@@ -1,0 +1,98 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* ============================================
+       SINGLE SOURCE OF TRUTH - LIGHT MODE
+       B2B Enterprise Color Palette
+       Professional, Elegant, Minimalistic
+       ============================================ */
+    
+    /* Primary Colors - Deep Blue (Trust & Professionalism) */
+    --color-primary: 30 58 95; /* #1E3A5F */
+    --color-primary-light: 45 90 138; /* #2D5A8A */
+    --color-primary-dark: 15 31 51; /* #0F1F33 */
+    
+    /* Secondary Colors - Warm Slate (Sophisticated Accent) */
+    --color-secondary: 100 116 139; /* #64748B */
+    --color-secondary-light: 148 163 184; /* #94A3B8 */
+    --color-secondary-dark: 71 85 105; /* #475569 */
+    
+    /* Background Colors */
+    --color-background: 255 255 255; /* #FFFFFF */
+    --color-background-secondary: 248 250 252; /* #F8FAFC */
+    --color-background-tertiary: 241 245 249; /* #F1F5F9 */
+    
+    /* Surface Colors (Cards, Modals, Elevated Elements) */
+    --color-surface: 255 255 255; /* #FFFFFF */
+    --color-surface-elevated: 255 255 255; /* #FFFFFF */
+    
+    /* Border Colors */
+    --color-border: 226 232 240; /* #E2E8F0 */
+    --color-border-subtle: 241 245 249; /* #F1F5F9 */
+    
+    /* Text Colors */
+    --color-foreground: 15 23 42; /* #0F172A */
+    --color-foreground-secondary: 71 85 105; /* #475569 */
+    --color-foreground-muted: 148 163 184; /* #94A3B8 */
+    --color-foreground-inverse: 248 250 252; /* #F8FAFC */
+    
+    /* Semantic Colors */
+    --color-success: 5 150 105; /* #059669 */
+    --color-success-light: 209 250 229; /* #D1FAE5 */
+    --color-warning: 217 119 6; /* #D97706 */
+    --color-warning-light: 254 243 199; /* #FEF3C7 */
+    --color-error: 220 38 38; /* #DC2626 */
+    --color-error-light: 254 226 226; /* #FEE2E2 */
+    --color-info: 37 99 235; /* #2563EB */
+    --color-info-light: 219 234 254; /* #DBEAFE */
+  }
+  
+  .dark {
+    /* ============================================
+       SINGLE SOURCE OF TRUTH - DARK MODE
+       B2B Enterprise Color Palette
+       ============================================ */
+    
+    /* Primary Colors - Lighter Blue for Dark Mode */
+    --color-primary: 59 130 246; /* #3B82F6 */
+    --color-primary-light: 96 165 250; /* #60A5FA */
+    --color-primary-dark: 29 78 216; /* #1D4ED8 */
+    
+    /* Secondary Colors */
+    --color-secondary: 148 163 184; /* #94A3B8 */
+    --color-secondary-light: 203 213 225; /* #CBD5E1 */
+    --color-secondary-dark: 100 116 139; /* #64748B */
+    
+    /* Background Colors */
+    --color-background: 10 10 11; /* #0A0A0B */
+    --color-background-secondary: 20 20 22; /* #141416 */
+    --color-background-tertiary: 30 30 34; /* #1E1E22 */
+    
+    /* Surface Colors */
+    --color-surface: 20 20 22; /* #141416 */
+    --color-surface-elevated: 30 30 34; /* #1E1E22 */
+    
+    /* Border Colors */
+    --color-border: 42 42 46; /* #2A2A2E */
+    --color-border-subtle: 30 30 34; /* #1E1E22 */
+    
+    /* Text Colors */
+    --color-foreground: 248 250 252; /* #F8FAFC */
+    --color-foreground-secondary: 203 213 225; /* #CBD5E1 */
+    --color-foreground-muted: 100 116 139; /* #64748B */
+    --color-foreground-inverse: 15 23 42; /* #0F172A */
+    
+    /* Semantic Colors (Adjusted for dark background) */
+    --color-success: 34 197 94; /* #22C55E */
+    --color-success-light: 20 83 45; /* #14532D */
+    --color-warning: 251 191 36; /* #FBBF24 */
+    --color-warning-light: 113 63 18; /* #713F12 */
+    --color-error: 248 113 113; /* #F87171 */
+    --color-error-light: 127 29 29; /* #7F1D1D */
+    --color-info: 96 165 250; /* #60A5FA */
+    --color-info-light: 30 58 138; /* #1E3A8A */
+  }
+}
