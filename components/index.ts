@@ -5,8 +5,8 @@
 // Glass components
 export * from "./glass";
 
-// UI components (to be added)
-// export * from "./ui";
+// Layout components
+export * from "./layouts";
 
-// Layout components (to be added)
-// export * from "./layouts";
+// UI components (to be added in Phase 5)
+// export * from "./ui";
