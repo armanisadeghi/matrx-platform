@@ -6,9 +6,19 @@
  */
 
 import { View, StyleSheet } from "react-native";
-import { useAppColorScheme } from "@/hooks/useAppColorScheme";
+import { useTheme } from "@/hooks/useTheme";
 import type { GlassContainerProps } from "./types";
 import { borderRadiusMap, intensityToBlur } from "./types";
+
+/**
+ * Convert a hex color to an rgba string with the given opacity.
+ */
+function hexToRgba(hex: string, opacity: number): string {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${opacity})`;
+}
 
 export function GlassContainer({
   children,
@@ -19,23 +29,19 @@ export function GlassContainer({
   style,
   ...props
 }: GlassContainerProps) {
-  const { isDark } = useAppColorScheme();
+  const { colors } = useTheme();
 
   // Calculate values
   const radius = borderRadiusMap[borderRadius];
   const blurRadius = intensityToBlur[intensity];
 
-  // Get background color based on tint and theme
+  // Get background color based on tint and theme, derived from theme tokens
   const getBackgroundColor = () => {
     if (tint === "none") return "transparent";
-    if (tint === "primary") {
-      return isDark ? "rgba(59, 130, 246, 0.1)" : "rgba(30, 58, 95, 0.1)";
-    }
-    if (tint === "secondary") {
-      return isDark ? "rgba(148, 163, 184, 0.1)" : "rgba(100, 116, 139, 0.1)";
-    }
+    if (tint === "primary") return hexToRgba(colors.primary.DEFAULT, 0.1);
+    if (tint === "secondary") return hexToRgba(colors.secondary.DEFAULT, 0.1);
     // Surface tint
-    return isDark ? "rgba(20, 20, 22, 0.8)" : "rgba(255, 255, 255, 0.8)";
+    return hexToRgba(colors.surface.DEFAULT, 0.8);
   };
 
   return (

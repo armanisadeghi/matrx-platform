@@ -55,6 +55,7 @@ function DemoLink({ href, title, description, icon }: DemoLinkProps) {
 export default function DemoIndex() {
   const insets = useSafeAreaInsets();
   const { colorScheme, toggleColorScheme, isDark } = useAppColorScheme();
+  const { colors } = useTheme();
 
   return (
     <ScreenLayout safeAreaEdges={["top"]}>
@@ -84,7 +85,7 @@ export default function DemoIndex() {
               <Ionicons
                 name={isDark ? "moon" : "sunny"}
                 size={20}
-                color={isDark ? "#FBBF24" : "#F59E0B"}
+                color={colors.warning.DEFAULT}
               />
               <Text variant="label" className="ml-3">
                 {isDark ? "Dark Mode" : "Light Mode"}

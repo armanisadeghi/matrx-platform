@@ -8,8 +8,10 @@ import { View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, Button, Card, IconButton, Divider } from "@/components/ui";
 import { HeaderLayout } from "@/components/layouts";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function ButtonsDemo() {
+  const { colors } = useTheme();
   return (
     <HeaderLayout
       header={{
@@ -67,12 +69,12 @@ export default function ButtonsDemo() {
             With Icons
           </Text>
           <View className="gap-3">
-            <Button leftIcon={<Ionicons name="add" size={18} color="#FFFFFF" />}>
+            <Button leftIcon={<Ionicons name="add" size={18} color={colors.foreground.inverse} />}>
               Add Item
             </Button>
             <Button
               variant="outline"
-              rightIcon={<Ionicons name="arrow-forward" size={18} color="#1E3A5F" />}
+              rightIcon={<Ionicons name="arrow-forward" size={18} color={colors.foreground.DEFAULT} />}
             >
               Continue
             </Button>

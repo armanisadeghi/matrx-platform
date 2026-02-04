@@ -122,7 +122,7 @@ export function IconButton({
     if (color === "inverse") return colors.foreground.inverse;
 
     // Default based on variant
-    if (variant === "filled") return "#FFFFFF";
+    if (variant === "filled") return colors.foreground.inverse;
     return colors.foreground.DEFAULT;
   };
 
@@ -166,15 +166,15 @@ export function IconButton({
         backgroundColor:
           pressed && !isDisabled && variant === "default"
             ? isDark
-              ? "rgba(255,255,255,0.1)"
-              : "rgba(0,0,0,0.05)"
+              ? `${colors.foreground.inverse}1A`
+              : `${colors.foreground.DEFAULT}0D`
             : undefined,
       })}
     >
       {loading ? (
         <ActivityIndicator
           size="small"
-          color={variant === "filled" ? "#FFFFFF" : colors.primary.DEFAULT}
+          color={variant === "filled" ? colors.foreground.inverse : colors.primary.DEFAULT}
         />
       ) : (
         <Ionicons name={icon} size={config.icon} color={getIconColor()} />

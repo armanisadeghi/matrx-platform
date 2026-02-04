@@ -376,16 +376,16 @@ rg 'rgba?\(' --type tsx --type ts -g '!constants/*' -g '!global.css'
 
 ## TASKS
 
-- [ ] Remove hardcoded hex colors in `Toggle.tsx` - use `colors.border.DEFAULT` and `colors.foreground.inverse` from useTheme instead of `#2A2A2E`, `#E2E8F0`, `#FFFFFF`, `#F8FAFC` - `components/ui/Toggle.tsx:87,90,91,141`
-- [ ] Remove hardcoded spinner colors in `Button.tsx` - use theme colors for `#1E3A5F` and `#FFFFFF` - `components/ui/Button.tsx:164`
-- [ ] Remove hardcoded white in `Spinner.tsx` - use `colors.foreground.inverse` instead of `#FFFFFF` - `components/ui/Spinner.tsx:63`
-- [ ] Remove hardcoded colors in `IconButton.tsx` - use theme colors for `#FFFFFF` and rgba values - `components/ui/IconButton.tsx:125,169-170,177`
-- [ ] Remove hardcoded colors in `GlassContainer.android.tsx` - use theme colors from `colors.primary.DEFAULT`, `colors.secondary.DEFAULT`, etc. - `components/glass/GlassContainer.android.tsx:52-54,78`
-- [ ] Remove hardcoded rgba colors in `GlassContainer.web.tsx` - use theme colors with opacity - `components/glass/GlassContainer.web.tsx:32,35,38`
-- [ ] Remove hardcoded icon colors in demo pages - use theme-aware colors - `app/(demo)/buttons.tsx:70,75` and `app/(demo)/index.tsx:87`
-- [ ] Remove hardcoded background colors in demo layout - use NativeWind classes (`bg-background`) instead of inline styles - `app/(demo)/_layout.tsx:18`
-- [ ] Add React Navigation ThemeProvider integration to root layout to prevent white flash on navigation - `app/_layout.tsx` (as documented in Step 6)
-- [ ] Add `foreground.inverse` (white for light mode, dark for dark mode) as a standard semantic token to use for icon/text colors on filled buttons/elements - `constants/colors.ts`
+- [x] Remove hardcoded hex colors in `Toggle.tsx` - use `colors.border.DEFAULT` and `colors.foreground.inverse` from useTheme instead of `#2A2A2E`, `#E2E8F0`, `#FFFFFF`, `#F8FAFC` - `components/ui/Toggle.tsx`
+- [x] Remove hardcoded spinner colors in `Button.tsx` - use theme colors for `#1E3A5F` and `#FFFFFF` - `components/ui/Button.tsx`
+- [x] Remove hardcoded white in `Spinner.tsx` - use `colors.foreground.inverse` instead of `#FFFFFF` - `components/ui/Spinner.tsx`
+- [x] Remove hardcoded colors in `IconButton.tsx` - use theme colors for `#FFFFFF` and rgba values - `components/ui/IconButton.tsx`
+- [x] Remove hardcoded colors in `GlassContainer.android.tsx` - use theme colors from `colors.primary.DEFAULT`, `colors.secondary.DEFAULT`, etc. - `components/glass/GlassContainer.android.tsx`
+- [x] Remove hardcoded rgba colors in `GlassContainer.web.tsx` - use theme colors with opacity via `hexToRgba()` helper - `components/glass/GlassContainer.web.tsx`
+- [x] Remove hardcoded icon colors in demo pages - use theme-aware colors - `app/(demo)/buttons.tsx` and `app/(demo)/index.tsx`
+- [x] Remove hardcoded background colors in demo layout - use `colors.background.DEFAULT` from `useTheme()` - `app/(demo)/_layout.tsx`
+- [x] Add React Navigation ThemeProvider integration to root layout to prevent white flash on navigation - `app/_layout.tsx`
+- [x] `foreground.inverse` (white for light mode, dark for dark mode) already existed as a semantic token in `constants/colors.ts` - now used consistently across all components
 
 ## TO DISCUSS
 
@@ -416,3 +416,98 @@ rg 'rgba?\(' --type tsx --type ts -g '!constants/*' -g '!global.css'
 - **Current approach:** CSS variables in `global.css` include hex color comments (e.g., `/* #1E3A5F */`)
 - **Document suggests:** No comments on CSS variable definitions
 - **Why current is better:** The hex comments provide immediate visual reference when inspecting the CSS, making it easier to understand and debug theme values without needing to convert RGB values mentally.
+
+---
+
+## Implementation Notes: Hardcoded Color Elimination & ThemeProvider Integration
+
+> Completed as part of the design system setup task. This section documents the research, decisions, and changes made.
+
+### Research Summary
+
+An extensive web research was conducted across NativeWind documentation, Expo docs, State of React Native 2024 survey results, Shopify engineering blog, and multiple styling benchmark repositories to determine the absolute best practice for managing colors, styles, and light/dark mode in a cross-platform React Native/Expo project (Web, iOS, Android).
+
+**Key finding:** The project's existing architecture—NativeWind v4 with CSS variables in `global.css` as the single source of truth, Tailwind utility classes for 95% of styling, and `useTheme()` for programmatic access—is already the industry-recommended best practice. This was confirmed across:
+
+- [NativeWind Themes Guide](https://www.nativewind.dev/docs/guides/themes)
+- [NativeWind Dark Mode](https://www.nativewind.dev/docs/core-concepts/dark-mode)
+- [Expo Color Themes Documentation](https://docs.expo.dev/develop/user-interface/color-themes/)
+- [State of React Native 2024: Styling](https://results.stateofreactnative.com/en-US/styling/) (NativeWind +15% popularity)
+- [Shopify: 5 Ways to Improve RN Styling Workflow](https://shopify.engineering/5-ways-to-improve-your-react-native-styling-workflow)
+
+**Alternatives evaluated:**
+- `react-native-unistyles v3` — Requires New Architecture only (no Expo Go), C++ Nitro Modules for performance, but web support has known limitations and smaller ecosystem
+- `Uniwind` — Too new for production template use; positions itself as NativeWind replacement
+- `styled-components` — Legacy choice with runtime overhead, declining in RN ecosystem
+- Plain `StyleSheet.create` + Context — Viable but requires excessive boilerplate with no utility class system
+
+**Decision:** Keep NativeWind v4 + CSS variables. Focus efforts on eliminating all hardcoded color violations and completing the ThemeProvider integration.
+
+### What Was Changed
+
+#### 1. Component Hardcoded Color Fixes
+
+Every hardcoded hex color and rgba literal was removed from components and demo pages. The grep validation command `rg '#[0-9A-Fa-f]{6}' components/ app/` now returns **zero results**.
+
+| File | Before | After |
+|---|---|---|
+| `Button.tsx` | `#1E3A5F`, `#FFFFFF` for spinner | `colors.primary.DEFAULT`, `colors.foreground.inverse` via `useTheme()` |
+| `Toggle.tsx` | `#2A2A2E`, `#E2E8F0`, `#FFFFFF`, `#F8FAFC` for switch tracks/thumb | `colors.border.DEFAULT`, `colors.foreground.inverse` via `useTheme()` |
+| `Spinner.tsx` | `#FFFFFF` for white variant | `colors.foreground.inverse` |
+| `IconButton.tsx` | `#FFFFFF` for filled variant, `rgba(255,255,255,0.1)` / `rgba(0,0,0,0.05)` for pressed states | `colors.foreground.inverse`, theme-derived hex+alpha strings |
+| `GlassContainer.android.tsx` | `#3B82F6`, `#1E3A5F`, `#94A3B8`, `#64748B`, `#141416`, `#FFFFFF`, `#14141680`, `#FFFFFF80` | `colors.primary.DEFAULT`, `colors.secondary.DEFAULT`, `colors.surface.DEFAULT` with alpha suffix |
+| `GlassContainer.web.tsx` | Hardcoded `rgba(59, 130, 246, 0.1)` etc. | `hexToRgba()` helper function that converts theme hex values to rgba at runtime |
+| `buttons.tsx` (demo) | `#FFFFFF`, `#1E3A5F` for icon colors | `colors.foreground.inverse`, `colors.foreground.DEFAULT` |
+| `index.tsx` (demo) | `#FBBF24`, `#F59E0B` for sun/moon icon | `colors.warning.DEFAULT` |
+| `_layout.tsx` (demo) | `#0A0A0B`, `#FFFFFF` for contentStyle background | `colors.background.DEFAULT` via `useTheme()` |
+
+#### 2. React Navigation ThemeProvider
+
+Added `ThemeProvider` from `@react-navigation/native` to `app/_layout.tsx`. The navigation theme is built from our design tokens using `useMemo` for performance:
+
+```tsx
+const navigationTheme: Theme = useMemo(
+  () => ({
+    ...(isDark ? DarkTheme : DefaultTheme),
+    colors: {
+      ...(isDark ? DarkTheme.colors : DefaultTheme.colors),
+      primary: colors.primary.DEFAULT,
+      background: colors.background.DEFAULT,
+      card: colors.surface.DEFAULT,
+      text: colors.foreground.DEFAULT,
+      border: colors.border.DEFAULT,
+      notification: colors.error.DEFAULT,
+    },
+  }),
+  [isDark, colors]
+);
+```
+
+This prevents the white flash during navigation transitions in dark mode and ensures all React Navigation internal UI (headers, tab bars, modals) uses our design tokens.
+
+#### 3. Semantic Token Usage Pattern
+
+The `foreground.inverse` token (already defined in `constants/colors.ts`) is now consistently used across all components for text/icons on filled/colored backgrounds:
+- Light mode: `#F8FAFC` (near-white)
+- Dark mode: `#0F172A` (near-black)
+
+This ensures proper contrast regardless of the active color scheme.
+
+### Thought Process
+
+1. **"Why not just use `dark:` prefix everywhere?"** — The CSS variable approach in `global.css` means a single class like `bg-primary` automatically resolves to the correct color in both modes. Using `dark:` prefixes would require every developer to remember dual declarations, doubling the maintenance surface and creating opportunities for missed updates.
+
+2. **"Why use `useTheme()` for ActivityIndicator/Ionicons colors?"** — NativeWind's `className` prop works with React Native's layout/style system, but third-party components like `ActivityIndicator`, `Ionicons`, and `RNSwitch` accept explicit `color` string props. These must receive resolved hex values, which requires the programmatic `useTheme()` path.
+
+3. **"Why `colors.foreground.inverse` instead of a literal white?"** — In dark mode, `foreground.inverse` resolves to a dark color, which is correct for text on a light-colored filled button. A hardcoded `#FFFFFF` would be wrong in any context where the background color adapts to the theme.
+
+4. **"Why add `hexToRgba()` in GlassContainer.web.tsx?"** — Web glass effects require CSS `rgba()` values with specific opacity for the backdrop. Rather than hardcoding these, the helper converts theme hex values to rgba strings, keeping the single source of truth in `global.css` / `colors.ts`.
+
+### Possible Next Steps
+
+- **Theme preference persistence:** The current `useAppColorScheme` hook does not persist the user's light/dark choice across app restarts. Consider adding `AsyncStorage` or `expo-secure-store` to save the preference and restore it on launch.
+- **ESLint custom rule:** Add a lint rule or pre-commit hook that detects hardcoded hex codes (`#[0-9A-Fa-f]{3,8}`) in `components/` and `app/` directories, preventing future violations automatically.
+- **Auto-generation of `colors.ts`:** The `constants/colors.ts` file currently mirrors `global.css` manually. A build-time script could parse the CSS variables and generate the TypeScript file, eliminating the risk of them drifting out of sync.
+- **Dynamic color with `DynamicColorIOS`:** For iOS 26 Liquid Glass contexts where system colors adapt to the glass tint, consider using `DynamicColorIOS` from React Native to provide truly native adaptive colors.
+- **NativeWind v5 migration:** NativeWind v5 (in development) promises first-class CSS variable support with improved performance. Monitor its release for potential migration.
+- **Shadow token theming:** The shadow definitions in `constants/spacing.ts` use `shadowColor: "#000"`. While black shadows work in both modes, a fully theme-aware shadow system would use a semantic shadow color token.

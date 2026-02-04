@@ -84,11 +84,11 @@ export function Switch({
         onValueChange={onValueChange}
         disabled={disabled}
         trackColor={{
-          false: isDark ? "#2A2A2E" : "#E2E8F0",
+          false: colors.border.DEFAULT,
           true: colors.primary.DEFAULT,
         }}
-        thumbColor={isIOS ? "#FFFFFF" : value ? "#FFFFFF" : "#F8FAFC"}
-        ios_backgroundColor={isDark ? "#2A2A2E" : "#E2E8F0"}
+        thumbColor={colors.foreground.inverse}
+        ios_backgroundColor={colors.border.DEFAULT}
       />
     </Pressable>
   );
@@ -120,7 +120,7 @@ export function Checkbox({
   size = "md",
   className = "",
 }: CheckboxProps) {
-  useTheme(); // For theme context
+  const { colors } = useTheme();
   const sizeConfig = checkboxSizes[size];
 
   return (
@@ -138,7 +138,7 @@ export function Checkbox({
         style={{ width: sizeConfig.box, height: sizeConfig.box }}
       >
         {value && (
-          <Ionicons name="checkmark" size={sizeConfig.icon} color="#FFFFFF" />
+          <Ionicons name="checkmark" size={sizeConfig.icon} color={colors.foreground.inverse} />
         )}
       </View>
       {(label || description) && (

@@ -5,17 +5,17 @@
  */
 
 import { Stack } from "expo-router";
-import { useAppColorScheme } from "@/hooks/useAppColorScheme";
+import { useTheme } from "@/hooks/useTheme";
 
 export default function DemoLayout() {
-  const { isDark } = useAppColorScheme();
+  const { colors } = useTheme();
 
   return (
     <Stack
       screenOptions={{
         headerShown: false,
         contentStyle: {
-          backgroundColor: isDark ? "#0A0A0B" : "#FFFFFF",
+          backgroundColor: colors.background.DEFAULT,
         },
       }}
     />

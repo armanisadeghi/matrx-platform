@@ -7,6 +7,7 @@
 
 import { Pressable, View, ActivityIndicator } from "react-native";
 import { Text } from "./Text";
+import { useTheme } from "@/hooks/useTheme";
 import { isIOS } from "@/lib/platform";
 
 /**
@@ -156,12 +157,16 @@ export function Button({
   className = "",
   testID,
 }: ButtonProps) {
+  const { colors } = useTheme();
   const isDisabled = disabled || loading;
   const variantStyle = variantStyles[variant];
   const sizeStyle = sizeStyles[size];
 
-  // Determine text color for spinner
-  const spinnerColor = variant === "ghost" || variant === "outline" ? "#1E3A5F" : "#FFFFFF";
+  // Determine spinner color from theme based on variant
+  const spinnerColor =
+    variant === "ghost" || variant === "outline"
+      ? colors.primary.DEFAULT
+      : colors.foreground.inverse;
 
   return (
     <Pressable

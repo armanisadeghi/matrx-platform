@@ -60,7 +60,7 @@ export function Spinner({
   const colorMap = {
     primary: colors.primary.DEFAULT,
     secondary: colors.secondary.DEFAULT,
-    white: "#FFFFFF",
+    white: colors.foreground.inverse,
     muted: colors.foreground.muted,
   };
 

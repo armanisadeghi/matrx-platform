@@ -40,7 +40,7 @@ export function GlassContainer({
   style,
   ...props
 }: GlassContainerProps) {
-  const { isDark } = useTheme();
+  const { colors } = useTheme();
 
   // Calculate values
   const radius = borderRadiusMap[borderRadius];
@@ -49,18 +49,16 @@ export function GlassContainer({
   // Get tint color based on theme
   const getTintColor = () => {
     if (tint === "none") return "transparent";
-    if (tint === "primary") return isDark ? "#3B82F6" : "#1E3A5F";
-    if (tint === "secondary") return isDark ? "#94A3B8" : "#64748B";
-    return isDark ? "#141416" : "#FFFFFF";
+    if (tint === "primary") return colors.primary.DEFAULT;
+    if (tint === "secondary") return colors.secondary.DEFAULT;
+    return colors.surface.DEFAULT;
   };
 
   // If device doesn't support Material 3 Expressive or module not available, fall back
   if (!supportsMaterial3Expressive || !LiquidGlassView) {
     return (
       <View
-        className={`overflow-hidden ${
-          isDark ? "bg-surface/80" : "bg-surface/90"
-        } ${className}`}
+        className={`overflow-hidden bg-surface/85 ${className}`}
         style={[{ borderRadius: radius }, style]}
         {...props}
       >
@@ -75,7 +73,7 @@ export function GlassContainer({
       lensRadiusX={12}
       lensRadiusY={24}
       tintColor={getTintColor()}
-      surfaceColor={isDark ? "#14141680" : "#FFFFFF80"}
+      surfaceColor={`${colors.surface.DEFAULT}80`}
       style={[styles.container, { borderRadius: radius }, style]}
     >
       <View className={className}>{children}</View>
