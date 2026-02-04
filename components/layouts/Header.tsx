@@ -35,7 +35,7 @@ export function Header({
   className = "",
 }: HeaderProps) {
   const router = useRouter();
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
 
   const handleBackPress = () => {

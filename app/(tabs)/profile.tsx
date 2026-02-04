@@ -6,7 +6,6 @@
 
 import { View } from "react-native";
 import { Link } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
 import {
   Text,
   Card,
@@ -16,14 +15,12 @@ import {
   Switch,
   ListItem,
   ListSection,
-  Divider,
 } from "@/components/ui";
 import { HeaderLayout } from "@/components/layouts";
-import { useAppColorScheme } from "@/hooks/useAppColorScheme";
 import { useTheme } from "@/hooks/useTheme";
 
 export default function ProfileTab() {
-  const { colors, isDark, toggleColorScheme } = useTheme();
+  const { isDark, toggleColorScheme } = useTheme();
 
   return (
     <HeaderLayout

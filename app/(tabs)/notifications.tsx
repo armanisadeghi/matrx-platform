@@ -6,7 +6,7 @@
 
 import { View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { Text, Card, Avatar, Badge, Button, Divider } from "@/components/ui";
+import { Text, Card, Badge, Button, Divider } from "@/components/ui";
 import { HeaderLayout } from "@/components/layouts";
 import { useTheme } from "@/hooks/useTheme";
 

@@ -4,7 +4,7 @@
  * Main landing screen for the app.
  */
 
-import { View, ScrollView } from "react-native";
+import { View } from "react-native";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, Card, Button, Avatar, Badge } from "@/components/ui";

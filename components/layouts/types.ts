@@ -25,7 +25,7 @@ export interface BaseLayoutProps extends ViewProps {
    * Background color variant
    * @default 'background'
    */
-  background?: "background" | "secondary" | "tertiary" | "transparent";
+  background?: "background" | "secondary" | "tertiary" | "surface" | "transparent";
 
   /**
    * Additional className for NativeWind styling

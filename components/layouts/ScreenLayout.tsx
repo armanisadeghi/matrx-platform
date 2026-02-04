@@ -12,7 +12,7 @@ import { View, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppColorScheme } from "@/hooks/useAppColorScheme";
-import type { ScreenLayoutProps, SafeAreaEdge } from "./types";
+import type { ScreenLayoutProps } from "./types";
 
 /**
  * Get background class based on variant
@@ -25,6 +25,8 @@ function getBackgroundClass(
       return "bg-background-secondary";
     case "tertiary":
       return "bg-background-tertiary";
+    case "surface":
+      return "bg-surface";
     case "transparent":
       return "bg-transparent";
     default:
@@ -49,7 +51,7 @@ export function ScreenLayout({
   children,
   safeAreaEdges = ["top", "bottom"],
   background = "background",
-  edgeToEdge = true,
+  edgeToEdge: _edgeToEdge = true,
   className = "",
   style,
   testID,

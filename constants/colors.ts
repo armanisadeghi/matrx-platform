@@ -133,4 +133,17 @@ export const colors = {
 } as const;
 
 export type ColorScheme = "light" | "dark";
-export type Colors = typeof colors.light;
+
+/** Color values structure (non-literal) */
+export interface Colors {
+  primary: { DEFAULT: string; light: string; dark: string };
+  secondary: { DEFAULT: string; light: string; dark: string };
+  background: { DEFAULT: string; secondary: string; tertiary: string };
+  surface: { DEFAULT: string; elevated: string };
+  border: { DEFAULT: string; subtle: string };
+  foreground: { DEFAULT: string; secondary: string; muted: string; inverse: string };
+  success: { DEFAULT: string; light: string };
+  warning: { DEFAULT: string; light: string };
+  error: { DEFAULT: string; light: string };
+  info: { DEFAULT: string; light: string };
+}

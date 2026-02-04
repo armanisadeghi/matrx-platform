@@ -24,6 +24,7 @@ let LiquidGlassView: React.ComponentType<{
 
 try {
   // Dynamic import for Android-specific module
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   const liquidGlass = require("expo-liquid-glass-native");
   LiquidGlassView = liquidGlass.LiquidGlassView;
 } catch {

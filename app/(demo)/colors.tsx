@@ -4,7 +4,7 @@
  * Showcases the color palette and semantic colors.
  */
 
-import { View, ScrollView } from "react-native";
+import { View } from "react-native";
 import { Text, Card, Divider } from "@/components/ui";
 import { HeaderLayout } from "@/components/layouts";
 import { colors } from "@/constants/colors";
@@ -12,10 +12,9 @@ import { colors } from "@/constants/colors";
 interface ColorSwatchProps {
   name: string;
   value: string;
-  textLight?: boolean;
 }
 
-function ColorSwatch({ name, value, textLight = false }: ColorSwatchProps) {
+function ColorSwatch({ name, value }: ColorSwatchProps) {
   return (
     <View className="flex-row items-center mb-2">
       <View

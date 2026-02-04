@@ -5,22 +5,22 @@
  * Uses native tabs on iOS 26+ for Liquid Glass tab bar.
  */
 
-import { Platform } from "react-native";
 import { Tabs } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/hooks/useTheme";
-import { isIOS, supportsLiquidGlass } from "@/lib/platform";
+import { supportsLiquidGlass } from "@/lib/platform";
 
 // Try to import native tabs (iOS 26+)
 // This is unstable API and may change
 let NativeTabs: typeof Tabs | null = null;
-try {
-  if (supportsLiquidGlass) {
+if (supportsLiquidGlass) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
     const nativeTabsModule = require("expo-router/unstable-native-tabs");
     NativeTabs = nativeTabsModule.NativeTabs;
+  } catch {
+    // Native tabs not available, use regular Tabs
   }
-} catch {
-  // Native tabs not available, use regular Tabs
 }
 
 type IconName = keyof typeof Ionicons.glyphMap;

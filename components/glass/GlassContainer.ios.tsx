@@ -6,7 +6,7 @@
  */
 
 import { View } from "react-native";
-import { GlassView } from "expo-glass-effect";
+import { GlassView, type GlassStyle } from "expo-glass-effect";
 import { useAppColorScheme } from "@/hooks/useAppColorScheme";
 import { supportsLiquidGlass } from "@/lib/platform";
 import type { GlassContainerProps } from "./types";
@@ -14,8 +14,8 @@ import { borderRadiusMap } from "./types";
 
 export function GlassContainer({
   children,
-  intensity = "medium",
-  tint = "surface",
+  intensity: _intensity = "medium",
+  tint: _tint = "surface",
   interactive = false,
   borderRadius = "lg",
   className = "",
@@ -42,13 +42,14 @@ export function GlassContainer({
     );
   }
 
-  // Map tint to iOS glass style
-  const glassStyle = tint === "none" ? "regular" : "prominent";
+  // Map tint to iOS glass style - use "clear" as the base style
+  // expo-glass-effect supports: "clear" and other native glass styles
+  const glassEffectStyle: GlassStyle = "clear";
 
   return (
     <GlassView
       style={[{ borderRadius: radius, overflow: "hidden" }, style]}
-      glassStyle={glassStyle}
+      glassEffectStyle={glassEffectStyle}
       isInteractive={interactive}
       {...props}
     >

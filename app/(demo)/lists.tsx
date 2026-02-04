@@ -8,7 +8,6 @@ import { useState } from "react";
 import { View } from "react-native";
 import {
   Text,
-  Card,
   ListItem,
   ListSection,
   Switch,

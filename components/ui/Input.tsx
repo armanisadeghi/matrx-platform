@@ -122,7 +122,7 @@ export function Input({
   inputClassName = "",
   ...props
 }: InputProps) {
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 

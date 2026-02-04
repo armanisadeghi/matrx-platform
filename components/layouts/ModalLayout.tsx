@@ -42,14 +42,14 @@ export function ModalLayout({
   onDismiss,
   maxHeight = 90,
   safeAreaEdges = ["bottom"],
-  background = "surface",
+  background: _background = "surface",
   className = "",
   style,
   testID,
   ...props
 }: ModalLayoutProps) {
   const insets = useSafeAreaInsets();
-  const { isDark } = useTheme();
+  const _theme = useTheme();
 
   const handleBackdropPress = () => {
     if (dismissible && onDismiss) {

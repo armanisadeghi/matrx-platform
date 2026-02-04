@@ -49,7 +49,7 @@ interface BaseToggleProps {
 /**
  * Switch component
  */
-export interface SwitchProps extends BaseToggleProps {}
+export type SwitchProps = BaseToggleProps;
 
 export function Switch({
   value,
@@ -120,7 +120,7 @@ export function Checkbox({
   size = "md",
   className = "",
 }: CheckboxProps) {
-  const { colors } = useTheme();
+  useTheme(); // For theme context
   const sizeConfig = checkboxSizes[size];
 
   return (
@@ -181,7 +181,7 @@ export function Radio({
   size = "md",
   className = "",
 }: RadioProps) {
-  const { colors } = useTheme();
+  useTheme(); // For theme context
   const sizeConfig = radioSizes[size];
 
   return (

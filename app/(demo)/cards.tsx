@@ -4,7 +4,7 @@
  * Showcases card variants and compositions.
  */
 
-import { View, Image } from "react-native";
+import { View } from "react-native";
 import {
   Text,
   Button,

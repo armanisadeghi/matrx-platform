@@ -4,7 +4,7 @@
  * Button with icon only, for toolbar actions and navigation.
  */
 
-import { Pressable, View, ActivityIndicator } from "react-native";
+import { Pressable, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/hooks/useTheme";
 import { isIOS } from "@/lib/platform";

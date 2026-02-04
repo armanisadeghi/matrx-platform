@@ -8,7 +8,7 @@ import { View, ImageBackground, Platform } from "react-native";
 import { Text, Card, Divider } from "@/components/ui";
 import { HeaderLayout } from "@/components/layouts";
 import { GlassContainer } from "@/components/glass";
-import { isIOS, isAndroid, supportsLiquidGlass, supportsMaterial3Expressive } from "@/lib/platform";
+import { supportsLiquidGlass, supportsMaterial3Expressive } from "@/lib/platform";
 
 export default function GlassDemo() {
   return (
