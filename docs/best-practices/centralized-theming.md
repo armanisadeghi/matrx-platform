@@ -506,8 +506,74 @@ This ensures proper contrast regardless of the active color scheme.
 ### Possible Next Steps
 
 - **Theme preference persistence:** The current `useAppColorScheme` hook does not persist the user's light/dark choice across app restarts. Consider adding `AsyncStorage` or `expo-secure-store` to save the preference and restore it on launch.
-- **ESLint custom rule:** Add a lint rule or pre-commit hook that detects hardcoded hex codes (`#[0-9A-Fa-f]{3,8}`) in `components/` and `app/` directories, preventing future violations automatically.
+- ~~**ESLint custom rule:** Add a lint rule or pre-commit hook that detects hardcoded hex codes.~~ **DONE** - See "Automated Enforcement" section below.
 - **Auto-generation of `colors.ts`:** The `constants/colors.ts` file currently mirrors `global.css` manually. A build-time script could parse the CSS variables and generate the TypeScript file, eliminating the risk of them drifting out of sync.
 - **Dynamic color with `DynamicColorIOS`:** For iOS 26 Liquid Glass contexts where system colors adapt to the glass tint, consider using `DynamicColorIOS` from React Native to provide truly native adaptive colors.
 - **NativeWind v5 migration:** NativeWind v5 (in development) promises first-class CSS variable support with improved performance. Monitor its release for potential migration.
 - **Shadow token theming:** The shadow definitions in `constants/spacing.ts` use `shadowColor: "#000"`. While black shadows work in both modes, a fully theme-aware shadow system would use a semantic shadow color token.
+
+---
+
+## Automated Enforcement: ESLint Rule & Validation Script
+
+> Added to prevent future design system violations. Developers get immediate feedback in their editor and CI pipeline when rules are broken.
+
+### ESLint Custom Rule: `design-system/no-hardcoded-colors`
+
+A custom ESLint plugin at `eslint-plugins/no-hardcoded-colors.mjs` detects hardcoded color values in component and app files. It is integrated into `eslint.config.mjs` and scoped to `app/`, `components/`, and `hooks/` directories only — `constants/` and config files are excluded.
+
+**What it catches:**
+- Hex color literals: `#FFF`, `#FFFFFF`, `#FF000080`
+- RGB/RGBA function calls: `rgb(255, 0, 0)`, `rgba(0, 0, 0, 0.5)`
+- Both in string literals and template literals
+
+**What it allows:**
+- `transparent`, `inherit`, `currentColor`, `none`
+- Colors in `constants/` files (not scoped by the ESLint config block)
+- CSS variable references like `var(--color-primary)`
+
+**Error message shown to developers:**
+```
+error  Hardcoded color "#FF0000" detected. Use a design token from useTheme()
+       (e.g., colors.primary.DEFAULT) or a NativeWind class (e.g., bg-primary) instead.
+       design-system/no-hardcoded-colors
+```
+
+**Running:**
+```bash
+npm run lint          # Full ESLint (includes the rule)
+npm run lint:colors   # Only the hardcoded-colors rule on app/components/hooks
+```
+
+### Pre-Build Validation Script
+
+A comprehensive validation script at `scripts/validate-design-system.mjs` performs 5 checks that go beyond what ESLint can catch:
+
+| Check | What It Does | Severity |
+|---|---|---|
+| **Check 1** | Scans `app/`, `components/`, `hooks/` for hardcoded hex and rgb/rgba values | Error |
+| **Check 2** | Verifies CSS variable groups in `global.css` have matching entries in `colors.ts` | Warning |
+| **Check 3** | Verifies `tailwind.config.js` references all CSS variable groups | Error |
+| **Check 4** | Detects hardcoded colors in inline style props (`backgroundColor`, `borderColor`, `shadowColor`, etc.) | Error |
+| **Check 5** | Flags hardcoded shadow colors in `constants/spacing.ts` | Warning |
+
+**Running:**
+```bash
+npm run validate      # Design system validation only
+npm run check         # Full check: validate + lint + typecheck
+```
+
+**Exit behavior:**
+- Exits with code 0 if only warnings (pipeline continues)
+- Exits with code 1 if any errors found (pipeline fails)
+
+### Additional Fix: ModalLayout.tsx
+
+During validation testing, the script caught a hardcoded `shadowColor: "#000"` in `components/layouts/ModalLayout.tsx` that was missed in the initial audit. This was fixed by replacing it with `colors.foreground.DEFAULT` from `useTheme()`, making the shadow color theme-aware (dark text color in light mode casts shadows correctly, light text color in dark mode produces subtle shadows on dark surfaces).
+
+### How It Fits Into Development Workflow
+
+1. **Editor integration:** The ESLint rule fires in real-time in VS Code, Cursor, and other editors with ESLint extensions. Developers see red squiggles immediately when they type a hardcoded color.
+2. **Pre-commit (optional):** Add `npm run lint` to a lint-staged or husky pre-commit hook to block commits with violations.
+3. **CI pipeline:** Add `npm run check` as a CI step. It runs validation + lint + typecheck in sequence and fails if any step has errors.
+4. **Pre-build:** Run `npm run validate` before `expo prebuild` to catch issues before native builds.

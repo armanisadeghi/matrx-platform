@@ -18,7 +18,7 @@ import "../global.css";
 SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
-  const { colorScheme, isDark, colors } = useTheme();
+  const { isDark, colors } = useTheme();
 
   // Build React Navigation theme from our design tokens to prevent white flash
   const navigationTheme: Theme = useMemo(

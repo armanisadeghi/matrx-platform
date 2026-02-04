@@ -8,8 +8,11 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "lint": "eslint .",
+    "lint:colors": "eslint --rule '{\"design-system/no-hardcoded-colors\": \"error\"}' app/ components/ hooks/",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit",
+    "validate": "node scripts/validate-design-system.mjs",
+    "check": "npm run validate && npm run lint && npm run typecheck",
     "prebuild": "expo prebuild",
     "prebuild:clean": "expo prebuild --clean"
   },

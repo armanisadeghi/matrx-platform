@@ -49,7 +49,7 @@ export function ModalLayout({
   ...props
 }: ModalLayoutProps) {
   const insets = useSafeAreaInsets();
-  const _theme = useTheme();
+  const { colors } = useTheme();
 
   const handleBackdropPress = () => {
     if (dismissible && onDismiss) {
@@ -92,8 +92,14 @@ export function ModalLayout({
         <View
           className={`bg-surface rounded-2xl overflow-hidden mx-6 max-w-md w-full ${className}`}
           style={[
-            styles.dialog,
-            { maxHeight: SCREEN_HEIGHT * 0.8 },
+            {
+              maxHeight: SCREEN_HEIGHT * 0.8,
+              shadowColor: colors.foreground.DEFAULT,
+              shadowOffset: { width: 0, height: 8 },
+              shadowOpacity: 0.25,
+              shadowRadius: 16,
+              elevation: 16,
+            },
             style,
           ]}
           {...props}
@@ -163,12 +169,5 @@ export function ModalLayout({
 const styles = StyleSheet.create({
   sheet: {
     overflow: "hidden",
-  },
-  dialog: {
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.25,
-    shadowRadius: 16,
-    elevation: 16,
   },
 });

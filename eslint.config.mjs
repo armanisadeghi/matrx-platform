@@ -2,6 +2,7 @@ import js from "@eslint/js";
 import tseslint from "typescript-eslint";
 import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
+import designSystemPlugin from "./eslint-plugins/no-hardcoded-colors.mjs";
 
 export default [
   js.configs.recommended,
@@ -39,6 +40,16 @@ export default [
       "react-hooks/exhaustive-deps": "warn",
     },
   },
+  // Design system enforcement: no hardcoded colors in components and app files
+  {
+    files: ["app/**/*.{ts,tsx}", "components/**/*.{ts,tsx}", "hooks/**/*.{ts,tsx}"],
+    plugins: {
+      "design-system": designSystemPlugin,
+    },
+    rules: {
+      "design-system/no-hardcoded-colors": "error",
+    },
+  },
   {
     ignores: [
       "node_modules/",
@@ -51,6 +62,8 @@ export default [
       "*.config.mjs",
       "babel.config.js",
       "metro.config.js",
+      "eslint-plugins/",
+      "scripts/",
     ],
   },
 ];

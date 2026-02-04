@@ -8,7 +8,6 @@ import { Pressable, View, Switch as RNSwitch } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "./Text";
 import { useTheme } from "@/hooks/useTheme";
-import { isIOS } from "@/lib/platform";
 
 /**
  * Base toggle props
@@ -59,7 +58,7 @@ export function Switch({
   disabled = false,
   className = "",
 }: SwitchProps) {
-  const { colors, isDark } = useTheme();
+  const { colors } = useTheme();
 
   return (
     <Pressable
