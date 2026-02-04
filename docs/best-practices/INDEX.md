@@ -101,14 +101,45 @@ Critical for edge-to-edge designs. Covers:
 
 ---
 
-## Components & Patterns
+## Component Development
 
-### [React Native Paper](./react-native-paper.md)
-Material Design 3 component library. Covers:
-- Theme configuration (MD3 colors)
-- React Navigation integration
-- Component usage patterns (Buttons, Cards, Dialogs)
-- Typography system
+### [Component Architecture](./component-architecture.md)
+How to build production components. Covers:
+- Variant pattern (ButtonVariant, sizes, etc.)
+- Compound components (Card, CardHeader, CardContent)
+- className forwarding for composition
+- JSDoc documentation requirements
+- Accessibility patterns
+
+### [Icons and Vector Graphics](./icons-and-graphics.md)
+Using @expo/vector-icons effectively. Covers:
+- Ionicons as primary icon set
+- Type-safe icon names
+- Icon sizing standards
+- Tab bar icons (SF Symbols / Material Symbols)
+- Custom SVG icons
+- Animated icons
+
+### [Form Handling](./form-handling.md)
+Building accessible, user-friendly forms. Covers:
+- Input states (focus, error, disabled)
+- Validation patterns (inline, on-submit)
+- Keyboard handling
+- Password, email, search input types
+- Toggle and select components
+- Accessibility requirements
+
+### [Layout System](./layout-system.md)
+The ScreenLayout → HeaderLayout → ModalLayout hierarchy. Covers:
+- ScreenLayout as foundation
+- HeaderLayout for header + content screens
+- ModalLayout for sheets and dialogs
+- Safe area rules by layout
+- Tab screen considerations
+
+---
+
+## Architecture & Patterns
 
 ### [Platform-Specific Code](./platform-specific-code.md)
 Writing truly native experiences. Covers:
@@ -125,6 +156,22 @@ Type-safe React Native development. Covers:
 - Discriminated unions
 - Navigation types
 
+### [Project Structure](./project-structure.md)
+Organizing code effectively. Covers:
+- Directory structure conventions
+- Barrel export pattern
+- Path aliases (@/)
+- Route groups
+- Constants organization
+- Import order convention
+
+### [React Native Paper](./react-native-paper.md)
+Material Design 3 component library. Covers:
+- Theme configuration (MD3 colors)
+- React Navigation integration
+- Component usage patterns (Buttons, Cards, Dialogs)
+- Typography system
+
 ---
 
 ## Quick Reference
@@ -140,9 +187,14 @@ Type-safe React Native development. Covers:
 | New Architecture | Understanding runtime requirements |
 | Reanimated 4 | Adding animations |
 | Safe Areas | Any screen layout |
-| Paper | Material Design components |
+| Component Architecture | Building any reusable component |
+| Icons | Adding icons anywhere |
+| Form Handling | Building any form |
+| Layout System | Structuring any screen |
 | Platform Code | Divergent platform behavior |
 | TypeScript | **ALWAYS** - all code must be typed |
+| Project Structure | Organizing files and imports |
+| Paper | Material Design components |
 
 ---
 
@@ -151,13 +203,31 @@ Type-safe React Native development. Covers:
 For developers new to this stack:
 
 1. **[Centralized Theming](./centralized-theming.md)** - Foundation for everything
-2. **[Expo SDK 54](./expo-sdk-54.md)** - Project configuration
-3. **[NativeWind Styling](./nativewind-styling.md)** - How to style components
-4. **[Safe Area Handling](./safe-area-handling.md)** - Layout fundamentals
-5. **[Platform-Specific Code](./platform-specific-code.md)** - Native patterns
-6. **[iOS 26 Liquid Glass](./ios-26-liquid-glass.md)** - iOS native design
-7. **[Android 16 M3E](./android-16-material-3-expressive.md)** - Android native design
-8. **[TypeScript Patterns](./typescript-patterns.md)** - Type safety
+2. **[Project Structure](./project-structure.md)** - How to organize code
+3. **[Expo SDK 54](./expo-sdk-54.md)** - Project configuration
+4. **[NativeWind Styling](./nativewind-styling.md)** - How to style components
+5. **[Component Architecture](./component-architecture.md)** - How to build components
+6. **[Layout System](./layout-system.md)** - Screen structure
+7. **[Safe Area Handling](./safe-area-handling.md)** - Layout fundamentals
+8. **[Platform-Specific Code](./platform-specific-code.md)** - Native patterns
+9. **[iOS 26 Liquid Glass](./ios-26-liquid-glass.md)** - iOS native design
+10. **[Android 16 M3E](./android-16-material-3-expressive.md)** - Android native design
+11. **[TypeScript Patterns](./typescript-patterns.md)** - Type safety
+12. **[Form Handling](./form-handling.md)** - Building forms
+13. **[Icons](./icons-and-graphics.md)** - Using icons
+
+---
+
+## Document Count: 18
+
+| Category | Documents |
+|----------|-----------|
+| Design Systems | 2 |
+| Theming & Styling | 2 |
+| Core Frameworks | 3 |
+| Animation & Interaction | 2 |
+| Component Development | 4 |
+| Architecture & Patterns | 5 |
 
 ---
 

@@ -293,3 +293,46 @@ Prepare now by:
 - [Fabric Overview](https://reactnative.dev/docs/fabric-renderer)
 - [Expo Modules API](https://docs.expo.dev/modules/overview/)
 - [React Native Directory](https://reactnative.directory/)
+
+---
+
+## TASKS
+
+- [ ] Add `eas.json` configuration file for CI/CD builds - `eas.json` (new file at project root)
+- [ ] Consider adding runtime New Architecture verification utility - `lib/debug.ts` or `hooks/useNewArchVerification.ts`
+- [ ] Consider using React 18+ concurrent features (`Suspense`, `startTransition`) for improved UX in data-heavy screens - `app/(tabs)/*.tsx`
+
+✅ Core New Architecture requirements are met:
+- `newArchEnabled: true` is set in `app.config.ts:11`
+- Using Expo SDK 54 (`expo: "~54.0.33"`) with React Native 0.81.5
+- `react-native-reanimated/plugin` configured in `babel.config.js:8`
+- All dependencies are New Architecture compatible Expo packages
+- No legacy `NativeModules` usage in application code
+- No deprecated `findNodeHandle` usage
+- Proper `GestureHandlerRootView` wrapper in `app/_layout.tsx:26`
+
+## TO DISCUSS
+
+- **Current approach:** `babel.config.js` uses only `react-native-reanimated/plugin`
+- **Document suggests:** Adding separate `react-native-worklets/plugin` (line 184)
+- **Why current is better:** Reanimated 4 (v4.2.1 installed) includes worklets functionality and its plugin handles all worklet transformations. The separate `react-native-worklets/plugin` is only needed if using worklets independently of Reanimated. The lock file shows `react-native-worklets@0.7.2` is already installed as a peer dependency.
+
+---
+
+- **Current approach:** No Flipper dependency
+- **Document suggests:** Using Flipper for debugging (line 109-110)
+- **Why current is better:** Flipper has been deprecated by Meta in favor of the new React Native DevTools. The document should be updated to recommend Chrome DevTools or the built-in Expo dev tools instead.
+
+---
+
+- **Current approach:** Using `runOnUI` from `react-native-reanimated` (implicit)
+- **Document suggests:** `import { runOnUI } from 'react-native-worklets'` (line 157)
+- **Why current is better:** Reanimated 4 re-exports worklet functions directly. The modern pattern is `import { runOnUI } from 'react-native-reanimated'`, not from the separate worklets package.
+
+---
+
+- **Document issue (line 119-125):** The `measure` API shown (`import { measure } from 'react-native'`) is not a standard React Native export. Synchronous measurement in Fabric is done via the `measure()` method on refs, not a standalone import. Consider updating this example.
+
+---
+
+- **Document issue (line 249-258):** The `PerformanceObserver` API shown (`import { PerformanceObserver } from 'react-native'`) is not a standard React Native export. Performance monitoring should reference actual APIs like the React DevTools Profiler or Expo's performance monitoring tools.

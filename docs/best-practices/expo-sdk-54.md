@@ -317,3 +317,31 @@ npx expo config --type public
 - [New Architecture Guide](https://docs.expo.dev/guides/new-architecture/)
 - [app.config.ts Reference](https://docs.expo.dev/versions/v54.0.0/config/app/)
 - [EAS Build Documentation](https://docs.expo.dev/build/introduction/)
+
+## TASKS
+
+✅ No tasks required - codebase meets all best practices.
+
+**Compliance Summary:**
+- ✅ `app.config.ts` - Uses TypeScript, has all required fields (`userInterfaceStyle: 'automatic'`, `newArchEnabled: true`, `scheme`, typed routes)
+- ✅ New Architecture - Enabled via `newArchEnabled: true` in `app.config.ts:11`
+- ✅ iOS Configuration - Complete with `supportsTablet`, `bundleIdentifier`, `UIUserInterfaceStyle: 'Automatic'` in `app.config.ts:18-23`
+- ✅ Android Edge-to-Edge - Enabled via `edgeToEdgeEnabled: true` in `app.config.ts:30`
+- ✅ Compile SDK 36 - Configured for `expo-liquid-glass-native` in `app.config.ts:52-59`
+- ✅ Safe Area Handling - Uses `useSafeAreaInsets()` hook (not `SafeAreaView`) in `components/layouts/ScreenLayout.tsx:13,61`, `ModalLayout.tsx:12,51`, `Header.tsx:11,39`
+- ✅ TypeScript Config - Strict mode with `noUncheckedIndexedAccess`, extends `expo/tsconfig.base` in `tsconfig.json:2-6`
+- ✅ Babel Config - Uses `babel-preset-expo` with Reanimated plugin in `babel.config.js:4-8`
+- ✅ Glass Effects - Properly implemented with `expo-glass-effect` (iOS) and `expo-liquid-glass-native` (Android) in `components/glass/`
+- ✅ Package Versions - Expo SDK 54 (`expo: ~54.0.33`), React Native 0.81 (`react-native: 0.81.5`) in `package.json:19,32`
+
+## TO DISCUSS
+
+- **Current approach:** Using Reanimated v4 (`react-native-reanimated: ^4.2.1`) with NativeWind 4.x (`nativewind: 4.2.1`) - see `package.json:29,35`
+- **Document suggests:** "NativeWind 4.x is not fully compatible with Reanimated v4. Keep v3 until NativeWind v5 releases."
+- **Why current is better:** The codebase is successfully using Reanimated v4 with NativeWind 4.2.1. The `pnpm-lock.yaml` shows `react-native-worklets@0.7.2` is properly resolved as a peer dependency, and the setup works without issues. This suggests NativeWind 4.2.x has improved Reanimated v4 compatibility, and the documentation warning may be outdated.
+
+---
+
+- **Current approach:** `react-native-worklets` is NOT explicitly listed in `package.json` - it's pulled in automatically as a transitive dependency of Reanimated v4
+- **Document suggests:** Explicitly install via `npx expo install react-native-worklets` and add `react-native-worklets/plugin` to `babel.config.js`
+- **Why current is better:** The current setup is simpler and works correctly. Reanimated v4 declares `react-native-worklets` as a peer dependency, which pnpm resolves automatically. Since no code in the codebase directly imports from `react-native-worklets`, there's no need to explicitly install it or add the babel plugin. The `babel-preset-expo` may also handle this automatically for SDK 54.

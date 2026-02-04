@@ -367,3 +367,28 @@ Ensure ScrollView is first child with `collapsable={false}` on wrapper:
 - [Native Tabs Guide](https://docs.expo.dev/router/advanced/native-tabs/)
 - [File-Based Routing](https://docs.expo.dev/develop/file-based-routing/)
 - [NativeTabs API Reference](https://docs.expo.dev/versions/latest/sdk/router-native-tabs/)
+
+## TASKS
+
+- [ ] Add ThemeProvider wrapper to prevent white flash on tab switch - `app/_layout.tsx` needs to import and wrap with `ThemeProvider` from `@react-navigation/native` using `DarkTheme`/`DefaultTheme`
+- [ ] Update NativeTabs implementation to use proper `NativeTabs.Trigger` API instead of `Tabs.Screen` - `app/(tabs)/_layout.tsx` lines 61-98 use old API pattern
+- [ ] Add `minimizeBehavior="onScrollDown"` to NativeTabs for iOS 26 scroll-to-minimize feature - `app/(tabs)/_layout.tsx`
+- [ ] Use `DynamicColorIOS` for tab bar colors instead of theme colors for proper Liquid Glass adaptation - `app/(tabs)/_layout.tsx` lines 44-45, 97-98
+- [ ] Use SF Symbols (`sf` prop) and Material icons (`md` prop) for tab icons instead of Ionicons - `app/(tabs)/_layout.tsx` lines 66-67, 75-76, 84-85, 93-94
+- [ ] Create web-specific tab layout file for proper web support - create `app/(tabs)/_layout.web.tsx` using `Tabs, TabList, TabTrigger, TabSlot` from `expo-router/ui`
+- [ ] Add modal route with proper Stack.Screen configuration - create `app/modal.tsx` and configure `presentation: 'modal'` in `app/_layout.tsx`
+- [ ] Consider adding dynamic routes for user profiles or detail screens - no `[id].tsx` or `user/[userId]/` patterns currently exist
+
+## TO DISCUSS
+
+- **Current approach:** Conditional NativeTabs import with try/catch and `supportsLiquidGlass` check in `app/(tabs)/_layout.tsx` lines 13-24
+- **Document suggests:** Direct import of `NativeTabs` from `expo-router/unstable-native-tabs`
+- **Why current is better:** The current approach gracefully handles cases where NativeTabs may not be available (older SDKs, different platform versions) and falls back to standard Tabs. This is more defensive and production-ready than assuming the import will always succeed.
+
+- **Current approach:** SplashScreen handling with `preventAutoHideAsync()` and `hideAsync()` in `app/_layout.tsx` lines 7, 12, 17-23
+- **Document suggests:** No mention of splash screen handling
+- **Why current is better:** The document omits important splash screen management that's essential for production apps. The current implementation properly prevents auto-hide and programmatically hides after initialization.
+
+- **Current approach:** ModalLayout component in `components/layouts/ModalLayout.tsx` with multiple presentation types (sheet, dialog, fullscreen)
+- **Document suggests:** Simple `modal.tsx` route file with Stack.Screen presentation
+- **Why current is better:** The ModalLayout component is more flexible, offering sheet, dialog, and fullscreen variants with platform-appropriate styling and glass effects on iOS. However, a route-based modal entry point would still be useful for deep-linking purposes.

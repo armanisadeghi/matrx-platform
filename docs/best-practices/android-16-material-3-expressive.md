@@ -239,3 +239,46 @@ const { LightTheme, DarkTheme: NavDarkTheme } = adaptNavigationTheme({
 - [React Native Paper Documentation](https://callstack.github.io/react-native-paper/)
 - [expo-liquid-glass-native](https://www.npmjs.com/package/expo-liquid-glass-native)
 - [Android 16 Developer Preview](https://developer.android.com/about/versions/16)
+
+---
+
+## TASKS
+
+- [ ] **Wrap app with PaperProvider** - `app/_layout.tsx` does not wrap the app with `PaperProvider` from react-native-paper. Add provider with MD3 theme support.
+
+- [ ] **Add MD3 color roles to theme** - `constants/colors.ts` uses semantic color naming but is missing MD3-specific roles: `onPrimary`, `primaryContainer`, `onPrimaryContainer`, `secondaryContainer`, `onSecondaryContainer`, `tertiaryContainer`, `onTertiaryContainer`, `surfaceVariant`, `onSurfaceVariant`. Add these to both light and dark themes.
+
+- [ ] **Implement dynamic color theming** - Add `useMaterial3Theme` hook integration from react-native-paper for Android 12+ wallpaper-extracted colors. Currently using static color definitions only.
+
+- [ ] **Install expo-haptics** - Package not in `package.json`. Run `npx expo install expo-haptics`.
+
+- [ ] **Add haptic feedback to interactive components** - `components/ui/Button.tsx`, `components/ui/IconButton.tsx`, `components/ui/Toggle.tsx`, `components/ui/Card.tsx` (pressable variant) all lack haptic feedback on press. Add `Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)` to onPress handlers.
+
+- [ ] **Add spring animations to components** - Button, IconButton, and pressable Card use basic opacity transitions. Replace with Reanimated `withSpring` for M3E-compliant motion:
+  - `components/ui/Button.tsx` - lines 179-181 (opacity style)
+  - `components/ui/IconButton.tsx` - lines 162-172 (opacity style)
+  - `components/ui/Card.tsx` - lines 120, 146 (opacity: 0.9)
+
+- [ ] **Install expo-blur for BlurView** - Package not in `package.json`. Document recommends `BlurView` from expo-blur for notification/quick settings blur effects. Run `npx expo install expo-blur`.
+
+- [ ] **Integrate adaptNavigationTheme** - `app/_layout.tsx` and `app/(tabs)/_layout.tsx` do not use `adaptNavigationTheme` from react-native-paper to synchronize Paper theme with React Navigation theme.
+
+- [ ] **Consider rounded-full for primary buttons** - Document recommends `rounded-full` for buttons. Current implementation uses `rounded-xl` (12px) in `components/ui/Button.tsx` (lines 123-133). Consider adding a `rounded` prop or making primary buttons fully rounded.
+
+## TO DISCUSS
+
+- **Current approach:** NativeWind + centralized custom theme system (`hooks/useTheme.ts`, `constants/theme.ts`)
+- **Document suggests:** Wrapping with `PaperProvider` and using MD3 theme objects throughout
+- **Why current may be better:** The codebase has a well-architected single source of truth for theming with CSS variables in `global.css` mirrored to TypeScript constants. Adding `PaperProvider` creates dual theming complexity. If not using React Native Paper components (Button, Card, TextInput, etc.), the provider adds overhead without benefit. Consider this a conscious architectural decision - only add PaperProvider if planning to adopt Paper components.
+
+---
+
+- **Current approach:** Platform-specific glass effect files (`GlassContainer.android.tsx`, `GlassContainer.ios.tsx`, `GlassContainer.web.tsx`)
+- **Document suggests:** Single code example using `expo-liquid-glass-native` inline
+- **Why current is better:** The platform-specific file pattern (`.android.tsx`, `.ios.tsx`) is a React Native best practice for clean separation. Metro bundler automatically selects the correct file per platform, avoiding runtime platform checks and reducing bundle size on each platform.
+
+---
+
+- **Current approach:** Using `expo-glass-effect` (v0.1.8 installed) alongside `expo-liquid-glass-native`
+- **Document suggests:** Only `expo-blur` for blur effects
+- **Why current may be better:** `expo-glass-effect` provides cross-platform glass/blur abstraction that may offer better API consistency than combining `expo-blur` (general blur) with `expo-liquid-glass-native` (Android M3E specific). Evaluate whether `expo-glass-effect` already covers blur use cases before adding `expo-blur`.

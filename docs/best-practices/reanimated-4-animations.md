@@ -398,3 +398,47 @@ function SkeletonLoader() {
 - [Migration Guide v3 → v4](https://docs.swmansion.com/react-native-reanimated/docs/guides/migration-from-3.x/)
 - [Reanimated Cheat Sheet](https://docs.swmansion.com/react-native-reanimated/cheatsheet/)
 - [Gesture Handler Documentation](https://docs.swmansion.com/react-native-gesture-handler/)
+
+---
+
+## TASKS
+
+- [ ] **Update Babel plugin configuration** - `babel.config.js` uses legacy `react-native-reanimated/plugin` instead of recommended `react-native-worklets/plugin`. Verify if migration is needed for Reanimated 4.x compatibility.
+
+- [ ] **Add `react-native-worklets` to package.json** - Currently only installed as peer dependency. Document recommends explicit installation via `npx expo install react-native-worklets`. File: `package.json`
+
+- [ ] **Add spring animation to Button press feedback** - Currently uses basic opacity change via Pressable's style callback (`opacity: pressed ? 0.8 : 1`). Replace with Reanimated `withSpring` scale animation per document's "Button Press Feedback" pattern. File: `components/ui/Button.tsx` (lines 179-181)
+
+- [ ] **Add spring animation to IconButton press feedback** - Same issue as Button - uses opacity instead of spring scale. File: `components/ui/IconButton.tsx` (lines 162-172)
+
+- [ ] **Add spring animation to Card press feedback** - Pressable cards use `opacity: pressed ? 0.9 : 1`. Replace with scale animation. File: `components/ui/Card.tsx` (lines 120, 148)
+
+- [ ] **Add animation to Checkbox state change** - Checkbox has instant on/off with no animation. Add scale animation to checkmark icon appearance. File: `components/ui/Toggle.tsx` (Checkbox component, lines 140-142)
+
+- [ ] **Add animation to Radio state change** - Radio button dot appears instantly. Add scale animation to inner dot. File: `components/ui/Toggle.tsx` (Radio component, lines 201-206)
+
+- [ ] **Create `useAnimatedPress` hook** - Extract common press animation pattern into reusable hook for consistent spring feedback across all pressable components. New file: `hooks/useAnimatedPress.ts`
+
+- [ ] **Add enter/exit animations to LoadingOverlay** - Currently uses React Native Modal's basic `animationType="fade"`. Consider using Reanimated's `FadeIn`/`FadeOut` for smoother transitions. File: `components/ui/Spinner.tsx` (lines 110-128)
+
+- [ ] **Add skeleton loading component** - Document shows shimmer keyframe animation pattern but codebase has no skeleton loader. Consider creating `components/ui/Skeleton.tsx` with keyframe animation.
+
+- [ ] **Consider layout animations for list items** - Document recommends `LinearTransition` for reorderable lists. Could benefit `ListItem` and any future list components. File: `components/ui/ListItem.tsx`
+
+## TO DISCUSS
+
+- **Current approach:** Babel config uses `react-native-reanimated/plugin`
+- **Document suggests:** Use `react-native-worklets/plugin` (must be last)
+- **Why current may be acceptable:** The `react-native-reanimated/plugin` still works in Reanimated 4.x as it internally delegates to worklets. The pnpm-lock.yaml shows `react-native-worklets@0.7.2` is properly installed as a peer dependency. This may be intentional backward compatibility. Recommend verifying with Reanimated 4.x official docs before changing.
+
+---
+
+- **Current approach:** Components use basic Pressable opacity transitions (`style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}`)
+- **Document suggests:** Use Reanimated `withSpring` for all press feedback
+- **Why current has merit:** The basic opacity approach is simpler, has zero bundle size impact, works identically on web, and has minimal performance overhead. For basic press feedback (not gestures), this may be "good enough". However, spring animations do provide more natural, interruptible motion that users perceive as higher quality. Consider a tiered approach: basic opacity for simple interactions, Reanimated springs for primary CTAs and important UI elements.
+
+---
+
+- **Current approach:** NativeWind 4.2.1 paired with Reanimated 4.2.1
+- **Document suggests:** "NativeWind 4.x requires Reanimated v3. CSS animations via NativeWind require v5."
+- **Why current may work:** The pnpm-lock.yaml shows NativeWind is resolving correctly with Reanimated 4.x. The constraint may only apply to NativeWind's CSS animation features, not general usage. If CSS transitions via NativeWind classes aren't being used (they aren't currently), this pairing should be fine. However, if CSS animation classes like `transition-all duration-300` are added to NativeWind styles, compatibility issues may arise.

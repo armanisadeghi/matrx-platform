@@ -373,3 +373,46 @@ rg 'rgba?\(' --type tsx --type ts -g '!constants/*' -g '!global.css'
 - [NativeWind Dark Mode](https://nativewind.dev/docs/core-concepts/dark-mode)
 - [NativeWind vars() API](https://www.nativewind.dev/api/vars)
 - [Tailwind CSS Custom Properties](https://tailwindcss.com/docs/customizing-colors#using-css-variables)
+
+## TASKS
+
+- [ ] Remove hardcoded hex colors in `Toggle.tsx` - use `colors.border.DEFAULT` and `colors.foreground.inverse` from useTheme instead of `#2A2A2E`, `#E2E8F0`, `#FFFFFF`, `#F8FAFC` - `components/ui/Toggle.tsx:87,90,91,141`
+- [ ] Remove hardcoded spinner colors in `Button.tsx` - use theme colors for `#1E3A5F` and `#FFFFFF` - `components/ui/Button.tsx:164`
+- [ ] Remove hardcoded white in `Spinner.tsx` - use `colors.foreground.inverse` instead of `#FFFFFF` - `components/ui/Spinner.tsx:63`
+- [ ] Remove hardcoded colors in `IconButton.tsx` - use theme colors for `#FFFFFF` and rgba values - `components/ui/IconButton.tsx:125,169-170,177`
+- [ ] Remove hardcoded colors in `GlassContainer.android.tsx` - use theme colors from `colors.primary.DEFAULT`, `colors.secondary.DEFAULT`, etc. - `components/glass/GlassContainer.android.tsx:52-54,78`
+- [ ] Remove hardcoded rgba colors in `GlassContainer.web.tsx` - use theme colors with opacity - `components/glass/GlassContainer.web.tsx:32,35,38`
+- [ ] Remove hardcoded icon colors in demo pages - use theme-aware colors - `app/(demo)/buttons.tsx:70,75` and `app/(demo)/index.tsx:87`
+- [ ] Remove hardcoded background colors in demo layout - use NativeWind classes (`bg-background`) instead of inline styles - `app/(demo)/_layout.tsx:18`
+- [ ] Add React Navigation ThemeProvider integration to root layout to prevent white flash on navigation - `app/_layout.tsx` (as documented in Step 6)
+- [ ] Add `foreground.inverse` (white for light mode, dark for dark mode) as a standard semantic token to use for icon/text colors on filled buttons/elements - `constants/colors.ts`
+
+## TO DISCUSS
+
+- **Current approach:** Colors are structured as nested `light`/`dark` objects in `colors.ts` with semantic groupings (primary.DEFAULT, primary.light, primary.dark)
+- **Document suggests:** Flat `palette` object with raw colors, separate `lightTheme`/`darkTheme` objects in `theme.ts`
+- **Why current is better:** The nested structure with DEFAULT/light/dark variants maps directly to Tailwind's color system (e.g., `bg-primary`, `bg-primary-light`), reducing cognitive overhead and enabling consistent usage patterns across NativeWind classes and programmatic access.
+
+---
+
+- **Current approach:** Uses `foreground` for text colors (`foreground.DEFAULT`, `foreground.secondary`, `foreground.muted`)
+- **Document suggests:** Uses `textPrimary`, `textSecondary`, `textMuted` naming
+- **Why current is better:** The `foreground` naming convention aligns with modern design systems (shadcn/ui, Radix) and complements `background` semantically. It also works better with Tailwind's class system (`text-foreground` vs `text-text-primary`).
+
+---
+
+- **Current approach:** Semantic colors (success, warning, error, info) have different values in dark mode for better contrast
+- **Document suggests:** "Semantic (same in dark mode for consistency)"
+- **Why current is better:** Adjusting semantic colors for dark mode improves accessibility and visual comfort. For example, `#DC2626` (red-600) is appropriate on white but `#F87171` (red-400) provides better readability on dark backgrounds without being harsh.
+
+---
+
+- **Current approach:** `useTheme` hook provides access to typography, spacing, componentSpacing, borderRadius, and shadows in addition to colors
+- **Document suggests:** Only shows colors in the `useTheme` return value
+- **Why current is better:** Providing comprehensive access to all design tokens through a single hook creates a unified API and eliminates the need to import multiple constants files when doing programmatic styling.
+
+---
+
+- **Current approach:** CSS variables in `global.css` include hex color comments (e.g., `/* #1E3A5F */`)
+- **Document suggests:** No comments on CSS variable definitions
+- **Why current is better:** The hex comments provide immediate visual reference when inspecting the CSS, making it easier to understand and debug theme values without needing to convert RGB values mentally.

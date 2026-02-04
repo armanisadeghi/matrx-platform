@@ -385,3 +385,53 @@ NativeWind supports CSS-style transitions via Reanimated 4:
 - [Tailwind CSS Documentation](https://tailwindcss.com/docs)
 - [vars() API Reference](https://www.nativewind.dev/api/vars)
 - [NativeWind Themes Guide](https://www.nativewind.dev/guides/themes)
+
+---
+
+## TASKS
+
+- [ ] **Install `clsx` and `tailwind-merge` packages** - Run `pnpm add clsx tailwind-merge` to enable the `cn()` utility pattern
+- [ ] **Create `cn()` utility function** - Add `lib/utils.ts` with the `cn()` helper for conditional class merging
+- [ ] **Replace hardcoded colors with theme tokens** - Multiple files affected:
+  - [ ] `components/ui/Button.tsx:164` - Replace `#1E3A5F` and `#FFFFFF` with theme colors
+  - [ ] `components/ui/Toggle.tsx:87,90,91,141` - Replace `#2A2A2E`, `#E2E8F0`, `#FFFFFF`, `#F8FAFC` with theme colors
+  - [ ] `components/ui/IconButton.tsx:125,177` - Replace `#FFFFFF` with theme color
+  - [ ] `components/ui/Spinner.tsx:63` - Replace `#FFFFFF` with `colors.foreground.inverse`
+  - [ ] `components/glass/GlassContainer.android.tsx:52-54,78` - Use theme colors from `useTheme()` hook
+  - [ ] `components/glass/GlassContainer.web.tsx:32-38` - Use theme colors from `useTheme()` hook
+  - [ ] `components/layouts/ModalLayout.tsx:168` - Replace `#000` in shadow with theme variable
+- [ ] **Add custom typography scale to Tailwind config** - Add `fontSize` entries for `display`, `headline`, `title`, `body`, `caption`, `label` to `tailwind.config.js` theme.extend
+- [ ] **Refactor redundant StyleSheet.create usage** - Replace with NativeWind classes where possible:
+  - [ ] `components/layouts/ScreenLayout.tsx:86-89` - Remove `styles.container` (already using `flex-1` className)
+  - [ ] `components/layouts/Header.tsx:128-137` - Convert flexDirection/alignItems/justifyContent to NativeWind classes
+- [ ] **Consider adding CSS transition classes** - Evaluate using `transition-all duration-300` for interactive state changes in components like Toggle, Button (requires testing with Reanimated 4)
+
+## TO DISCUSS
+
+- **Current approach:** Color system uses nested objects with variants (`primary.DEFAULT`, `primary.light`, `primary.dark`) and comprehensive semantic tokens (`foreground`, `surface-elevated`, `border-subtle`)
+- **Document suggests:** Simpler flat color tokens (`background`, `surface`, `primary`, `text-primary`, `text-secondary`)
+- **Why current is better:** The expanded color system provides more granular control for a B2B enterprise design system. Having light/dark variants for primary colors, multiple elevation levels for surfaces, and semantic colors with light backgrounds (for badges, alerts) enables more sophisticated UI without reaching for arbitrary values.
+
+---
+
+- **Current approach:** Uses `foreground` naming for text colors (`text-foreground`, `text-foreground-secondary`, `text-foreground-muted`)
+- **Document suggests:** Uses `text-primary` and `text-secondary` naming
+- **Why current is better:** Using `foreground` avoids naming collision with `primary` brand color (e.g., `text-primary` could mean "primary brand color text" vs "primary importance text"). The `foreground` convention aligns with modern design systems like shadcn/ui and Radix Themes.
+
+---
+
+- **Current approach:** Some `StyleSheet.create` usage alongside NativeWind (e.g., `scrollContent` in `HeaderLayout.tsx`, shadow objects in `ModalLayout.tsx`)
+- **Document suggests:** "Do not mix StyleSheet.create with NativeWind"
+- **Why current is acceptable:** Certain patterns require `StyleSheet.create`: (1) `contentContainerStyle` for ScrollView needs a style object, not className, (2) React Native shadows require numeric objects that can't be expressed as Tailwind classes, (3) Dynamic calculations based on `Dimensions` or `insets`. The rule should be: prefer NativeWind, but use StyleSheet for values that can't be expressed as classes.
+
+---
+
+- **Current approach:** Comprehensive `constants/typography.ts` with programmatic access to font sizes, weights, and line heights
+- **Document suggests:** Define typography only in `tailwind.config.js`
+- **Why current is better:** Having both allows NativeWind classes for styling (`text-lg font-semibold`) while also providing numeric values for native APIs that require numbers (e.g., `fontSize` prop on native components, calculations for layout). Consider documenting this dual approach.
+
+---
+
+- **Current approach:** Platform-specific files already implemented for `GlassContainer` (`*.ios.tsx`, `*.android.tsx`, `*.web.tsx`, `index.ts`)
+- **Document suggests:** This exact pattern
+- **Status:** ✅ Codebase already follows best practice
