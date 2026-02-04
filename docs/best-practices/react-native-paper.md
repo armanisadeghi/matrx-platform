@@ -446,3 +446,33 @@ const theme = {
 - [Material Design 3 Guidelines](https://m3.material.io/)
 - [Theming Guide](https://callstack.github.io/react-native-paper/docs/guides/theming/)
 - [Component API Reference](https://callstack.github.io/react-native-paper/docs/components/ActivityIndicator)
+
+## TASKS
+
+- [ ] **Add PaperProvider to root layout** - `app/_layout.tsx` does not wrap the app with `PaperProvider`. If adopting Paper components, wrap with `<PaperProvider theme={theme}>` around the Stack.
+
+- [ ] **Create Paper theme configuration** - `constants/paperTheme.ts` does not exist. Create this file with custom MD3 theme extending `MD3LightTheme`/`MD3DarkTheme` and mapping to existing color tokens from `global.css`.
+
+- [ ] **Integrate adaptNavigationTheme** - `app/_layout.tsx` does not use `adaptNavigationTheme` to synchronize Paper and React Navigation themes. Add theme adaptation to prevent visual inconsistencies.
+
+- [ ] **Evaluate component migration or removal** - The codebase has custom components (`components/ui/Button.tsx`, `Card.tsx`, `Input.tsx`, `Text.tsx`, `ListItem.tsx`, `Toggle.tsx`) that duplicate Paper functionality. Either:
+  - Migrate to Paper components for MD3 compliance, OR
+  - Remove `react-native-paper` from `package.json` if not planning to use it (currently installed but unused)
+
+- [ ] **Add Portal wrapper for modals** - No Portal usage found in codebase. If using Paper dialogs, add Portal support in root layout.
+
+- [ ] **Align Text variants with MD3** - Current `components/ui/Text.tsx` uses variants (h1-h6, body, label, caption) that don't match MD3 spec (displayLarge, headlineLarge, titleMedium, bodyMedium, labelSmall). Either align custom variants or use Paper's Text component.
+
+## TO DISCUSS
+
+- **Current approach:** The codebase has a complete custom UI component library (`components/ui/*`) built with NativeWind, with its own theming system via CSS variables in `global.css` and TypeScript constants in `constants/theme.ts`. `react-native-paper` (v5.15.0) is installed but **not used anywhere**.
+- **Document suggests:** Wrapping with `PaperProvider`, using Paper components (Button, TextInput, Card, List, Dialog, FAB), and MD3 typography variants throughout.
+- **Why current may be better:**
+  1. **Single styling system** - All components use NativeWind classes exclusively, avoiding the complexity of mixing NativeWind with Paper's style system
+  2. **Custom glass effects** - `components/glass/GlassContainer.tsx` provides platform-specific glass/blur effects (iOS Liquid Glass, Android) that Paper doesn't offer
+  3. **Full design control** - Custom components allow precise control over appearance without fighting Paper's opinions
+  4. **True single source of truth** - Colors defined once in `global.css` CSS variables, mirrored to TypeScript - no duplication with a separate Paper theme
+  5. **Lighter bundle** - Not loading unused Paper component code
+  6. **Platform adaptations** - Custom components in `components/glass/` have `.ios.tsx`, `.android.tsx`, `.web.tsx` variants for platform-specific behavior
+
+  **Recommendation:** Consider removing `react-native-paper` from `package.json` entirely if the team commits to the custom component approach, OR fully adopt Paper components if MD3 compliance and accessibility features are priorities. The current state (installed but unused) creates confusion about the intended architecture.

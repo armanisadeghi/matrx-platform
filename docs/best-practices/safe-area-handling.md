@@ -367,3 +367,32 @@ import { SafeAreaView } from 'react-native';
 - [Expo Safe Area Context](https://docs.expo.dev/versions/latest/sdk/safe-area-context/)
 - [React Navigation Safe Area Handling](https://reactnavigation.org/docs/handling-safe-area)
 - [Apple Human Interface Guidelines - Layout](https://developer.apple.com/design/human-interface-guidelines/layout)
+
+---
+
+## TASKS
+
+- [ ] Add `Math.max(insets.bottom, 16)` to `ModalLayout` sheet presentation for minimum bottom padding - `components/layouts/ModalLayout.tsx:121`
+  - Currently uses raw `insets.bottom` which could be 0 on devices without home indicators, leaving content too close to edge
+- [ ] Add `Math.max(insets.bottom, 16)` to `ModalLayout` fullscreen presentation - `components/layouts/ModalLayout.tsx:73`
+  - Same issue as sheet presentation
+
+**Note:** Landscape mode handling (left/right insets) is NOT required because `app.config.ts:8` locks orientation to portrait (`orientation: "portrait"`).
+
+## TO DISCUSS
+
+- **Current approach:** Layout components (`ScreenLayout`, `HeaderLayout`, `ModalLayout`) encapsulate safe area logic with a typed `safeAreaEdges` prop. Screens declaratively specify which edges to handle: `safeAreaEdges={["bottom"]}`.
+- **Document suggests:** Raw `useSafeAreaInsets()` hook usage in every screen with inline style calculations.
+- **Why current is better:** The component abstraction reduces boilerplate, prevents errors, and ensures consistent handling across the app. The typed `SafeAreaEdge` type provides autocomplete and compile-time safety. Developers don't need to remember the safe area patterns for each screen type.
+
+---
+
+- **Current approach:** `HeaderLayout` includes `KeyboardAvoidingView` by default (`components/layouts/HeaderLayout.tsx:73-78`), wrapping all scrollable content.
+- **Document suggests:** Keyboard handling as a separate pattern that developers must implement manually alongside safe area handling.
+- **Why current is better:** By building keyboard avoidance into the layout component, forms and input screens automatically get proper keyboard handling without additional boilerplate. This follows the principle of making the pit of success easy to fall into.
+
+---
+
+- **Current approach:** `Header` component (`components/layouts/Header.tsx`) handles its own top safe area padding based on `transparent` and `useGlassEffect` props, so screens using `HeaderLayout` only need to specify `safeAreaEdges={["bottom"]}`.
+- **Document suggests:** Screens should always handle top insets themselves when using custom headers.
+- **Why current is better:** The Header component's self-contained safe area handling means less coordination between components and fewer opportunities for double-padding bugs. The glass effect on iOS and transparent header modes are handled automatically.

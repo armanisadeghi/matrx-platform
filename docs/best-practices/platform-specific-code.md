@@ -391,3 +391,49 @@ export function useHaptics() {
 - [Expo Router Platform Extensions](https://docs.expo.dev/router/advanced/platform-specific-modules/)
 - [Metro File Resolution](https://reactnative.dev/docs/metro)
 - [Expo Tree Shaking](https://docs.expo.dev/guides/tree-shaking/)
+
+---
+
+## TASKS
+
+- [ ] **Add platform-specific Button implementations** - The `Button.tsx` component should have `Button.ios.tsx` (with Liquid Glass for primary variant on iOS 26+) and `Button.android.tsx` (with Material 3 Expressive styling and haptics) as documented. Current implementation only has minor platform differences (pressed opacity). - `components/ui/Button.tsx` → create `Button.ios.tsx`, `Button.android.tsx`
+
+- [ ] **Create useHaptics hook with native/web split** - Best practices recommend a `useHaptics` hook using the `.native.tsx` pattern for haptic feedback on mobile with no-op on web. No haptics implementation currently exists. - Create `hooks/useHaptics.ts` (web no-op) and `hooks/useHaptics.native.ts` (using expo-haptics)
+
+- [ ] **Add platform-specific web layout for tabs** - Document recommends `_layout.web.tsx` for web-specific tab navigation using `expo-router/ui` components (`TabList`, `TabTrigger`, `TabSlot`). Current implementation uses dynamic runtime import of NativeTabs. - `app/(tabs)/_layout.tsx` → consider creating `_layout.web.tsx`
+
+- [ ] **Evaluate tree shaking implications of lib/platform.ts** - The document explicitly warns that re-exporting Platform breaks tree shaking. The codebase uses `@/lib/platform` imports (`isIOS`, `supportsLiquidGlass`, etc.) throughout, which may prevent dead code elimination. Consider:
+  1. Testing actual bundle sizes to verify if this is a real issue with current Expo/Metro versions
+  2. If confirmed, refactor to use direct `Platform` imports where tree shaking matters
+  - Files affected: `components/ui/Button.tsx`, `components/ui/Toggle.tsx`, `components/ui/IconButton.tsx`, `components/layouts/Header.tsx`, `components/layouts/HeaderLayout.tsx`, `components/layouts/ModalLayout.tsx`, `components/glass/GlassContainer.ios.tsx`, `components/glass/GlassContainer.android.tsx`, `app/(tabs)/_layout.tsx`
+
+- [ ] **Add Jest configuration for platform-specific testing** - No Jest/testing setup exists. Document recommends `jest-expo` preset with platform-specific test file patterns. - Create `jest.config.js` with platform mocking support
+
+- [ ] **Add platform-specific icon patterns** - Document shows `NativeTabs.Trigger.Icon` with SF Symbols (`sf`) for iOS and Material Icons (`md`) for Android. Current tab icons only use Ionicons uniformly. - `app/(tabs)/_layout.tsx`
+
+## TO DISCUSS
+
+- **Current approach:** Centralized platform utilities in `lib/platform.ts` with pre-computed feature flags (`supportsLiquidGlass`, `supportsMaterial3Expressive`, `isIOS`, etc.) and platform constants (`platformConstants.hitSlop`, `platformConstants.buttonRadius`, etc.)
+- **Document suggests:** Direct `Platform` import from react-native everywhere to preserve tree shaking, with inline checks like `Platform.OS === 'ios'`
+- **Why current may be better:**
+  1. Type-safe feature detection with semantic naming (`supportsLiquidGlass` vs `Platform.OS === 'ios' && Platform.Version >= 26`)
+  2. Single source of truth for platform version requirements (if iOS 27 changes Liquid Glass support, update one file)
+  3. Centralized platform constants ensure consistent values across components
+  4. More readable code (`isIOS` vs `Platform.OS === 'ios'`)
+  5. **Recommended action:** Test actual bundle sizes with and without `lib/platform.ts` to determine if tree shaking is actually impacted with current Metro/Expo versions. Modern bundlers may handle this case.
+
+- **Current approach:** Dynamic runtime import of `NativeTabs` in `app/(tabs)/_layout.tsx` with `try/catch` and fallback to regular `Tabs`
+- **Document suggests:** Separate `_layout.tsx` and `_layout.web.tsx` files using Metro's platform extension resolution
+- **Why current may be acceptable:**
+  1. Avoids code duplication when layouts are 95% identical
+  2. Single source of truth for tab configuration
+  3. Runtime feature detection allows graceful fallback on older iOS versions
+  4. **Caveat:** File-based resolution would be cleaner and more aligned with React Native conventions. Consider refactoring if web tabs need significantly different UI.
+
+- **Current approach:** `GlassContainer` implementation uses shared `types.ts` file for props interface and constants
+- **Document suggests:** Types defined in base `.tsx` file (e.g., `Button.tsx` defines `ButtonProps`)
+- **Why current is better:**
+  1. Cleaner separation of concerns (types vs implementation)
+  2. Avoids circular dependency issues if base file has implementation that platform files need
+  3. Easier to maintain shared constants (`intensityToBlur`, `borderRadiusMap`)
+  4. This pattern should be recommended in the document as an alternative for complex components
