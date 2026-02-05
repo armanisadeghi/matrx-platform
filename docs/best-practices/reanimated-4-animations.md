@@ -384,26 +384,36 @@ function AnimatedButton({ onPress, disabled, children }: Props) {
 
 ### Skeleton Loading
 
+See `components/ui/Skeleton.tsx` for the full implementation. Uses Reanimated 4's CSS `keyframes` API:
+
 ```tsx
-const shimmer = keyframes({
-  '0%': { opacity: 0.3 },
-  '50%': { opacity: 0.7 },
-  '100%': { opacity: 0.3 },
+import Animated, { css } from 'react-native-reanimated';
+
+const pulseKeyframes = css.keyframes({
+  '0%': { opacity: 1 },
+  '50%': { opacity: 0.4 },
+  '100%': { opacity: 1 },
 });
 
-function SkeletonLoader() {
+function SkeletonBox() {
   return (
     <Animated.View
-      className="bg-gray-300 dark:bg-gray-700 rounded"
+      className="bg-surface-elevated"
       style={{
-        animation: shimmer,
-        animationDuration: '1500ms',
+        width: 200,
+        height: 20,
+        borderRadius: 8,
+        animationName: pulseKeyframes,
+        animationDuration: '1.5s',
         animationIterationCount: 'infinite',
+        animationTimingFunction: 'ease-in-out',
       }}
     />
   );
 }
 ```
+
+> **Note:** Use `css.keyframes()` (not bare `keyframes`) and `animationName` (not `animation`). The `keyframes` function is exported under the `css` namespace.
 
 ## Resources
 
@@ -432,11 +442,11 @@ function SkeletonLoader() {
 
 - [x] **Create `useAnimatedPress` hook** - Reusable hook using `useSharedValue` + `useAnimatedStyle` + `withSpring`. Configurable `scaleTo` and `disabled` options. File: `hooks/useAnimatedPress.ts`
 
-- [ ] **Add enter/exit animations to LoadingOverlay** - Currently uses React Native Modal's basic `animationType="fade"`. Consider using Reanimated's `FadeIn`/`FadeOut` for smoother transitions. File: `components/ui/Spinner.tsx`
+- [x] **Add enter/exit animations to LoadingOverlay** - Replaced `animationType="fade"` with Reanimated `FadeIn` on backdrop and `FadeInDown` on card content. File: `components/ui/Spinner.tsx`
 
-- [ ] **Add skeleton loading component** - Document shows shimmer keyframe animation pattern but codebase has no skeleton loader. Consider creating `components/ui/Skeleton.tsx` with keyframe animation.
+- [x] **Add skeleton loading component** - Created `Skeleton` and `SkeletonGroup` components using Reanimated 4 CSS keyframes API (`css.keyframes()`) for a pulse shimmer animation. File: `components/ui/Skeleton.tsx`
 
-- [ ] **Consider layout animations for list items** - Document recommends `LinearTransition` for reorderable lists. Could benefit `ListItem` and any future list components. File: `components/ui/ListItem.tsx`
+- [x] **Add spring press animation to ListItem** - Replaced `backgroundColor` pressed-state feedback with `useAnimatedPress` hook (scale: 0.98). File: `components/ui/ListItem.tsx`
 
 ## RESOLVED DISCUSSIONS
 

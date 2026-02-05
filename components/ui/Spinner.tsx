@@ -5,6 +5,7 @@
  */
 
 import { ActivityIndicator, View, Modal } from "react-native";
+import Animated, { FadeIn, FadeInDown } from "react-native-reanimated";
 import { Text } from "./Text";
 import { useTheme } from "@/hooks/useTheme";
 
@@ -111,19 +112,25 @@ export function LoadingOverlay({
     <Modal
       visible={visible}
       transparent
-      animationType="fade"
+      animationType="none"
       onRequestClose={dismissible ? onDismiss : undefined}
     >
-      <View className="flex-1 items-center justify-center bg-black/50">
-        <View className="bg-surface rounded-2xl p-6 items-center min-w-[120px]">
+      <Animated.View
+        entering={FadeIn.duration(200)}
+        className="flex-1 items-center justify-center bg-black/50"
+      >
+        <Animated.View
+          entering={FadeInDown.duration(300).delay(100)}
+          className="bg-surface rounded-2xl p-6 items-center min-w-[120px]"
+        >
           <Spinner size="lg" />
           {message && (
             <Text variant="body" className="mt-3 text-center">
               {message}
             </Text>
           )}
-        </View>
-      </View>
+        </Animated.View>
+      </Animated.View>
     </Modal>
   );
 }

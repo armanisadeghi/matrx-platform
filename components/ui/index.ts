@@ -55,6 +55,12 @@ export {
 } from "./Badge";
 export { Divider, type DividerProps } from "./Divider";
 export {
+  Skeleton,
+  SkeletonGroup,
+  type SkeletonProps,
+  type SkeletonGroupProps,
+} from "./Skeleton";
+export {
   Spinner,
   LoadingOverlay,
   type SpinnerProps,

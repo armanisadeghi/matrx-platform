@@ -5,9 +5,11 @@
  */
 
 import { Pressable, View } from "react-native";
+import Animated from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "./Text";
 import { useTheme } from "@/hooks/useTheme";
+import { useAnimatedPress } from "@/hooks/useAnimatedPress";
 import { cn } from "@/lib/utils";
 
 export interface ListItemProps {
@@ -118,6 +120,10 @@ export function ListItem({
 
   const isPressable = !!onPress && !disabled;
   const shouldShowChevron = showChevron ?? (isPressable && !rightContent);
+  const { animatedStyle, handlers } = useAnimatedPress({
+    scaleTo: 0.98,
+    disabled: !isPressable,
+  });
 
   const content = (
     <View
@@ -173,16 +179,16 @@ export function ListItem({
   );
 
   const wrapper = isPressable ? (
-    <Pressable
-      onPress={onPress}
-      disabled={disabled}
-      testID={testID}
-      style={({ pressed }) => ({
-        backgroundColor: pressed ? colors.surface.elevated : "transparent",
-      })}
-    >
-      {content}
-    </Pressable>
+    <Animated.View style={animatedStyle}>
+      <Pressable
+        onPress={onPress}
+        disabled={disabled}
+        testID={testID}
+        {...handlers}
+      >
+        {content}
+      </Pressable>
+    </Animated.View>
   ) : (
     <View testID={testID}>{content}</View>
   );
