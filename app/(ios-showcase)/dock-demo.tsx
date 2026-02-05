@@ -17,9 +17,8 @@ import { GlassContainer } from "@/components/glass";
 import { HeaderLayout, Header } from "@/components/layouts";
 import {
   GlassDock,
-  FloatingTabBar,
+  FloatingBar,
   type DockItem,
-  type TabBarItem,
 } from "@/components/ios";
 import { useTheme } from "@/hooks/useTheme";
 import { useHaptics } from "@/hooks/useHaptics";
@@ -41,39 +40,30 @@ export default function DockDemo() {
     { id: "music", icon: "musical-notes", color: "#FF2D55", onPress: () => haptics.light() },
   ];
 
-  // Tab bar items
-  const tabBarItems: TabBarItem[] = [
+  // Floating bar actions (converted from tab bar items)
+  const floatingBarActions = [
     {
       id: "home",
-      icon: "home-outline",
-      iconFilled: "home",
+      icon: "home-outline" as const,
       label: "Home",
-      isActive: activeTab === "home",
       onPress: () => { haptics.selection(); setActiveTab("home"); },
     },
     {
       id: "explore",
-      icon: "compass-outline",
-      iconFilled: "compass",
+      icon: "compass-outline" as const,
       label: "Explore",
-      isActive: activeTab === "explore",
       onPress: () => { haptics.selection(); setActiveTab("explore"); },
     },
     {
       id: "notifications",
-      icon: "notifications-outline",
-      iconFilled: "notifications",
+      icon: "notifications-outline" as const,
       label: "Alerts",
-      badgeCount: 3,
-      isActive: activeTab === "notifications",
       onPress: () => { haptics.selection(); setActiveTab("notifications"); },
     },
     {
       id: "profile",
-      icon: "person-outline",
-      iconFilled: "person",
+      icon: "person-outline" as const,
       label: "Profile",
-      isActive: activeTab === "profile",
       onPress: () => { haptics.selection(); setActiveTab("profile"); },
     },
   ];
@@ -193,7 +183,7 @@ export default function DockDemo() {
               <View className="items-center">
                 <GlassContainer intensity="medium" tint="surface" borderRadius="full">
                   <View className="flex-row items-center px-2 py-2">
-                    {tabBarItems.map((item) => (
+                    {floatingBarActions.map((item) => (
                       <Pressable
                         key={item.id}
                         onPress={() => {
@@ -205,7 +195,7 @@ export default function DockDemo() {
                         }`}
                       >
                         <Ionicons
-                          name={activeTab === item.id && item.iconFilled ? item.iconFilled : item.icon}
+                          name={item.icon}
                           size={22}
                           color={activeTab === item.id ? colors.primary.DEFAULT : colors.foreground.muted}
                         />
@@ -254,8 +244,8 @@ export default function DockDemo() {
       {/* Glass Dock */}
       {activeDock === "dock" && <GlassDock items={dockItems} />}
 
-      {/* Floating Tab Bar */}
-      {activeDock === "tabbar" && <FloatingTabBar items={tabBarItems} />}
+      {/* Floating Bar */}
+      {activeDock === "tabbar" && <FloatingBar actions={floatingBarActions} visible mode="labeled" />}
     </View>
   );
 }

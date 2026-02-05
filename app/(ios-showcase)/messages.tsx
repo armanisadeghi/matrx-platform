@@ -468,7 +468,13 @@ function ChatView({
   const scrollViewRef = useRef<ScrollView>(null);
   const inputRef = useRef<TextInput>(null);
   const [inputValue, setInputValue] = useState("");
-  const [messages, setMessages] = useState(mockMessages);
+  const [messages, setMessages] = useState<Array<{
+    id: string;
+    message: string;
+    isSent: boolean;
+    timestamp: string;
+    status: "sending" | "sent" | "delivered" | "read";
+  }>>(mockMessages);
   const [isTyping, setIsTyping] = useState(false);
   const [keyboardHeight, setKeyboardHeight] = useState(0);
 

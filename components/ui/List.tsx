@@ -17,7 +17,6 @@ import {
   FlashList,
   type FlashListProps,
   type ListRenderItem,
-  type ContentStyle,
 } from "@shopify/flash-list";
 import { Text } from "./Text";
 import { Spinner } from "./Spinner";
@@ -39,12 +38,6 @@ export interface OptimizedListProps<T> extends Omit<FlashListProps<T>, "renderIt
    * IMPORTANT: This should be memoized or stable
    */
   renderItem: ListRenderItem<T>;
-
-  /**
-   * Estimated size of each item in pixels
-   * REQUIRED: Improves initial render performance
-   */
-  estimatedItemSize: number;
 
   /**
    * Key extractor function
@@ -95,7 +88,7 @@ export interface OptimizedListProps<T> extends Omit<FlashListProps<T>, "renderIt
   /**
    * Content container style
    */
-  contentContainerStyle?: ContentStyle;
+  contentContainerStyle?: StyleProp<ViewStyle>;
 }
 
 /**
@@ -110,7 +103,6 @@ export interface OptimizedListProps<T> extends Omit<FlashListProps<T>, "renderIt
  * <OptimizedList
  *   data={items}
  *   renderItem={renderItem}
- *   estimatedItemSize={80}
  *   keyExtractor={(item) => item.id}
  * />
  * ```
@@ -118,7 +110,6 @@ export interface OptimizedListProps<T> extends Omit<FlashListProps<T>, "renderIt
 export function OptimizedList<T>({
   data,
   renderItem,
-  estimatedItemSize,
   keyExtractor,
   isLoadingMore = false,
   onEndReached,
@@ -136,7 +127,7 @@ export function OptimizedList<T>({
     if (isLoadingMore) {
       return (
         <View className="py-4 items-center">
-          <Spinner size="small" />
+          <Spinner size="md" />
         </View>
       );
     }
@@ -160,7 +151,6 @@ export function OptimizedList<T>({
       <FlashList
         data={data}
         renderItem={renderItem}
-        estimatedItemSize={estimatedItemSize}
         keyExtractor={keyExtractor}
         onEndReached={onEndReached}
         onEndReachedThreshold={onEndReachedThreshold}
@@ -173,9 +163,6 @@ export function OptimizedList<T>({
         contentContainerStyle={contentContainerStyle}
         // Performance optimizations
         removeClippedSubviews={true}
-        // @ts-expect-error - FlashList types may be incomplete
-        maxToRenderPerBatch={10}
-        windowSize={5}
         {...props}
       />
     </View>

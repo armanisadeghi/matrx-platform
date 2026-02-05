@@ -100,7 +100,7 @@ export function isCacheStale(key: string): boolean {
  * Invalidate specific cache entry
  */
 export function invalidateCache(key: string): void {
-  cacheStorage.delete(getCacheKey(key));
+  cacheStorage.remove(getCacheKey(key));
 }
 
 /**
@@ -110,8 +110,8 @@ export function invalidateCacheByPrefix(prefix: string): void {
   const keys = cacheStorage.getAllKeys();
   const fullPrefix = getCacheKey(prefix);
   keys
-    .filter((k) => k.startsWith(fullPrefix))
-    .forEach((k) => cacheStorage.delete(k));
+    .filter((k: string) => k.startsWith(fullPrefix))
+    .forEach((k: string) => cacheStorage.remove(k));
 }
 
 /**

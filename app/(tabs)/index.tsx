@@ -33,7 +33,7 @@ export default function HomeTab() {
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="px-4 py-4">
           {/* iOS 26 Showcase Banner */}
-          <Link href="/(ios-showcase)" asChild>
+          <Link href={"/(ios-showcase)/" as any} asChild>
             <Card variant="glass" pressable className="mb-6">
               <View className="flex-row items-center">
                 <View className="w-14 h-14 rounded-2xl bg-gradient-to-br items-center justify-center mr-4" style={{ backgroundColor: "#007AFF" }}>
@@ -145,7 +145,7 @@ export default function HomeTab() {
 
           {/* CTA */}
           <View className="mt-6 gap-3">
-            <Link href="/(ios-showcase)" asChild>
+            <Link href={"/(ios-showcase)/" as any} asChild>
               <Button fullWidth variant="primary">
                 iOS 26 Showcase
               </Button>

@@ -23,7 +23,6 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useRouter } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import Slider from "@react-native-community/slider";
 import { Text } from "@/components/ui";
 import { GlassContainer } from "@/components/glass";
 import { useTheme } from "@/hooks/useTheme";
@@ -57,7 +56,7 @@ export default function MusicPlayerDemo() {
 
   // Simulate playback
   useEffect(() => {
-    let interval: NodeJS.Timeout;
+    let interval: ReturnType<typeof setInterval> | undefined;
     if (isPlaying) {
       interval = setInterval(() => {
         setCurrentTime((prev) => {
@@ -69,7 +68,9 @@ export default function MusicPlayerDemo() {
         });
       }, 1000);
     }
-    return () => clearInterval(interval);
+    return () => {
+      if (interval) clearInterval(interval);
+    };
   }, [isPlaying]);
 
   // Format time
@@ -103,7 +104,10 @@ export default function MusicPlayerDemo() {
     haptics.selection();
     const modes: ("off" | "all" | "one")[] = ["off", "all", "one"];
     const currentIndex = modes.indexOf(repeatMode);
-    setRepeatMode(modes[(currentIndex + 1) % modes.length]);
+    const nextMode = modes[(currentIndex + 1) % modes.length];
+    if (nextMode) {
+      setRepeatMode(nextMode);
+    }
   };
 
   const artworkAnimatedStyle = useAnimatedStyle(() => ({
@@ -240,24 +244,13 @@ export default function MusicPlayerDemo() {
 
         {/* Progress Bar */}
         <View className="mb-4">
-          <Slider
-            value={currentTime}
-            minimumValue={0}
-            maximumValue={track.duration}
-            onValueChange={(value) => {
-              setCurrentTime(value);
-            }}
-            onSlidingStart={() => haptics.selection()}
-            onSlidingComplete={(value) => {
-              haptics.selection();
-              setCurrentTime(value);
-            }}
-            minimumTrackTintColor={colors.foreground.DEFAULT}
-            maximumTrackTintColor={isDark ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.2)"}
-            thumbTintColor={colors.foreground.DEFAULT}
-            style={{ height: 30 }}
-          />
-          <View className="flex-row justify-between px-1 -mt-1">
+          <View className="h-1 bg-foreground-muted rounded-full overflow-hidden mb-2">
+            <View 
+              className="h-full bg-foreground" 
+              style={{ width: `${(currentTime / track.duration) * 100}%` }}
+            />
+          </View>
+          <View className="flex-row justify-between px-1">
             <Text variant="caption" color="muted">
               {formatTime(currentTime)}
             </Text>
@@ -311,16 +304,10 @@ export default function MusicPlayerDemo() {
         {/* Volume Control */}
         <View className="flex-row items-center px-2">
           <Ionicons name="volume-low" size={20} color={colors.foreground.muted} />
-          <View className="flex-1 mx-3">
-            <Slider
-              value={volume}
-              minimumValue={0}
-              maximumValue={1}
-              onValueChange={setVolume}
-              onSlidingStart={() => haptics.selection()}
-              minimumTrackTintColor={colors.foreground.muted}
-              maximumTrackTintColor={isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"}
-              thumbTintColor={colors.foreground.DEFAULT}
+          <View className="flex-1 mx-3 h-1 bg-foreground-muted rounded-full overflow-hidden">
+            <View 
+              className="h-full bg-foreground" 
+              style={{ width: `${volume * 100}%` }}
             />
           </View>
           <Ionicons name="volume-high" size={20} color={colors.foreground.muted} />

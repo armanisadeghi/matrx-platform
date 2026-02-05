@@ -7,12 +7,12 @@
  * IMPORTANT: Always prefer MMKV over AsyncStorage for all storage needs.
  */
 
-import { MMKV } from "react-native-mmkv";
+import { createMMKV } from "react-native-mmkv";
 
 /**
  * Default storage instance for general app data
  */
-export const storage = new MMKV({
+export const storage = createMMKV({
   id: "app-storage",
 });
 
@@ -20,7 +20,7 @@ export const storage = new MMKV({
  * Secure storage instance for sensitive data
  * Note: For production, consider adding encryption key
  */
-export const secureStorage = new MMKV({
+export const secureStorage = createMMKV({
   id: "secure-storage",
   // In production, add: encryptionKey: 'your-encryption-key'
 });
@@ -28,7 +28,7 @@ export const secureStorage = new MMKV({
 /**
  * Cache storage instance for API responses
  */
-export const cacheStorage = new MMKV({
+export const cacheStorage = createMMKV({
   id: "cache-storage",
 });
 
@@ -83,7 +83,7 @@ export const AppStorage = {
   },
 
   // Delete operations
-  delete: (key: string): void => storage.delete(key),
+  delete: (key: string): void => { storage.remove(key); },
   clearAll: (): void => storage.clearAll(),
 
   // Check if key exists
@@ -99,6 +99,6 @@ export const AppStorage = {
 export const SecureAppStorage = {
   getString: (key: string): string | undefined => secureStorage.getString(key),
   setString: (key: string, value: string): void => secureStorage.set(key, value),
-  delete: (key: string): void => secureStorage.delete(key),
+  delete: (key: string): void => { secureStorage.remove(key); },
   clearAll: (): void => secureStorage.clearAll(),
 };

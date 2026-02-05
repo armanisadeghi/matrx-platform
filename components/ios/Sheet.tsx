@@ -130,7 +130,8 @@ export function Sheet({
   // Open sheet
   useEffect(() => {
     if (visible) {
-      translateY.value = withSpring(snapPointHeights[initialSnapIndex], {
+      const targetHeight = snapPointHeights[initialSnapIndex] ?? snapPointHeights[0] ?? SCREEN_HEIGHT * 0.5;
+      translateY.value = withSpring(targetHeight, {
         damping: 20,
         stiffness: 200,
       });
@@ -139,18 +140,20 @@ export function Sheet({
       translateY.value = withTiming(SCREEN_HEIGHT, { duration: 200 });
       backdropOpacity.value = withTiming(0, { duration: 200 });
     }
-  }, [visible]);
+  }, [visible, snapPointHeights, initialSnapIndex, translateY, backdropOpacity]);
 
   const closeSheet = useCallback(() => {
     translateY.value = withTiming(SCREEN_HEIGHT, { duration: 200 });
     backdropOpacity.value = withTiming(0, { duration: 200 });
     setTimeout(onClose, 200);
-  }, [onClose]);
+  }, [onClose, translateY, backdropOpacity]);
 
   const panGesture = Gesture.Pan()
     .onUpdate((event) => {
-      const newY = snapPointHeights[currentSnapIndex.value] + event.translationY;
-      translateY.value = Math.max(newY, snapPointHeights[snapPointHeights.length - 1]);
+      const currentHeight = snapPointHeights[currentSnapIndex.value] ?? snapPointHeights[0] ?? 0;
+      const minHeight = snapPointHeights[snapPointHeights.length - 1] ?? 0;
+      const newY = currentHeight + event.translationY;
+      translateY.value = Math.max(newY, minHeight);
     })
     .onEnd((event) => {
       // Find nearest snap point
@@ -165,10 +168,10 @@ export function Sheet({
 
       // Find closest snap point
       let closestIndex = 0;
-      let closestDistance = Math.abs(currentY - snapPointHeights[0]);
+      let closestDistance = Math.abs(currentY - (snapPointHeights[0] ?? 0));
 
       for (let i = 1; i < snapPointHeights.length; i++) {
-        const distance = Math.abs(currentY - snapPointHeights[i]);
+        const distance = Math.abs(currentY - (snapPointHeights[i] ?? 0));
         if (distance < closestDistance) {
           closestDistance = distance;
           closestIndex = i;
@@ -176,14 +179,16 @@ export function Sheet({
       }
 
       // Check if dragged below first snap point (dismiss)
-      if (enableDismiss && currentY > snapPointHeights[0] + 100) {
+      const firstSnapPoint = snapPointHeights[0] ?? 0;
+      if (enableDismiss && currentY > firstSnapPoint + 100) {
         runOnJS(haptics.light)();
         runOnJS(closeSheet)();
         return;
       }
 
       currentSnapIndex.value = closestIndex;
-      translateY.value = withSpring(snapPointHeights[closestIndex], {
+      const targetHeight = snapPointHeights[closestIndex] ?? snapPointHeights[0] ?? 0;
+      translateY.value = withSpring(targetHeight, {
         damping: 20,
         stiffness: 200,
       });

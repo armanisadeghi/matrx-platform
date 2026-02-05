@@ -32,6 +32,11 @@ export interface BadgeProps {
   children?: React.ReactNode;
 
   /**
+   * Numeric count to display (alternative to children)
+   */
+  count?: number;
+
+  /**
    * Badge variant
    * @default 'default'
    */
@@ -95,6 +100,7 @@ const sizeStyles: Record<BadgeSize, { padding: string; text: string; dot: number
  */
 export function Badge({
   children,
+  count,
   variant = "default",
   size = "md",
   dot = false,
@@ -104,11 +110,14 @@ export function Badge({
   const variantStyle = variantStyles[variant];
   const sizeStyle = sizeStyles[size];
 
+  // Use count prop if provided, otherwise use children
+  const content = count !== undefined ? count : children;
+
   // Format count if it's a number
   const formattedContent =
-    typeof children === "number" && maxCount && children > maxCount
+    typeof content === "number" && maxCount && content > maxCount
       ? `${maxCount}+`
-      : children;
+      : content;
 
   // Dot badge
   if (dot) {

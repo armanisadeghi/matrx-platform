@@ -94,7 +94,7 @@ export default function DemoIndex() {
           <Text variant="overline" color="secondary" className="mb-3 ml-1">
             iOS 26 Native Demos
           </Text>
-          <Link href="/(ios-showcase)" asChild>
+          <Link href={"/(ios-showcase)/" as any} asChild>
             <Card variant="glass" pressable className="mb-6">
               <View className="flex-row items-center">
                 <View className="w-12 h-12 rounded-xl items-center justify-center mr-3" style={{ backgroundColor: "#007AFF" }}>

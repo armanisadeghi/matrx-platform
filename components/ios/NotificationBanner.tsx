@@ -113,6 +113,7 @@ export function NotificationBanner({
       }, duration);
       return () => clearTimeout(timer);
     }
+    return undefined;
   }, [visible, duration, onDismiss]);
 
   // Haptic feedback on show

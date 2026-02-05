@@ -17,11 +17,9 @@ import { GlassContainer } from "@/components/glass";
 import { HeaderLayout } from "@/components/layouts";
 import {
   NotificationBanner,
-  useNotificationBanner,
   Sheet,
   ActionSheet,
   FloatingBar,
-  MiniPlayer,
   AppIcon,
 } from "@/components/ios";
 import { useTheme } from "@/hooks/useTheme";
@@ -30,13 +28,12 @@ import { useHaptics } from "@/hooks/useHaptics";
 export default function NotificationsDemo() {
   const { colors, isDark } = useTheme();
   const haptics = useHaptics();
-  const notification = useNotificationBanner();
 
   // State for various demos
   const [showSheet, setShowSheet] = useState(false);
   const [showActionSheet, setShowActionSheet] = useState(false);
   const [showFloatingBar, setShowFloatingBar] = useState(false);
-  const [showMiniPlayer, setShowMiniPlayer] = useState(false);
+  const [showNotificationBanner, setShowNotificationBanner] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [badgeCounts, setBadgeCounts] = useState({
     messages: 5,
@@ -47,42 +44,17 @@ export default function NotificationsDemo() {
   // Demo notification triggers
   const triggerMessageNotification = () => {
     haptics.light();
-    notification.show({
-      title: "Messages",
-      message: "John Appleseed: Hey! Are you free for a call?",
-      subtitle: "now",
-      icon: "chatbubble-ellipses",
-      iconColor: "#34C759",
-      duration: 4000,
-      onPress: () => {
-        notification.hide();
-        haptics.light();
-      },
-    });
+    setShowNotificationBanner(true);
   };
 
   const triggerMailNotification = () => {
     haptics.light();
-    notification.show({
-      title: "Mail",
-      message: "New email from Sarah Wilson regarding the project update",
-      subtitle: "1m ago",
-      icon: "mail",
-      iconColor: "#007AFF",
-      duration: 4000,
-    });
+    setShowNotificationBanner(true);
   };
 
   const triggerCalendarNotification = () => {
     haptics.light();
-    notification.show({
-      title: "Calendar",
-      message: "Team Meeting in 15 minutes - Conference Room A",
-      subtitle: "Reminder",
-      icon: "calendar",
-      iconColor: "#FF3B30",
-      duration: 5000,
-    });
+    setShowNotificationBanner(true);
   };
 
   // Increment badge count
@@ -114,7 +86,7 @@ export default function NotificationsDemo() {
       >
         <ScrollView
           className="flex-1"
-          contentContainerStyle={{ paddingBottom: showMiniPlayer ? 100 : 32 }}
+          contentContainerStyle={{ paddingBottom: 32 }}
           showsVerticalScrollIndicator={false}
         >
           <View className="px-4 py-4">
@@ -268,22 +240,6 @@ export default function NotificationsDemo() {
                 >
                   {showFloatingBar ? "Hide Floating Bar" : "Show Floating Bar"}
                 </Button>
-                <Button
-                  variant={showMiniPlayer ? "destructive" : "secondary"}
-                  onPress={() => {
-                    haptics.light();
-                    setShowMiniPlayer(!showMiniPlayer);
-                  }}
-                  leftIcon={
-                    <Ionicons
-                      name={showMiniPlayer ? "close" : "musical-notes"}
-                      size={18}
-                      color={colors.foreground.DEFAULT}
-                    />
-                  }
-                >
-                  {showMiniPlayer ? "Hide Mini Player" : "Show Mini Player"}
-                </Button>
               </View>
             </Card>
 
@@ -351,15 +307,13 @@ export default function NotificationsDemo() {
 
       {/* Notification Banner */}
       <NotificationBanner
-        visible={notification.visible}
-        onDismiss={notification.hide}
-        title={notification.notification?.title || ""}
-        message={notification.notification?.message || ""}
-        subtitle={notification.notification?.subtitle}
-        icon={notification.notification?.icon}
-        iconColor={notification.notification?.iconColor}
-        onPress={notification.notification?.onPress}
-        duration={notification.notification?.duration}
+        visible={showNotificationBanner}
+        onDismiss={() => setShowNotificationBanner(false)}
+        title="Messages"
+        message="John Appleseed: Hey! Are you free for a call?"
+        subtitle="now"
+        icon="chatbubble-ellipses"
+        iconColor="#34C759"
       />
 
       {/* Bottom Sheet */}
@@ -491,19 +445,6 @@ export default function NotificationsDemo() {
         ]}
       />
 
-      {/* Mini Player */}
-      <MiniPlayer
-        visible={showMiniPlayer && !showFloatingBar}
-        title="Blest"
-        artist="Yuno"
-        isPlaying={isPlaying}
-        onPlayPause={() => {
-          haptics.light();
-          setIsPlaying(!isPlaying);
-        }}
-        onNext={() => haptics.light()}
-        onPress={() => haptics.light()}
-      />
     </View>
   );
 }

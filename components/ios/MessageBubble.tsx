@@ -20,7 +20,6 @@ import Animated, {
   FadeIn,
 } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
-import { BlurView } from "expo-blur";
 import { Text, Avatar } from "@/components/ui";
 import { GlassContainer } from "@/components/glass";
 import { useHaptics } from "@/hooks/useHaptics";
@@ -188,7 +187,7 @@ export function MessageBubble({
           {isLastInGroup && (
             <Avatar
               name={senderName || "User"}
-              image={senderAvatar}
+              source={senderAvatar}
               size="sm"
             />
           )}

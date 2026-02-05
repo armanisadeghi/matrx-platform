@@ -45,4 +45,10 @@ export {
   SettingsSectionHeader,
   type SettingsSectionHeaderProps,
 } from "./SettingsRow";
-export { Sheet, type SheetProps } from "./Sheet";
+export { 
+  Sheet, 
+  type SheetProps,
+  ActionSheet,
+  type ActionSheetProps,
+  type ActionSheetOption,
+} from "./Sheet";

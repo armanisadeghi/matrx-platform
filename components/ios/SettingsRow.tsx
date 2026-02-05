@@ -147,7 +147,7 @@ export function SettingsRow({
       {rightContent ? (
         rightContent
       ) : hasSwitch ? (
-        <Switch value={switchValue} onValueChange={onSwitchChange} />
+        <Switch value={switchValue ?? false} onValueChange={onSwitchChange ?? (() => {})} />
       ) : (
         <View className="flex-row items-center">
           {value && (

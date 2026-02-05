@@ -18,9 +18,6 @@ import { GlassContainer } from "@/components/glass";
 import {
   AppIcon,
   Widget,
-  WeatherWidget,
-  CalendarWidget,
-  MusicWidget,
   GlassDock,
   type DockItem,
 } from "@/components/ios";
@@ -57,13 +54,13 @@ export default function DashboardDemo() {
       icon: "chatbubble-ellipses",
       color: "#34C759",
       badgeCount: 5,
-      onPress: () => router.push("/(ios-showcase)/messages"),
+      onPress: () => router.push("/(ios-showcase)/messages" as any),
     },
     {
       id: "music",
       icon: "musical-notes",
       color: "#FF2D55",
-      onPress: () => router.push("/(ios-showcase)/music-player"),
+      onPress: () => router.push("/(ios-showcase)/music-player" as any),
     },
   ];
 
@@ -138,33 +135,50 @@ export default function DashboardDemo() {
         <View className="px-4 mb-4">
           <View className="flex-row gap-2">
             {/* Weather Widget */}
-            <WeatherWidget
-              temperature="53°"
-              condition="Partly Cloudy"
-              location="San Francisco"
-              high="56°"
-              low="50°"
+            <Widget
+              size="small"
+              title="53°"
+              icon="partly-sunny"
+              iconColor={colors.primary.DEFAULT}
               onPress={() => haptics.light()}
-            />
+            >
+              <View className="mt-2">
+                <Text variant="caption" color="secondary">Partly Cloudy</Text>
+                <Text variant="caption" color="muted">H:56° L:50°</Text>
+              </View>
+            </Widget>
 
             {/* Calendar Widget */}
-            <CalendarWidget
-              day={currentDate.getDate().toString()}
-              dayOfWeek={["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][currentDate.getDay()]}
-              month={["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"][currentDate.getMonth()]}
+            <Widget
+              size="small"
+              title={currentDate.getDate().toString()}
+              icon="calendar"
+              iconColor={colors.error.DEFAULT}
               onPress={() => haptics.light()}
-            />
+            >
+              <View className="mt-2">
+                <Text variant="caption" color="secondary">
+                  {["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"][currentDate.getDay()]}
+                </Text>
+              </View>
+            </Widget>
           </View>
         </View>
 
         {/* Music Widget (Large) */}
         <View className="px-4 mb-4">
-          <MusicWidget
-            title="Blest"
-            artist="Yuno"
-            isPlaying={true}
-            onPress={() => router.push("/(ios-showcase)/music-player")}
-          />
+          <Widget
+            size="large"
+            title="Now Playing"
+            icon="musical-notes"
+            iconColor={colors.primary.DEFAULT}
+            onPress={() => router.push("/(ios-showcase)/music-player" as any)}
+          >
+            <View className="mt-2">
+              <Text variant="body" className="font-semibold">Blest</Text>
+              <Text variant="caption" color="secondary">Yuno</Text>
+            </View>
+          </Widget>
         </View>
 
         {/* App Grid */}
@@ -185,9 +199,9 @@ export default function DashboardDemo() {
                   onPress={() => {
                     haptics.light();
                     if (app.id === "settings") {
-                      router.push("/(ios-showcase)/settings");
+                      router.push("/(ios-showcase)/settings" as any);
                     } else if (app.id === "mail") {
-                      router.push("/(ios-showcase)/messages");
+                      router.push("/(ios-showcase)/messages" as any);
                     }
                   }}
                   onLongPress={() => haptics.medium()}

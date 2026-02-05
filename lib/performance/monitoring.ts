@@ -306,7 +306,7 @@ export function useFrameRateMonitor() {
   const [fps, setFps] = useState(60);
   const frameCountRef = useRef(0);
   const lastTimeRef = useRef(Date.now());
-  const animationFrameRef = useRef<number>();
+  const animationFrameRef = useRef<number | undefined>(undefined);
   const isRunningRef = useRef(false);
 
   const measureFrame = useCallback(() => {
