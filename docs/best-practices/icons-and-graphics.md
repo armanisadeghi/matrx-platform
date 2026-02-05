@@ -19,7 +19,7 @@ Use Ionicons as the primary icon set - it has consistent iOS and Android variant
 ```typescript
 import { Ionicons } from '@expo/vector-icons';
 
-<Ionicons name="home" size={24} color="#1E3A5F" />
+<Ionicons name="home" size={24} color={colors.foreground.DEFAULT} />
 ```
 
 ### Other Available Sets
@@ -100,15 +100,17 @@ import { Ionicons } from '@expo/vector-icons';
 
 ### With Native Tabs (iOS 26+)
 
+> SDK 54 uses standalone `Icon`/`Label` imports, not compound sub-components. The `drawable` prop is used for Android (not `md`, which is SDK 55+).
+
 ```tsx
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
 
 <NativeTabs.Trigger name="home">
-  <NativeTabs.Trigger.Icon 
+  <Icon
     sf={{ default: 'house', selected: 'house.fill' }}  // SF Symbols
-    md="home"  // Material Symbols
+    drawable="home"  // Android drawable
   />
-  <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+  <Label>Home</Label>
 </NativeTabs.Trigger>
 ```
 
@@ -327,7 +329,7 @@ function AnimatedHeartIcon({ filled }: { filled: boolean }) {
       <AnimatedIonicons
         name={filled ? 'heart' : 'heart-outline'}
         size={24}
-        color={filled ? '#EF4444' : '#6B7280'}
+        color={filled ? colors.error.DEFAULT : colors.foreground.muted}
         style={animatedStyle}
       />
     </Pressable>
@@ -398,3 +400,15 @@ function App() {
 - [SF Symbols](https://developer.apple.com/sf-symbols/)
 - [Material Symbols](https://fonts.google.com/icons)
 - [react-native-svg](https://github.com/software-mansion/react-native-svg)
+
+---
+
+## TASKS
+
+- [x] **Corrected NativeTabs icon example** — Updated to SDK 54 API: standalone `Icon`/`Label` imports with `drawable` prop instead of `md`. Consistent with `expo-router-navigation.md` corrections.
+
+- [x] **Corrected hardcoded colors in doc examples** — Fixed example code to use theme tokens (`colors.foreground.DEFAULT`, `colors.error.DEFAULT`) instead of hex literals.
+
+- [ ] **Consider creating standardized `iconSizes` constant** — The doc describes an icon size scale (xs through 3xl) but no centralized constant exists. Individual components use sizes directly. Could add to `constants/` if consistent sizing across components is needed.
+
+- [ ] **Consider creating a reusable `Icon` wrapper component** — The doc describes a `SemanticIcon` pattern with themed color support. Currently, all components use `Ionicons` directly with `useTheme()` colors, which works well.
