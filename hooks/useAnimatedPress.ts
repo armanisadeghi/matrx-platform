@@ -24,7 +24,7 @@ import {
 } from "react-native-reanimated";
 import { useHaptics } from "./useHaptics";
 
-interface UseAnimatedPressConfig {
+export interface UseAnimatedPressConfig {
   /**
    * Scale factor when pressed (0-1). Lower = more visible bounce.
    * @default 0.95
