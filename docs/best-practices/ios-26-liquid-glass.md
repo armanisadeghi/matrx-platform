@@ -166,9 +166,14 @@ For iOS < 26, provide CSS `backdrop-filter` equivalents:
 
 ## TASKS
 
+### Completed
+
+- [x] **Add `reduceTransparency` accessibility support** - IMPLEMENTED: `GlassContainer.ios.tsx` now uses `useReduceTransparency()` hook that listens to `AccessibilityInfo.isReduceTransparencyEnabled()` and provides solid fallback when enabled
+- [x] **Update NativeTabs with SF Symbols and minimizeBehavior** - IMPLEMENTED: `app/(tabs)/_layout.tsx` uses NativeTabs with `sf` prop for SF Symbols, `drawable` for Android, and `minimizeBehavior="onScrollDown"`
+
+### Remaining
+
 - [ ] Add `tintColor` support to iOS GlassContainer - pass tint prop to GlassView's `tintColor` property - `components/glass/GlassContainer.ios.tsx`
-- [ ] Add `reduceTransparency` accessibility support - check `AccessibilityInfo.isReduceTransparencyEnabled()` and provide solid fallback when enabled - `components/glass/GlassContainer.ios.tsx`
-- [ ] Update NativeTabs to use proper iOS 26 pattern with `NativeTabs.Trigger`, SF Symbols, and `minimizeBehavior` - `app/(tabs)/_layout.tsx`
 - [ ] Add `DynamicColorIOS` for tint colors in iOS glass components instead of manual theme color selection - `components/glass/GlassContainer.ios.tsx`
 - [ ] Create iOS 26 layered Liquid Glass app icon using Icon Composer and update config - `app.config.ts`, `assets/`
 - [ ] Add `spacing` prop to GlassContainer for grouped glass elements (per document example) - `components/glass/types.ts`, all GlassContainer implementations

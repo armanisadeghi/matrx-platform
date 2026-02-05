@@ -10,16 +10,25 @@ module.exports = {
     extend: {
       colors: {
         // Primary Colors - Deep Blue (Trust, Professionalism)
+        // Includes MD3 container/on-container pairs
         primary: {
           DEFAULT: "rgb(var(--color-primary) / <alpha-value>)",
           light: "rgb(var(--color-primary-light) / <alpha-value>)",
           dark: "rgb(var(--color-primary-dark) / <alpha-value>)",
+          on: "rgb(var(--color-on-primary) / <alpha-value>)",
+          container: "rgb(var(--color-primary-container) / <alpha-value>)",
+          "on-container":
+            "rgb(var(--color-on-primary-container) / <alpha-value>)",
         },
         // Secondary Colors - Slate (Sophisticated Accent)
         secondary: {
           DEFAULT: "rgb(var(--color-secondary) / <alpha-value>)",
           light: "rgb(var(--color-secondary-light) / <alpha-value>)",
           dark: "rgb(var(--color-secondary-dark) / <alpha-value>)",
+          on: "rgb(var(--color-on-secondary) / <alpha-value>)",
+          container: "rgb(var(--color-secondary-container) / <alpha-value>)",
+          "on-container":
+            "rgb(var(--color-on-secondary-container) / <alpha-value>)",
         },
         // Background Colors
         background: {
@@ -31,11 +40,18 @@ module.exports = {
         surface: {
           DEFAULT: "rgb(var(--color-surface) / <alpha-value>)",
           elevated: "rgb(var(--color-surface-elevated) / <alpha-value>)",
+          variant: "rgb(var(--color-surface-variant) / <alpha-value>)",
+          "on-variant": "rgb(var(--color-on-surface-variant) / <alpha-value>)",
         },
         // Border Colors
         border: {
           DEFAULT: "rgb(var(--color-border) / <alpha-value>)",
           subtle: "rgb(var(--color-border-subtle) / <alpha-value>)",
+        },
+        // MD3 Outline (for borders/dividers)
+        outline: {
+          DEFAULT: "rgb(var(--color-outline) / <alpha-value>)",
+          variant: "rgb(var(--color-outline-variant) / <alpha-value>)",
         },
         // Text Colors
         foreground: {

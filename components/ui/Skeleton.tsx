@@ -4,7 +4,7 @@
  * Shimmer loading placeholder using Reanimated 4 CSS keyframe animations.
  */
 
-import { View } from "react-native";
+import { View, type DimensionValue } from "react-native";
 import Animated, { css } from "react-native-reanimated";
 import { cn } from "@/lib/utils";
 
@@ -71,7 +71,7 @@ export function Skeleton({
     <Animated.View
       className={cn("bg-surface-elevated", className)}
       style={{
-        width,
+        width: width as DimensionValue,
         height,
         borderRadius: radiusMap[radius],
         animationName: pulseKeyframes,

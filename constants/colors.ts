@@ -15,6 +15,10 @@ export const colors = {
       DEFAULT: "#1E3A5F",
       light: "#2D5A8A",
       dark: "#0F1F33",
+      // MD3 Container Roles
+      on: "#FFFFFF",
+      container: "#D4E4F7",
+      onContainer: "#001D36",
     },
 
     // Secondary Colors - Warm Slate (Sophisticated Accent)
@@ -22,6 +26,10 @@ export const colors = {
       DEFAULT: "#64748B",
       light: "#94A3B8",
       dark: "#475569",
+      // MD3 Container Roles
+      on: "#FFFFFF",
+      container: "#D6E3F7",
+      onContainer: "#0F1D2A",
     },
 
     // Background Colors
@@ -35,12 +43,20 @@ export const colors = {
     surface: {
       DEFAULT: "#FFFFFF",
       elevated: "#FFFFFF",
+      // MD3 Surface Variant
+      variant: "#DFE2EB",
+      onVariant: "#43474E",
     },
 
-    // Border Colors
+    // Border/Outline Colors
     border: {
       DEFAULT: "#E2E8F0",
       subtle: "#F1F5F9",
+    },
+    // MD3 Outline Roles
+    outline: {
+      DEFAULT: "#73777F",
+      variant: "#C3C7CF",
     },
 
     // Text Colors
@@ -76,6 +92,10 @@ export const colors = {
       DEFAULT: "#3B82F6",
       light: "#60A5FA",
       dark: "#1D4ED8",
+      // MD3 Container Roles (inverted for dark)
+      on: "#003059",
+      container: "#1E3A5F",
+      onContainer: "#D4E4F7",
     },
 
     // Secondary Colors
@@ -83,6 +103,10 @@ export const colors = {
       DEFAULT: "#94A3B8",
       light: "#CBD5E1",
       dark: "#64748B",
+      // MD3 Container Roles
+      on: "#243240",
+      container: "#3B4857",
+      onContainer: "#D6E3F7",
     },
 
     // Background Colors
@@ -96,12 +120,20 @@ export const colors = {
     surface: {
       DEFAULT: "#141416",
       elevated: "#1E1E22",
+      // MD3 Surface Variant
+      variant: "#43474E",
+      onVariant: "#C3C7CF",
     },
 
-    // Border Colors
+    // Border/Outline Colors
     border: {
       DEFAULT: "#2A2A2E",
       subtle: "#1E1E22",
+    },
+    // MD3 Outline Roles
+    outline: {
+      DEFAULT: "#8D9199",
+      variant: "#43474E",
     },
 
     // Text Colors
@@ -134,14 +166,39 @@ export const colors = {
 
 export type ColorScheme = "light" | "dark";
 
-/** Color values structure (non-literal) */
+/** Color values structure with MD3 container roles */
 export interface Colors {
-  primary: { DEFAULT: string; light: string; dark: string };
-  secondary: { DEFAULT: string; light: string; dark: string };
+  primary: {
+    DEFAULT: string;
+    light: string;
+    dark: string;
+    on: string;
+    container: string;
+    onContainer: string;
+  };
+  secondary: {
+    DEFAULT: string;
+    light: string;
+    dark: string;
+    on: string;
+    container: string;
+    onContainer: string;
+  };
   background: { DEFAULT: string; secondary: string; tertiary: string };
-  surface: { DEFAULT: string; elevated: string };
+  surface: {
+    DEFAULT: string;
+    elevated: string;
+    variant: string;
+    onVariant: string;
+  };
   border: { DEFAULT: string; subtle: string };
-  foreground: { DEFAULT: string; secondary: string; muted: string; inverse: string };
+  outline: { DEFAULT: string; variant: string };
+  foreground: {
+    DEFAULT: string;
+    secondary: string;
+    muted: string;
+    inverse: string;
+  };
   success: { DEFAULT: string; light: string };
   warning: { DEFAULT: string; light: string };
   error: { DEFAULT: string; light: string };

@@ -2,16 +2,41 @@
  * iOS Liquid Glass Container
  *
  * Uses expo-glass-effect for native iOS 26+ Liquid Glass effects.
- * Falls back to a simple View on older iOS versions.
+ * Falls back to a simple View on older iOS versions or when
+ * Reduce Transparency accessibility setting is enabled.
  */
 
-import { View } from "react-native";
+import { useState, useEffect } from "react";
+import { View, AccessibilityInfo } from "react-native";
 import { GlassView, type GlassStyle } from "expo-glass-effect";
 import { useAppColorScheme } from "@/hooks/useAppColorScheme";
 import { supportsLiquidGlass } from "@/lib/platform";
 import { cn } from "@/lib/utils";
 import type { GlassContainerProps } from "./types";
 import { borderRadiusMap } from "./types";
+
+/**
+ * Hook to check if user has Reduce Transparency enabled
+ * Required for iOS accessibility compliance
+ */
+function useReduceTransparency(): boolean {
+  const [reduceTransparency, setReduceTransparency] = useState(false);
+
+  useEffect(() => {
+    // Check initial value
+    AccessibilityInfo.isReduceTransparencyEnabled().then(setReduceTransparency);
+
+    // Listen for changes
+    const subscription = AccessibilityInfo.addEventListener(
+      "reduceTransparencyChanged",
+      setReduceTransparency
+    );
+
+    return () => subscription.remove();
+  }, []);
+
+  return reduceTransparency;
+}
 
 export function GlassContainer({
   children,
@@ -24,12 +49,15 @@ export function GlassContainer({
   ...props
 }: GlassContainerProps) {
   const { isDark } = useAppColorScheme();
+  const reduceTransparency = useReduceTransparency();
 
   // Calculate border radius
   const radius = borderRadiusMap[borderRadius];
 
-  // If device doesn't support Liquid Glass, fall back to a styled View
-  if (!supportsLiquidGlass) {
+  // Fall back to solid View if:
+  // 1. Device doesn't support Liquid Glass (pre-iOS 26)
+  // 2. User has Reduce Transparency enabled (accessibility)
+  if (!supportsLiquidGlass || reduceTransparency) {
     return (
       <View
         className={cn(

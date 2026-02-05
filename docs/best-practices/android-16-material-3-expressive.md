@@ -244,26 +244,35 @@ const { LightTheme, DarkTheme: NavDarkTheme } = adaptNavigationTheme({
 
 ## TASKS
 
-- [ ] **Wrap app with PaperProvider** - `app/_layout.tsx` does not wrap the app with `PaperProvider` from react-native-paper. Add provider with MD3 theme support.
+### Completed
 
-- [ ] **Add MD3 color roles to theme** - `constants/colors.ts` uses semantic color naming but is missing MD3-specific roles: `onPrimary`, `primaryContainer`, `onPrimaryContainer`, `secondaryContainer`, `onSecondaryContainer`, `tertiaryContainer`, `onTertiaryContainer`, `surfaceVariant`, `onSurfaceVariant`. Add these to both light and dark themes.
+- [x] **Add MD3 color roles to theme** - IMPLEMENTED: `global.css`, `constants/colors.ts`, and `tailwind.config.js` now include full MD3 color roles:
+  - `onPrimary`, `primaryContainer`, `onPrimaryContainer`
+  - `onSecondary`, `secondaryContainer`, `onSecondaryContainer`
+  - `surfaceVariant`, `onSurfaceVariant`
+  - `outline`, `outlineVariant`
 
-- [ ] **Implement dynamic color theming** - Add `useMaterial3Theme` hook integration from react-native-paper for Android 12+ wallpaper-extracted colors. Currently using static color definitions only.
+- [x] **Install expo-haptics** - IMPLEMENTED: Package installed and `hooks/useHaptics.ts` + `hooks/useHaptics.native.ts` provide platform-specific haptic feedback
 
-- [ ] **Install expo-haptics** - Package not in `package.json`. Run `npx expo install expo-haptics`.
+- [x] **Add haptic feedback to interactive components** - IMPLEMENTED via two mechanisms:
+  - `useAnimatedPress` hook automatically provides haptic feedback for Button, IconButton, Card, ListItem
+  - `Toggle.tsx` components (Switch, Checkbox, Radio) directly call `haptics.selection()` on press
 
-- [ ] **Add haptic feedback to interactive components** - `components/ui/Button.tsx`, `components/ui/IconButton.tsx`, `components/ui/Toggle.tsx`, `components/ui/Card.tsx` (pressable variant) all lack haptic feedback on press. Add `Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light)` to onPress handlers.
+- [x] **Add spring animations to components** - IMPLEMENTED: All interactive components now use Reanimated 4 `withSpring` for M3E-compliant motion via the `useAnimatedPress` hook
 
-- [ ] **Add spring animations to components** - Button, IconButton, and pressable Card use basic opacity transitions. Replace with Reanimated `withSpring` for M3E-compliant motion:
-  - `components/ui/Button.tsx` - lines 179-181 (opacity style)
-  - `components/ui/IconButton.tsx` - lines 162-172 (opacity style)
-  - `components/ui/Card.tsx` - lines 120, 146 (opacity: 0.9)
+### Remaining
 
-- [ ] **Install expo-blur for BlurView** - Package not in `package.json`. Document recommends `BlurView` from expo-blur for notification/quick settings blur effects. Run `npx expo install expo-blur`.
+- [ ] **Install expo-blur for BlurView** - Package not installed. Useful for notification/quick settings blur effects if needed in specific app implementations
 
-- [ ] **Integrate adaptNavigationTheme** - `app/_layout.tsx` and `app/(tabs)/_layout.tsx` do not use `adaptNavigationTheme` from react-native-paper to synchronize Paper theme with React Navigation theme.
+- [ ] **Implement dynamic color theming** - Consider adding `useMaterial3Theme` integration for Android 12+ wallpaper-extracted colors (requires react-native-paper)
 
-- [ ] **Consider rounded-full for primary buttons** - Document recommends `rounded-full` for buttons. Current implementation uses `rounded-xl` (12px) in `components/ui/Button.tsx` (lines 123-133). Consider adding a `rounded` prop or making primary buttons fully rounded.
+- [ ] **Consider rounded-full for primary buttons** - Document recommends `rounded-full` for M3E buttons. Current implementation uses `rounded-xl` (12px). Consider adding a `rounded` prop variant
+
+### Not Applicable
+
+- [x] **Wrap app with PaperProvider** - N/A: Architectural decision made to NOT use react-native-paper. Custom NativeWind theme system provides single source of truth with better control. See `docs/best-practices/react-native-paper.md` for rationale
+
+- [x] **Integrate adaptNavigationTheme** - N/A: Not using react-native-paper theme system
 
 ## TO DISCUSS
 

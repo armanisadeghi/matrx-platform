@@ -8,37 +8,54 @@
        SINGLE SOURCE OF TRUTH - LIGHT MODE
        B2B Enterprise Color Palette
        Professional, Elegant, Minimalistic
+
+       Includes MD3 container/on-container pairs for
+       Material Design 3 Expressive compliance
        ============================================ */
-    
+
     /* Primary Colors - Deep Blue (Trust & Professionalism) */
     --color-primary: 30 58 95; /* #1E3A5F */
     --color-primary-light: 45 90 138; /* #2D5A8A */
     --color-primary-dark: 15 31 51; /* #0F1F33 */
-    
+    /* MD3 Container Roles */
+    --color-on-primary: 255 255 255; /* #FFFFFF - text/icons on primary */
+    --color-primary-container: 212 228 247; /* #D4E4F7 - light container */
+    --color-on-primary-container: 0 29 54; /* #001D36 - text on container */
+
     /* Secondary Colors - Warm Slate (Sophisticated Accent) */
     --color-secondary: 100 116 139; /* #64748B */
     --color-secondary-light: 148 163 184; /* #94A3B8 */
     --color-secondary-dark: 71 85 105; /* #475569 */
-    
+    /* MD3 Container Roles */
+    --color-on-secondary: 255 255 255; /* #FFFFFF */
+    --color-secondary-container: 214 227 247; /* #D6E3F7 */
+    --color-on-secondary-container: 15 29 42; /* #0F1D2A */
+
     /* Background Colors */
     --color-background: 255 255 255; /* #FFFFFF */
     --color-background-secondary: 248 250 252; /* #F8FAFC */
     --color-background-tertiary: 241 245 249; /* #F1F5F9 */
-    
+
     /* Surface Colors (Cards, Modals, Elevated Elements) */
     --color-surface: 255 255 255; /* #FFFFFF */
     --color-surface-elevated: 255 255 255; /* #FFFFFF */
-    
-    /* Border Colors */
+    /* MD3 Surface Variant */
+    --color-surface-variant: 223 226 235; /* #DFE2EB */
+    --color-on-surface-variant: 67 71 78; /* #43474E */
+
+    /* Border/Outline Colors */
     --color-border: 226 232 240; /* #E2E8F0 */
     --color-border-subtle: 241 245 249; /* #F1F5F9 */
-    
+    /* MD3 Outline Roles */
+    --color-outline: 115 119 127; /* #73777F */
+    --color-outline-variant: 195 199 207; /* #C3C7CF */
+
     /* Text Colors */
     --color-foreground: 15 23 42; /* #0F172A */
     --color-foreground-secondary: 71 85 105; /* #475569 */
     --color-foreground-muted: 148 163 184; /* #94A3B8 */
     --color-foreground-inverse: 248 250 252; /* #F8FAFC */
-    
+
     /* Semantic Colors */
     --color-success: 5 150 105; /* #059669 */
     --color-success-light: 209 250 229; /* #D1FAE5 */
@@ -54,37 +71,54 @@
     /* ============================================
        SINGLE SOURCE OF TRUTH - DARK MODE
        B2B Enterprise Color Palette
+
+       Includes MD3 container/on-container pairs for
+       Material Design 3 Expressive compliance
        ============================================ */
-    
+
     /* Primary Colors - Lighter Blue for Dark Mode */
     --color-primary: 59 130 246; /* #3B82F6 */
     --color-primary-light: 96 165 250; /* #60A5FA */
     --color-primary-dark: 29 78 216; /* #1D4ED8 */
-    
+    /* MD3 Container Roles (inverted for dark mode) */
+    --color-on-primary: 0 48 89; /* #003059 - dark text on bright primary */
+    --color-primary-container: 30 58 95; /* #1E3A5F - darker container */
+    --color-on-primary-container: 212 228 247; /* #D4E4F7 - light text */
+
     /* Secondary Colors */
     --color-secondary: 148 163 184; /* #94A3B8 */
     --color-secondary-light: 203 213 225; /* #CBD5E1 */
     --color-secondary-dark: 100 116 139; /* #64748B */
-    
+    /* MD3 Container Roles */
+    --color-on-secondary: 36 50 64; /* #243240 */
+    --color-secondary-container: 59 72 87; /* #3B4857 */
+    --color-on-secondary-container: 214 227 247; /* #D6E3F7 */
+
     /* Background Colors */
     --color-background: 10 10 11; /* #0A0A0B */
     --color-background-secondary: 20 20 22; /* #141416 */
     --color-background-tertiary: 30 30 34; /* #1E1E22 */
-    
+
     /* Surface Colors */
     --color-surface: 20 20 22; /* #141416 */
     --color-surface-elevated: 30 30 34; /* #1E1E22 */
-    
-    /* Border Colors */
+    /* MD3 Surface Variant */
+    --color-surface-variant: 67 71 78; /* #43474E */
+    --color-on-surface-variant: 195 199 207; /* #C3C7CF */
+
+    /* Border/Outline Colors */
     --color-border: 42 42 46; /* #2A2A2E */
     --color-border-subtle: 30 30 34; /* #1E1E22 */
-    
+    /* MD3 Outline Roles */
+    --color-outline: 141 145 153; /* #8D9199 */
+    --color-outline-variant: 67 71 78; /* #43474E */
+
     /* Text Colors */
     --color-foreground: 248 250 252; /* #F8FAFC */
     --color-foreground-secondary: 203 213 225; /* #CBD5E1 */
     --color-foreground-muted: 100 116 139; /* #64748B */
     --color-foreground-inverse: 15 23 42; /* #0F172A */
-    
+
     /* Semantic Colors (Adjusted for dark background) */
     --color-success: 34 197 94; /* #22C55E */
     --color-success-light: 20 83 45; /* #14532D */
