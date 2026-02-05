@@ -9,6 +9,7 @@ import Animated, { ZoomIn, ZoomOut } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "./Text";
 import { useTheme } from "@/hooks/useTheme";
+import { useHaptics } from "@/hooks/useHaptics";
 import { cn } from "@/lib/utils";
 
 /**
@@ -61,10 +62,18 @@ export function Switch({
   className,
 }: SwitchProps) {
   const { colors } = useTheme();
+  const haptics = useHaptics();
+
+  const handlePress = () => {
+    if (!disabled) {
+      haptics.selection();
+      onValueChange(!value);
+    }
+  };
 
   return (
     <Pressable
-      onPress={() => !disabled && onValueChange(!value)}
+      onPress={handlePress}
       disabled={disabled}
       className={cn(
         "flex-row items-center justify-between py-2",
@@ -124,11 +133,19 @@ export function Checkbox({
   className,
 }: CheckboxProps) {
   const { colors } = useTheme();
+  const haptics = useHaptics();
   const sizeConfig = checkboxSizes[size];
+
+  const handlePress = () => {
+    if (!disabled) {
+      haptics.selection();
+      onValueChange(!value);
+    }
+  };
 
   return (
     <Pressable
-      onPress={() => !disabled && onValueChange(!value)}
+      onPress={handlePress}
       disabled={disabled}
       className={cn(
         "flex-row items-center py-2",
@@ -189,12 +206,19 @@ export function Radio({
   size = "md",
   className,
 }: RadioProps) {
-  useTheme(); // For theme context
+  const haptics = useHaptics();
   const sizeConfig = radioSizes[size];
+
+  const handlePress = () => {
+    if (!disabled) {
+      haptics.selection();
+      onValueChange(!value);
+    }
+  };
 
   return (
     <Pressable
-      onPress={() => !disabled && onValueChange(!value)}
+      onPress={handlePress}
       disabled={disabled}
       className={cn(
         "flex-row items-center py-2",

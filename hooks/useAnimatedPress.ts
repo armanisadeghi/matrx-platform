@@ -1,8 +1,9 @@
 /**
  * useAnimatedPress hook
  *
- * Provides spring-based scale animation for pressable components.
- * Returns an animated style and press handlers to apply to Pressable/Animated.View.
+ * Provides spring-based scale animation and optional haptic feedback
+ * for pressable components. Returns an animated style and press handlers
+ * to apply to Pressable/Animated.View.
  *
  * @example
  * ```tsx
@@ -21,6 +22,7 @@ import {
   useAnimatedStyle,
   withSpring,
 } from "react-native-reanimated";
+import { useHaptics } from "./useHaptics";
 
 interface UseAnimatedPressConfig {
   /**
@@ -34,13 +36,21 @@ interface UseAnimatedPressConfig {
    * @default false
    */
   disabled?: boolean;
+
+  /**
+   * Haptic feedback intensity on press. Set to false to disable haptics.
+   * @default 'light'
+   */
+  hapticFeedback?: "light" | "medium" | "heavy" | false;
 }
 
 export function useAnimatedPress({
   scaleTo = 0.95,
   disabled = false,
+  hapticFeedback = "light",
 }: UseAnimatedPressConfig = {}) {
   const scale = useSharedValue(1);
+  const haptics = useHaptics();
 
   const animatedStyle = useAnimatedStyle(() => ({
     transform: [{ scale: scale.value }],
@@ -50,6 +60,9 @@ export function useAnimatedPress({
     onPressIn: () => {
       if (!disabled) {
         scale.value = withSpring(scaleTo);
+        if (hapticFeedback) {
+          haptics[hapticFeedback]();
+        }
       }
     },
     onPressOut: () => {
