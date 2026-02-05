@@ -68,7 +68,7 @@ export {
   type BadgeSize,
 } from "./Badge";
 export { Divider, type DividerProps } from "./Divider";
-export { Image, type ImageProps } from "./Image";
+export { Image, AvatarImage, type ImageProps, type AvatarImageProps } from "./Image";
 export { Icon, type IconProps, type IconName, type IconSize, type IconColor } from "./Icon";
 
 // =============================================================================
@@ -124,6 +124,17 @@ export {
   type ListItemProps,
   type ListSectionProps,
 } from "./ListItem";
+export {
+  OptimizedList,
+  ListSeparator,
+  ListSeparatorInset,
+  ListSectionHeader,
+  createMemoizedItem,
+  useListData,
+  useInfiniteList,
+  type OptimizedListProps,
+  type ListSectionHeaderProps,
+} from "./List";
 export { Pressable, type PressableProps } from "./Pressable";
 
 // =============================================================================
