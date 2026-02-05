@@ -2,7 +2,12 @@
  * Tabs Layout
  *
  * Main tab navigation with platform-native styling.
- * Uses native tabs on iOS 26+ for Liquid Glass tab bar.
+ * Uses NativeTabs on iOS 26+ for Liquid Glass tab bar,
+ * falls back to regular Tabs elsewhere.
+ *
+ * NativeTabs is NOT a drop-in replacement for Tabs — it uses a completely
+ * different API (Trigger/Icon/Label children vs Tabs.Screen with options).
+ * We maintain two rendering paths to handle this correctly.
  */
 
 import { Tabs } from "expo-router";
@@ -10,14 +15,14 @@ import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/hooks/useTheme";
 import { supportsLiquidGlass } from "@/lib/platform";
 
-// Try to import native tabs (iOS 26+)
-// This is unstable API and may change
-let NativeTabs: typeof Tabs | null = null;
+// Conditionally import NativeTabs and its element components (SDK 54 API).
+// In SDK 54, Icon/Label are standalone exports, not compound sub-components.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let NativeTabsModule: Record<string, any> | null = null;
 if (supportsLiquidGlass) {
   try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const nativeTabsModule = require("expo-router/unstable-native-tabs");
-    NativeTabs = nativeTabsModule.NativeTabs;
+    NativeTabsModule = require("expo-router/unstable-native-tabs");
   } catch {
     // Native tabs not available, use regular Tabs
   }
@@ -25,76 +30,107 @@ if (supportsLiquidGlass) {
 
 type IconName = keyof typeof Ionicons.glyphMap;
 
-interface TabIconProps {
-  name: IconName;
-  color: string;
-  size: number;
+/**
+ * Tab definitions — single source of truth for both native and JS tab paths.
+ */
+const tabs = [
+  {
+    name: "index",
+    title: "Home",
+    ionicon: "home" as IconName,
+    sf: { default: "house", selected: "house.fill" },
+    drawable: "home",
+  },
+  {
+    name: "explore",
+    title: "Explore",
+    ionicon: "compass" as IconName,
+    sf: { default: "safari", selected: "safari.fill" },
+    drawable: "explore",
+  },
+  {
+    name: "notifications",
+    title: "Notifications",
+    ionicon: "notifications" as IconName,
+    sf: { default: "bell", selected: "bell.fill" },
+    drawable: "notifications",
+  },
+  {
+    name: "profile",
+    title: "Profile",
+    ionicon: "person" as IconName,
+    sf: { default: "person", selected: "person.fill" },
+    drawable: "person",
+  },
+] as const;
+
+/**
+ * NativeTabs layout for iOS 26+ with Liquid Glass.
+ * Uses the SDK 54 API: standalone Icon and Label components as Trigger children.
+ */
+function NativeTabsLayout() {
+  const NTabs = NativeTabsModule!.NativeTabs;
+  const Icon = NativeTabsModule!.Icon;
+  const Label = NativeTabsModule!.Label;
+
+  return (
+    <NTabs minimizeBehavior="onScrollDown">
+      {tabs.map((tab) => (
+        <NTabs.Trigger key={tab.name} name={tab.name}>
+          <Icon sf={tab.sf} drawable={tab.drawable} />
+          <Label>{tab.title}</Label>
+        </NTabs.Trigger>
+      ))}
+    </NTabs>
+  );
 }
 
-function TabIcon({ name, color, size }: TabIconProps) {
-  return <Ionicons name={name} size={size} color={color} />;
+/**
+ * Regular Tabs layout for non-iOS-26 platforms.
+ * Uses Ionicons and theme colors.
+ */
+function RegularTabsLayout() {
+  const { colors, isDark } = useTheme();
+
+  return (
+    <Tabs
+      screenOptions={{
+        headerShown: false,
+        tabBarActiveTintColor: colors.primary.DEFAULT,
+        tabBarInactiveTintColor: colors.foreground.muted,
+        tabBarStyle: {
+          backgroundColor: isDark
+            ? colors.surface.DEFAULT
+            : colors.background.DEFAULT,
+          borderTopColor: colors.border.DEFAULT,
+          borderTopWidth: 1,
+        },
+        tabBarLabelStyle: {
+          fontSize: 12,
+          fontWeight: "500" as const,
+        },
+      }}
+    >
+      {tabs.map((tab) => (
+        <Tabs.Screen
+          key={tab.name}
+          name={tab.name}
+          options={{
+            title: tab.title,
+            tabBarIcon: ({ color, size }) => (
+              <Ionicons name={tab.ionicon} size={size} color={color} />
+            ),
+          }}
+        />
+      ))}
+    </Tabs>
+  );
 }
 
 export default function TabsLayout() {
-  const { colors, isDark } = useTheme();
+  if (NativeTabsModule) {
+    return <NativeTabsLayout />;
+  }
 
-  // Common tab screen options
-  const screenOptions = {
-    headerShown: false,
-    tabBarActiveTintColor: colors.primary.DEFAULT,
-    tabBarInactiveTintColor: colors.foreground.muted,
-    tabBarStyle: {
-      backgroundColor: isDark ? colors.surface.DEFAULT : colors.background.DEFAULT,
-      borderTopColor: colors.border.DEFAULT,
-      borderTopWidth: 1,
-    },
-    tabBarLabelStyle: {
-      fontSize: 12,
-      fontWeight: "500" as const,
-    },
-  };
-
-  // Use native tabs on iOS 26+ for Liquid Glass, otherwise regular Tabs
-  const TabsComponent = NativeTabs || Tabs;
-
-  return (
-    <TabsComponent screenOptions={screenOptions}>
-      <Tabs.Screen
-        name="index"
-        options={{
-          title: "Home",
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon name="home" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: "Explore",
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon name="compass" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="notifications"
-        options={{
-          title: "Notifications",
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon name="notifications" color={color} size={size} />
-          ),
-        }}
-      />
-      <Tabs.Screen
-        name="profile"
-        options={{
-          title: "Profile",
-          tabBarIcon: ({ color, size }) => (
-            <TabIcon name="person" color={color} size={size} />
-          ),
-        }}
-      />
-    </TabsComponent>
-  );
+  return <RegularTabsLayout />;
 }

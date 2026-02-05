@@ -81,42 +81,33 @@ export default function RootLayout() {
 
 ## Native Tabs (iOS 26 Liquid Glass)
 
+> **SDK Version Note:** This project uses SDK 54 (expo-router@6.0.23). In SDK 54, `Icon`, `Label`, and `Badge` are **standalone exports** from the NativeTabs module, NOT compound sub-components like `NativeTabs.Trigger.Icon`. The `md` prop for Material icons is also SDK 55+ — use `drawable` for Android icons in SDK 54.
+
 ### Basic Setup
+
+NativeTabs is **NOT** a drop-in replacement for `Tabs` — it uses a completely different API. We maintain separate rendering paths.
 
 `app/(tabs)/_layout.tsx`:
 
 ```tsx
-import { NativeTabs } from 'expo-router/unstable-native-tabs';
-import { DynamicColorIOS } from 'react-native';
+import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
 
-export default function TabLayout() {
+function NativeTabsLayout() {
   return (
-    <NativeTabs
-      minimizeBehavior="onScrollDown"  // iOS 26 minimize on scroll
-      labelStyle={{
-        color: DynamicColorIOS({ dark: 'white', light: 'black' }),
-      }}
-      tintColor={DynamicColorIOS({ dark: 'white', light: 'black' })}
-    >
+    <NativeTabs minimizeBehavior="onScrollDown">
       <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Icon 
-          sf={{ default: 'house', selected: 'house.fill' }} 
-          md="home" 
-        />
-        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+        <Icon sf={{ default: 'house', selected: 'house.fill' }} drawable="home" />
+        <Label>Home</Label>
       </NativeTabs.Trigger>
-      
+
       <NativeTabs.Trigger name="profile">
-        <NativeTabs.Trigger.Icon 
-          sf={{ default: 'person', selected: 'person.fill' }} 
-          md="person" 
-        />
-        <NativeTabs.Trigger.Label>Profile</NativeTabs.Trigger.Label>
+        <Icon sf={{ default: 'person', selected: 'person.fill' }} drawable="person" />
+        <Label>Profile</Label>
       </NativeTabs.Trigger>
-      
+
       <NativeTabs.Trigger name="settings">
-        <NativeTabs.Trigger.Icon sf="gear" md="settings" />
-        <NativeTabs.Trigger.Label>Settings</NativeTabs.Trigger.Label>
+        <Icon sf="gear" drawable="settings" />
+        <Label>Settings</Label>
       </NativeTabs.Trigger>
     </NativeTabs>
   );
@@ -129,12 +120,14 @@ export default function TabLayout() {
 
 ```tsx
 <NativeTabs.Trigger name="search" role="search">
-  <NativeTabs.Trigger.Icon sf="magnifyingglass" md="search" />
-  <NativeTabs.Trigger.Label>Search</NativeTabs.Trigger.Label>
+  <Icon sf="magnifyingglass" drawable="search" />
+  <Label>Search</Label>
 </NativeTabs.Trigger>
 ```
 
-#### Bottom Accessory (Mini-Player)
+#### Bottom Accessory (Mini-Player) — SDK 55+
+
+> This API is NOT available in SDK 54. Documented here for future reference.
 
 ```tsx
 const [isPlaying, setIsPlaying] = useState(false);
@@ -152,10 +145,12 @@ const [isPlaying, setIsPlaying] = useState(false);
 #### Tab Badges
 
 ```tsx
+import { NativeTabs, Icon, Label, Badge } from 'expo-router/unstable-native-tabs';
+
 <NativeTabs.Trigger name="messages">
-  <NativeTabs.Trigger.Badge>9+</NativeTabs.Trigger.Badge>
-  <NativeTabs.Trigger.Icon sf="message.fill" md="chat" />
-  <NativeTabs.Trigger.Label>Messages</NativeTabs.Trigger.Label>
+  <Badge>9+</Badge>
+  <Icon sf="message.fill" drawable="chat" />
+  <Label>Messages</Label>
 </NativeTabs.Trigger>
 ```
 
@@ -370,25 +365,28 @@ Ensure ScrollView is first child with `collapsable={false}` on wrapper:
 
 ## TASKS
 
-- [ ] Add ThemeProvider wrapper to prevent white flash on tab switch - `app/_layout.tsx` needs to import and wrap with `ThemeProvider` from `@react-navigation/native` using `DarkTheme`/`DefaultTheme`
-- [ ] Update NativeTabs implementation to use proper `NativeTabs.Trigger` API instead of `Tabs.Screen` - `app/(tabs)/_layout.tsx` lines 61-98 use old API pattern
-- [ ] Add `minimizeBehavior="onScrollDown"` to NativeTabs for iOS 26 scroll-to-minimize feature - `app/(tabs)/_layout.tsx`
-- [ ] Use `DynamicColorIOS` for tab bar colors instead of theme colors for proper Liquid Glass adaptation - `app/(tabs)/_layout.tsx` lines 44-45, 97-98
-- [ ] Use SF Symbols (`sf` prop) and Material icons (`md` prop) for tab icons instead of Ionicons - `app/(tabs)/_layout.tsx` lines 66-67, 75-76, 84-85, 93-94
-- [ ] Create web-specific tab layout file for proper web support - create `app/(tabs)/_layout.web.tsx` using `Tabs, TabList, TabTrigger, TabSlot` from `expo-router/ui`
-- [ ] Add modal route with proper Stack.Screen configuration - create `app/modal.tsx` and configure `presentation: 'modal'` in `app/_layout.tsx`
-- [ ] Consider adding dynamic routes for user profiles or detail screens - no `[id].tsx` or `user/[userId]/` patterns currently exist
+- [x] **Add ThemeProvider wrapper to prevent white flash on tab switch** - Already implemented in `app/_layout.tsx`: builds React Navigation theme from design tokens with `useMemo`.
 
-## TO DISCUSS
+- [x] **Update NativeTabs implementation to use proper Trigger API** - Fixed: NativeTabs path now uses `NativeTabs.Trigger` with standalone `Icon`/`Label` components (SDK 54 API). Regular `Tabs` path uses `Tabs.Screen` with Ionicons. Two separate rendering paths, not a drop-in swap.
 
-- **Current approach:** Conditional NativeTabs import with try/catch and `supportsLiquidGlass` check in `app/(tabs)/_layout.tsx` lines 13-24
-- **Document suggests:** Direct import of `NativeTabs` from `expo-router/unstable-native-tabs`
-- **Why current is better:** The current approach gracefully handles cases where NativeTabs may not be available (older SDKs, different platform versions) and falls back to standard Tabs. This is more defensive and production-ready than assuming the import will always succeed.
+- [x] **Add `minimizeBehavior="onScrollDown"` to NativeTabs** - Added to the NativeTabs rendering path for iOS 26 scroll-to-minimize.
 
-- **Current approach:** SplashScreen handling with `preventAutoHideAsync()` and `hideAsync()` in `app/_layout.tsx` lines 7, 12, 17-23
-- **Document suggests:** No mention of splash screen handling
-- **Why current is better:** The document omits important splash screen management that's essential for production apps. The current implementation properly prevents auto-hide and programmatically hides after initialization.
+- [x] **Use SF Symbols for NativeTabs icons** - NativeTabs path now uses `sf` prop (e.g., `{ default: 'house', selected: 'house.fill' }`) with `drawable` for Android. Regular Tabs path continues to use Ionicons.
 
-- **Current approach:** ModalLayout component in `components/layouts/ModalLayout.tsx` with multiple presentation types (sheet, dialog, fullscreen)
-- **Document suggests:** Simple `modal.tsx` route file with Stack.Screen presentation
-- **Why current is better:** The ModalLayout component is more flexible, offering sheet, dialog, and fullscreen variants with platform-appropriate styling and glass effects on iOS. However, a route-based modal entry point would still be useful for deep-linking purposes.
+- [ ] **Use `DynamicColorIOS` for tab bar colors** - Deprioritized: there is a known iOS 26 bug (expo/expo#39930) where DynamicColorIOS produces inverted icon tint behavior. Expo recommends `PlatformColor()` with system semantic colors instead. The Liquid Glass tab bar adapts colors automatically, so manual color overrides may be unnecessary.
+
+- [ ] **Create web-specific tab layout file** - Consider creating `app/(tabs)/_layout.web.tsx` using `Tabs, TabList, TabTrigger, TabSlot` from `expo-router/ui` if web support is needed.
+
+- [ ] **Add modal route with proper Stack.Screen configuration** - The existing `ModalLayout` component handles modals flexibly (sheet, dialog, fullscreen). A route-based modal entry point could be added for deep-linking.
+
+- [ ] **Consider adding dynamic routes** - No `[id].tsx` or `user/[userId]/` patterns currently exist. These should be added as actual app features are built.
+
+## RESOLVED DISCUSSIONS
+
+- **NativeTabs import pattern** — RESOLVED: Keep the conditional try/catch import with `supportsLiquidGlass` guard. This is defensive and handles older SDK versions gracefully. Direct import would crash on platforms without NativeTabs support.
+
+- **SplashScreen handling** — RESOLVED: The current `preventAutoHideAsync()` + `hideAsync()` pattern is correct and essential for production apps. The doc omitted this — it's already properly implemented in `app/_layout.tsx`.
+
+- **Modal approach** — RESOLVED: Keep the flexible `ModalLayout` component for in-app modals. Route-based modals (`app/modal.tsx`) can be added later if deep-linking to modals is needed.
+
+- **SDK 54 vs SDK 55 API** — RESOLVED: Several doc examples used SDK 55 compound API (`NativeTabs.Trigger.Icon`, `.Label`, `.Badge`, `md` prop, `BottomAccessory`). These have been corrected to SDK 54 standalone imports (`Icon`, `Label`, `Badge`, `drawable` prop). `BottomAccessory` is documented as SDK 55+ future reference.
