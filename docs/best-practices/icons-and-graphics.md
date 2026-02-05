@@ -1,414 +1,92 @@
-# Icons and Vector Graphics
+# Icons
 
-> Production patterns for icons in React Native with @expo/vector-icons.
+## Use the Icon Component
 
-## Primary Icon Library
+```tsx
+import { Icon, IconButton } from "@/components/ui";
 
-Use `@expo/vector-icons` which bundles popular icon sets:
-
-```bash
-# Already included with Expo - no installation needed
+<Icon name="home" size="md" color="primary" />
+<IconButton name="settings" onPress={handleSettings} />
 ```
 
-## Recommended Icon Sets
+## Icon Sizes
 
-### Ionicons (Primary)
+| Size | Pixels | Usage |
+|------|--------|-------|
+| `xs` | 12 | Badges, indicators |
+| `sm` | 16 | Inline with text |
+| `md` | 20 | Default |
+| `lg` | 24 | Primary actions |
+| `xl` | 32 | Feature icons |
+| `2xl` | 40 | Hero icons |
 
-Use Ionicons as the primary icon set - it has consistent iOS and Android variants:
+## Icon Colors
 
-```typescript
-import { Ionicons } from '@expo/vector-icons';
+```tsx
+// Semantic colors (auto light/dark)
+<Icon name="checkmark-circle" color="success" />
+<Icon name="alert-circle" color="error" />
+<Icon name="information-circle" color="info" />
 
-<Ionicons name="home" size={24} color={colors.foreground.DEFAULT} />
-```
-
-### Other Available Sets
-
-```typescript
-import { 
-  MaterialIcons,         // Material Design icons
-  MaterialCommunityIcons, // Extended Material icons
-  FontAwesome,           // FontAwesome 4
-  FontAwesome5,          // FontAwesome 5
-  Feather,               // Feather icons
-  AntDesign,             // Ant Design icons
-} from '@expo/vector-icons';
-```
-
-## Type-Safe Icon Names
-
-### Creating Icon Props
-
-```typescript
-import { Ionicons } from '@expo/vector-icons';
-
-type IconName = keyof typeof Ionicons.glyphMap;
-
-interface IconProps {
-  name: IconName;
-  size?: number;
-  color?: string;
-}
-
-function Icon({ name, size = 24, color }: IconProps) {
-  return <Ionicons name={name} size={size} color={color} />;
-}
-```
-
-### Using in Components
-
-```typescript
-interface ButtonProps {
-  leftIcon?: keyof typeof Ionicons.glyphMap;
-  rightIcon?: keyof typeof Ionicons.glyphMap;
-}
-
-export function Button({ leftIcon, rightIcon, children }: ButtonProps) {
-  const { colors } = useTheme();
-  
-  return (
-    <Pressable>
-      {leftIcon && (
-        <Ionicons name={leftIcon} size={20} color={colors.foreground.DEFAULT} />
-      )}
-      <Text>{children}</Text>
-      {rightIcon && (
-        <Ionicons name={rightIcon} size={20} color={colors.foreground.DEFAULT} />
-      )}
-    </Pressable>
-  );
-}
+// Theme colors
+<Icon name="heart" color="primary" />
+<Icon name="person" color="muted" />
 ```
 
 ## Tab Bar Icons
 
-### With Regular Tabs
-
-```typescript
-import { Tabs } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-
-<Tabs.Screen
-  name="home"
-  options={{
-    tabBarIcon: ({ color, size }) => (
-      <Ionicons name="home" size={size} color={color} />
-    ),
-  }}
-/>
-```
-
-### With Native Tabs (iOS 26+)
-
-> SDK 54 uses standalone `Icon`/`Label` imports, not compound sub-components. The `drawable` prop is used for Android (not `md`, which is SDK 55+).
+NativeTabs use platform-specific icons:
 
 ```tsx
-import { NativeTabs, Icon, Label } from 'expo-router/unstable-native-tabs';
-
-<NativeTabs.Trigger name="home">
+<Trigger name="home" asChild>
   <Icon
-    sf={{ default: 'house', selected: 'house.fill' }}  // SF Symbols
-    drawable="home"  // Android drawable
+    sf={{ default: "house", selected: "house.fill" }}  // iOS SF Symbols
+    drawable="home"                                      // Android drawable
   />
   <Label>Home</Label>
-</NativeTabs.Trigger>
+</Trigger>
 ```
 
-### SF Symbols (iOS) vs Material Symbols (Android)
+## Icon Names
 
-| Action | SF Symbol | Material Symbol |
-|--------|-----------|-----------------|
-| Home | `house` / `house.fill` | `home` |
-| Search | `magnifyingglass` | `search` |
-| Settings | `gear` | `settings` |
-| Profile | `person` / `person.fill` | `person` |
-| Notifications | `bell` / `bell.fill` | `notifications` |
-| Add | `plus` | `add` |
-| Close | `xmark` | `close` |
-| Back | `chevron.left` | `arrow_back` |
-| Menu | `line.3.horizontal` | `menu` |
+Ionicons library — browse at [icons.expo.fyi](https://icons.expo.fyi)
 
-## Icon Sizing Standards
-
-### Size Scale
-
-| Name | Size | Use Case |
-|------|------|----------|
-| xs | 12 | Inline with small text |
-| sm | 16 | Inline with body text |
-| md | 20 | Button icons |
-| lg | 24 | Tab bar, navigation |
-| xl | 32 | Feature icons |
-| 2xl | 48 | Empty states |
-| 3xl | 64 | Hero illustrations |
-
-### Implementation
-
-```typescript
-const iconSizes = {
-  xs: 12,
-  sm: 16,
-  md: 20,
-  lg: 24,
-  xl: 32,
-  '2xl': 48,
-  '3xl': 64,
-} as const;
-
-type IconSize = keyof typeof iconSizes;
-
-interface IconProps {
-  name: keyof typeof Ionicons.glyphMap;
-  size?: IconSize;
-  color?: string;
-}
-
-function Icon({ name, size = 'lg', color }: IconProps) {
-  return <Ionicons name={name} size={iconSizes[size]} color={color} />;
-}
+Common icons:
+```
+home, home-outline
+search, search-outline
+person, person-outline
+settings, settings-outline
+chevron-forward, chevron-back
+checkmark, checkmark-circle
+close, close-circle
+add, add-circle
+trash, trash-outline
+heart, heart-outline
+star, star-outline
 ```
 
-## Icon Color Theming
+## IconButton
 
-### Using Theme Colors
+```tsx
+// Variants
+<IconButton name="trash" variant="ghost" />
+<IconButton name="edit" variant="secondary" />
+<IconButton name="send" variant="primary" />
 
-```typescript
-import { useTheme } from '@/hooks/useTheme';
-
-function ThemedIcon({ name }: { name: keyof typeof Ionicons.glyphMap }) {
-  const { colors } = useTheme();
-  
-  return (
-    <Ionicons 
-      name={name} 
-      size={24} 
-      color={colors.foreground.DEFAULT}  // Uses theme color
-    />
-  );
-}
+// Sizes
+<IconButton name="close" size="sm" />
+<IconButton name="menu" size="lg" />
 ```
 
-### Semantic Icon Colors
+## Direct Ionicons (Escape Hatch)
 
-```typescript
-type IconSemantic = 'default' | 'muted' | 'primary' | 'success' | 'warning' | 'error';
+When you need direct access:
 
-function SemanticIcon({ 
-  name, 
-  semantic = 'default' 
-}: { 
-  name: keyof typeof Ionicons.glyphMap;
-  semantic?: IconSemantic;
-}) {
-  const { colors } = useTheme();
-  
-  const colorMap: Record<IconSemantic, string> = {
-    default: colors.foreground.DEFAULT,
-    muted: colors.foreground.muted,
-    primary: colors.primary.DEFAULT,
-    success: colors.success.DEFAULT,
-    warning: colors.warning.DEFAULT,
-    error: colors.error.DEFAULT,
-  };
-  
-  return <Ionicons name={name} size={24} color={colorMap[semantic]} />;
-}
+```tsx
+import { Ionicons } from "@expo/vector-icons";
+import { useTheme } from "@/hooks/useTheme";
+
+const { colors } = useTheme();
+<Ionicons name="star" size={24} color={colors.warning.DEFAULT} />
 ```
-
-## Icon Button Component
-
-```typescript
-import { Pressable, type PressableProps } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { useTheme } from '@/hooks/useTheme';
-
-interface IconButtonProps extends Omit<PressableProps, 'children'> {
-  icon: keyof typeof Ionicons.glyphMap;
-  size?: number;
-  color?: string;
-  variant?: 'default' | 'ghost' | 'outline';
-}
-
-export function IconButton({
-  icon,
-  size = 24,
-  color,
-  variant = 'default',
-  disabled,
-  ...props
-}: IconButtonProps) {
-  const { colors } = useTheme();
-  const resolvedColor = color || colors.foreground.DEFAULT;
-  
-  const variantClasses = {
-    default: 'bg-surface-elevated',
-    ghost: 'bg-transparent',
-    outline: 'bg-transparent border border-border',
-  };
-  
-  return (
-    <Pressable
-      className={`
-        rounded-full p-2 items-center justify-center
-        ${variantClasses[variant]}
-        ${disabled ? 'opacity-50' : ''}
-      `}
-      disabled={disabled}
-      hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-      {...props}
-    >
-      <Ionicons name={icon} size={size} color={resolvedColor} />
-    </Pressable>
-  );
-}
-```
-
-## Custom SVG Icons
-
-### When to Use Custom SVGs
-
-- Brand icons not in icon libraries
-- Complex illustrations
-- Animated icons
-
-### Using react-native-svg
-
-```bash
-npx expo install react-native-svg
-```
-
-```typescript
-import Svg, { Path } from 'react-native-svg';
-
-interface CustomIconProps {
-  size?: number;
-  color?: string;
-}
-
-export function CustomIcon({ size = 24, color = '#000' }: CustomIconProps) {
-  return (
-    <Svg width={size} height={size} viewBox="0 0 24 24" fill="none">
-      <Path
-        d="M12 2L2 7l10 5 10-5-10-5z"
-        fill={color}
-      />
-    </Svg>
-  );
-}
-```
-
-## Animated Icons
-
-### With Reanimated
-
-```typescript
-import Animated, { 
-  useSharedValue, 
-  useAnimatedStyle, 
-  withSpring 
-} from 'react-native-reanimated';
-import { Ionicons } from '@expo/vector-icons';
-
-const AnimatedIonicons = Animated.createAnimatedComponent(Ionicons);
-
-function AnimatedHeartIcon({ filled }: { filled: boolean }) {
-  const scale = useSharedValue(1);
-  
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-  
-  const handlePress = () => {
-    scale.value = withSpring(1.2, {}, () => {
-      scale.value = withSpring(1);
-    });
-  };
-  
-  return (
-    <Pressable onPress={handlePress}>
-      <AnimatedIonicons
-        name={filled ? 'heart' : 'heart-outline'}
-        size={24}
-        color={filled ? colors.error.DEFAULT : colors.foreground.muted}
-        style={animatedStyle}
-      />
-    </Pressable>
-  );
-}
-```
-
-## Accessibility
-
-### Icon-Only Buttons
-
-Always provide accessibility label for icon-only buttons:
-
-```typescript
-<Pressable
-  onPress={handleClose}
-  accessible={true}
-  accessibilityLabel="Close"
-  accessibilityRole="button"
->
-  <Ionicons name="close" size={24} />
-</Pressable>
-```
-
-### Decorative Icons
-
-Mark decorative icons as not accessible:
-
-```typescript
-<View accessibilityElementsHidden={true}>
-  <Ionicons name="checkmark" size={16} color="#22C55E" />
-</View>
-```
-
-## Performance
-
-### Preloading Icons
-
-Icons are loaded on first use. For critical icons, preload:
-
-```typescript
-import { useFonts } from 'expo-font';
-import { Ionicons } from '@expo/vector-icons';
-
-function App() {
-  const [fontsLoaded] = useFonts({
-    ...Ionicons.font,
-  });
-  
-  if (!fontsLoaded) {
-    return <SplashScreen />;
-  }
-  
-  return <MainApp />;
-}
-```
-
-### Avoid
-
-1. **Don't use images for icons** - Vector icons scale better
-2. **Don't mix icon libraries** - Stick to Ionicons for consistency
-3. **Don't use arbitrary sizes** - Follow the size scale
-
-## Resources
-
-- [@expo/vector-icons](https://docs.expo.dev/guides/icons/)
-- [Ionicons](https://ionic.io/ionicons)
-- [SF Symbols](https://developer.apple.com/sf-symbols/)
-- [Material Symbols](https://fonts.google.com/icons)
-- [react-native-svg](https://github.com/software-mansion/react-native-svg)
-
----
-
-## TASKS
-
-- [x] **Corrected NativeTabs icon example** — Updated to SDK 54 API: standalone `Icon`/`Label` imports with `drawable` prop instead of `md`. Consistent with `expo-router-navigation.md` corrections.
-
-- [x] **Corrected hardcoded colors in doc examples** — Fixed example code to use theme tokens (`colors.foreground.DEFAULT`, `colors.error.DEFAULT`) instead of hex literals.
-
-- [ ] **Consider creating standardized `iconSizes` constant** — The doc describes an icon size scale (xs through 3xl) but no centralized constant exists. Individual components use sizes directly. Could add to `constants/` if consistent sizing across components is needed.
-
-- [ ] **Consider creating a reusable `Icon` wrapper component** — The doc describes a `SemanticIcon` pattern with themed color support. Currently, all components use `Ionicons` directly with `useTheme()` colors, which works well.
