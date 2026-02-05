@@ -52,10 +52,10 @@ export function GlassContainer({
         {
           borderRadius: radius,
           backgroundColor: getBackgroundColor(),
-          // @ts-expect-error - Web-specific CSS properties
+          // Web-specific CSS properties for glass effect
           backdropFilter: `blur(${blurRadius}px)`,
           WebkitBackdropFilter: `blur(${blurRadius}px)`,
-        },
+        } as any,
         style,
       ]}
       {...props}
