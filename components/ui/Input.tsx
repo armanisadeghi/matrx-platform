@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "./Text";
+import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/useTheme";
 
 /**
@@ -118,8 +119,8 @@ export function Input({
   onRightIconPress,
   disabled = false,
   type = "text",
-  className = "",
-  inputClassName = "",
+  className,
+  inputClassName,
   ...props
 }: InputProps) {
   const { colors } = useTheme();
@@ -159,7 +160,7 @@ export function Input({
     : "";
 
   return (
-    <View className={`w-full ${className}`}>
+    <View className={cn("w-full", className)}>
       {/* Label */}
       {label && (
         <Text variant="label" className="mb-1.5">
@@ -169,12 +170,12 @@ export function Input({
 
       {/* Input container */}
       <View
-        className={`
-          flex-row items-center rounded-xl px-3 py-2.5
-          ${variantStyles[variant]}
-          ${borderClass}
-          ${disabled ? "opacity-50" : ""}
-        `}
+        className={cn(
+          "flex-row items-center rounded-xl px-3 py-2.5",
+          variantStyles[variant],
+          borderClass,
+          disabled && "opacity-50"
+        )}
       >
         {/* Left icon */}
         {leftIcon && (
@@ -188,7 +189,7 @@ export function Input({
 
         {/* Text input */}
         <TextInput
-          className={`flex-1 text-foreground text-base ${inputClassName}`}
+          className={cn("flex-1 text-foreground text-base", inputClassName)}
           placeholderTextColor={colors.foreground.muted}
           editable={!disabled}
           secureTextEntry={secureTextEntry}

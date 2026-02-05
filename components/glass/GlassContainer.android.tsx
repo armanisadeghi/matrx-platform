@@ -8,6 +8,7 @@
 import { View, StyleSheet } from "react-native";
 import { useTheme } from "@/hooks/useTheme";
 import { supportsMaterial3Expressive } from "@/lib/platform";
+import { cn } from "@/lib/utils";
 import type { GlassContainerProps } from "./types";
 import { borderRadiusMap, intensityToBlur } from "./types";
 
@@ -36,7 +37,7 @@ export function GlassContainer({
   intensity = "medium",
   tint = "surface",
   borderRadius = "lg",
-  className = "",
+  className,
   style,
   ...props
 }: GlassContainerProps) {
@@ -58,7 +59,7 @@ export function GlassContainer({
   if (!supportsMaterial3Expressive || !LiquidGlassView) {
     return (
       <View
-        className={`overflow-hidden bg-surface/85 ${className}`}
+        className={cn("overflow-hidden bg-surface/85", className)}
         style={[{ borderRadius: radius }, style]}
         {...props}
       >

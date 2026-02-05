@@ -25,7 +25,7 @@ export function GlassContainer({
   intensity = "medium",
   tint = "surface",
   borderRadius = "lg",
-  className = "",
+  className,
   style,
   ...props
 }: GlassContainerProps) {

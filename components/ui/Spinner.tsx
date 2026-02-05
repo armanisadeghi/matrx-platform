@@ -53,7 +53,7 @@ const sizeMap: Record<SpinnerSize, "small" | "large"> = {
 export function Spinner({
   size = "md",
   color = "primary",
-  className = "",
+  className,
 }: SpinnerProps) {
   const { colors } = useTheme();
 

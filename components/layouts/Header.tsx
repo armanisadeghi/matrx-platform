@@ -11,6 +11,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/hooks/useTheme";
 import { isIOS } from "@/lib/platform";
+import { cn } from "@/lib/utils";
 import { GlassContainer } from "@/components/glass";
 import type { HeaderConfig } from "./types";
 import { headerHeights } from "./types";
@@ -32,7 +33,7 @@ export function Header({
   useGlassEffect = true,
   transparent = false,
   size = "default",
-  className = "",
+  className,
 }: HeaderProps) {
   const router = useRouter();
   const { colors } = useTheme();
@@ -52,7 +53,7 @@ export function Header({
   // Header content
   const headerContent = (
     <View
-      className={`flex-row items-center justify-between px-4 ${className}`}
+      className={cn("flex-row items-center justify-between px-4", className)}
       style={[styles.header, { height, paddingTop: transparent ? insets.top : 0 }]}
     >
       {/* Left section */}

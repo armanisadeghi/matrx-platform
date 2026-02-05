@@ -6,6 +6,7 @@
 
 import { View } from "react-native";
 import { Text } from "./Text";
+import { cn } from "@/lib/utils";
 
 /**
  * Badge variant types
@@ -98,7 +99,7 @@ export function Badge({
   size = "md",
   dot = false,
   maxCount = 99,
-  className = "",
+  className,
 }: BadgeProps) {
   const variantStyle = variantStyles[variant];
   const sizeStyle = sizeStyles[size];
@@ -113,7 +114,7 @@ export function Badge({
   if (dot) {
     return (
       <View
-        className={`rounded-full ${variantStyle.bg} ${className}`}
+        className={cn("rounded-full", variantStyle.bg, className)}
         style={{ width: sizeStyle.dot, height: sizeStyle.dot }}
       />
     );
@@ -121,10 +122,10 @@ export function Badge({
 
   return (
     <View
-      className={`rounded-full ${sizeStyle.padding} ${variantStyle.bg} ${className}`}
+      className={cn("rounded-full", sizeStyle.padding, variantStyle.bg, className)}
     >
       <Text
-        className={`font-medium ${sizeStyle.text} ${variantStyle.text}`}
+        className={cn("font-medium", sizeStyle.text, variantStyle.text)}
       >
         {formattedContent}
       </Text>
@@ -175,10 +176,10 @@ export function BadgeGroup({
   badge,
   position = "top-right",
   badgeProps,
-  className = "",
+  className,
 }: BadgeGroupProps) {
   return (
-    <View className={`relative ${className}`}>
+    <View className={cn("relative", className)}>
       {children}
       {badge !== undefined && (
         <View className={`absolute ${positionStyles[position]}`}>

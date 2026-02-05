@@ -12,6 +12,7 @@ import { View, StyleSheet } from "react-native";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useAppColorScheme } from "@/hooks/useAppColorScheme";
+import { cn } from "@/lib/utils";
 import type { ScreenLayoutProps } from "./types";
 
 /**
@@ -52,7 +53,7 @@ export function ScreenLayout({
   safeAreaEdges = ["top", "bottom"],
   background = "background",
   edgeToEdge: _edgeToEdge = true,
-  className = "",
+  className,
   style,
   testID,
   ...props
@@ -72,7 +73,7 @@ export function ScreenLayout({
 
   return (
     <View
-      className={`flex-1 ${backgroundClass} ${className}`}
+      className={cn("flex-1", backgroundClass, className)}
       style={[styles.container, safeAreaStyle, style]}
       testID={testID}
       {...props}

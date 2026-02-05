@@ -6,6 +6,7 @@
 
 import { View, Pressable, type ViewProps } from "react-native";
 import { GlassContainer } from "@/components/glass";
+import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/useTheme";
 
 /**
@@ -88,7 +89,7 @@ export function Card({
   pressable = false,
   onPress,
   padding = "md",
-  className = "",
+  className,
   children,
   style,
   ...props
@@ -96,7 +97,6 @@ export function Card({
   const { shadows } = useTheme();
 
   const paddingClass = paddingStyles[padding];
-  const baseClass = `rounded-2xl overflow-hidden ${paddingClass}`;
 
   // Glass variant uses GlassContainer
   if (variant === "glass") {
@@ -105,7 +105,7 @@ export function Card({
         intensity="light"
         tint="surface"
         borderRadius="xl"
-        className={`${paddingClass} ${className}`}
+        className={cn(paddingClass, className)}
         style={style}
         {...props}
       >
@@ -128,12 +128,16 @@ export function Card({
   }
 
   // Regular variants
-  const variantClass = variantStyles[variant];
   const shadowStyle = variant === "elevated" ? shadows.md : undefined;
 
   const content = (
     <View
-      className={`${baseClass} ${variantClass} ${className}`}
+      className={cn(
+        "rounded-2xl overflow-hidden",
+        paddingClass,
+        variantStyles[variant],
+        className
+      )}
       style={[shadowStyle, style]}
       {...props}
     >
@@ -160,12 +164,12 @@ export function Card({
  */
 export function CardHeader({
   children,
-  className = "",
+  className,
 }: {
   children: React.ReactNode;
   className?: string;
 }) {
-  return <View className={`mb-3 ${className}`}>{children}</View>;
+  return <View className={cn("mb-3", className)}>{children}</View>;
 }
 
 /**
@@ -173,12 +177,12 @@ export function CardHeader({
  */
 export function CardContent({
   children,
-  className = "",
+  className,
 }: {
   children: React.ReactNode;
   className?: string;
 }) {
-  return <View className={className}>{children}</View>;
+  return <View className={cn(className)}>{children}</View>;
 }
 
 /**
@@ -186,13 +190,13 @@ export function CardContent({
  */
 export function CardFooter({
   children,
-  className = "",
+  className,
 }: {
   children: React.ReactNode;
   className?: string;
 }) {
   return (
-    <View className={`mt-4 flex-row items-center justify-end gap-2 ${className}`}>
+    <View className={cn("mt-4 flex-row items-center justify-end gap-2", className)}>
       {children}
     </View>
   );

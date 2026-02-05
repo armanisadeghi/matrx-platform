@@ -8,6 +8,7 @@ import { View, Image, type ImageSourcePropType } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "./Text";
 import { useTheme } from "@/hooks/useTheme";
+import { cn } from "@/lib/utils";
 
 /**
  * Avatar size types
@@ -107,7 +108,7 @@ export function Avatar({
   showStatus = false,
   status = "offline",
   backgroundColor = "primary",
-  className = "",
+  className,
 }: AvatarProps) {
   const { colors } = useTheme();
   const config = sizeConfig[size];
@@ -127,12 +128,13 @@ export function Avatar({
   const initials = name ? getInitials(name) : "";
 
   return (
-    <View className={`relative ${className}`}>
+    <View className={cn("relative", className)}>
       {/* Avatar container */}
       <View
-        className={`items-center justify-center rounded-full overflow-hidden ${
+        className={cn(
+          "items-center justify-center rounded-full overflow-hidden",
           !hasImage ? bgColorClass : "bg-surface-elevated"
-        }`}
+        )}
         style={{ width: config.size, height: config.size }}
       >
         {hasImage ? (
@@ -204,7 +206,7 @@ export function AvatarGroup({
   avatars,
   max = 3,
   size = "md",
-  className = "",
+  className,
 }: AvatarGroupProps) {
   const config = sizeConfig[size];
   const visibleAvatars = avatars.slice(0, max);
@@ -212,7 +214,7 @@ export function AvatarGroup({
   const overlap = config.size * 0.3;
 
   return (
-    <View className={`flex-row ${className}`}>
+    <View className={cn("flex-row", className)}>
       {visibleAvatars.map((avatar, index) => (
         <View
           key={index}

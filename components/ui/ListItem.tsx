@@ -8,6 +8,7 @@ import { Pressable, View } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "./Text";
 import { useTheme } from "@/hooks/useTheme";
+import { cn } from "@/lib/utils";
 
 export interface ListItemProps {
   /**
@@ -110,7 +111,7 @@ export function ListItem({
   onPress,
   disabled = false,
   showSeparator = true,
-  className = "",
+  className,
   testID,
 }: ListItemProps) {
   const { colors } = useTheme();
@@ -120,11 +121,11 @@ export function ListItem({
 
   const content = (
     <View
-      className={`
-        flex-row items-center py-3 px-4
-        ${disabled ? "opacity-50" : ""}
-        ${className}
-      `}
+      className={cn(
+        "flex-row items-center py-3 px-4",
+        disabled && "opacity-50",
+        className
+      )}
     >
       {/* Left content */}
       {(leftIcon || leftContent) && (
@@ -223,7 +224,7 @@ export function ListSection({
   title,
   footer,
   children,
-  className = "",
+  className,
 }: ListSectionProps) {
   return (
     <View className={className}>

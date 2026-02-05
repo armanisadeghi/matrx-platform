@@ -6,6 +6,7 @@
  */
 
 import { Text as RNText, type TextProps as RNTextProps } from "react-native";
+import { cn } from "@/lib/utils";
 
 /**
  * Text variant types
@@ -108,16 +109,13 @@ const colorClasses: Record<TextColor, string> = {
 export function Text({
   variant = "body",
   color = "default",
-  className = "",
+  className,
   children,
   ...props
 }: TextProps) {
-  const variantClass = variantClasses[variant];
-  const colorClass = colorClasses[color];
-
   return (
     <RNText
-      className={`${variantClass} ${colorClass} ${className}`}
+      className={cn(variantClasses[variant], colorClasses[color], className)}
       {...props}
     >
       {children}

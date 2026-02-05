@@ -8,6 +8,7 @@ import { Pressable, View, Switch as RNSwitch } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "./Text";
 import { useTheme } from "@/hooks/useTheme";
+import { cn } from "@/lib/utils";
 
 /**
  * Base toggle props
@@ -56,7 +57,7 @@ export function Switch({
   label,
   description,
   disabled = false,
-  className = "",
+  className,
 }: SwitchProps) {
   const { colors } = useTheme();
 
@@ -64,9 +65,11 @@ export function Switch({
     <Pressable
       onPress={() => !disabled && onValueChange(!value)}
       disabled={disabled}
-      className={`flex-row items-center justify-between py-2 ${
-        disabled ? "opacity-50" : ""
-      } ${className}`}
+      className={cn(
+        "flex-row items-center justify-between py-2",
+        disabled && "opacity-50",
+        className
+      )}
     >
       {(label || description) && (
         <View className="flex-1 mr-3">
@@ -117,7 +120,7 @@ export function Checkbox({
   description,
   disabled = false,
   size = "md",
-  className = "",
+  className,
 }: CheckboxProps) {
   const { colors } = useTheme();
   const sizeConfig = checkboxSizes[size];
@@ -126,14 +129,17 @@ export function Checkbox({
     <Pressable
       onPress={() => !disabled && onValueChange(!value)}
       disabled={disabled}
-      className={`flex-row items-center py-2 ${
-        disabled ? "opacity-50" : ""
-      } ${className}`}
+      className={cn(
+        "flex-row items-center py-2",
+        disabled && "opacity-50",
+        className
+      )}
     >
       <View
-        className={`items-center justify-center rounded-md ${
+        className={cn(
+          "items-center justify-center rounded-md",
           value ? "bg-primary" : "bg-transparent border-2 border-border"
-        }`}
+        )}
         style={{ width: sizeConfig.box, height: sizeConfig.box }}
       >
         {value && (
@@ -178,7 +184,7 @@ export function Radio({
   description,
   disabled = false,
   size = "md",
-  className = "",
+  className,
 }: RadioProps) {
   useTheme(); // For theme context
   const sizeConfig = radioSizes[size];
@@ -187,14 +193,17 @@ export function Radio({
     <Pressable
       onPress={() => !disabled && onValueChange(!value)}
       disabled={disabled}
-      className={`flex-row items-center py-2 ${
-        disabled ? "opacity-50" : ""
-      } ${className}`}
+      className={cn(
+        "flex-row items-center py-2",
+        disabled && "opacity-50",
+        className
+      )}
     >
       <View
-        className={`items-center justify-center rounded-full border-2 ${
+        className={cn(
+          "items-center justify-center rounded-full border-2",
           value ? "border-primary" : "border-border"
-        }`}
+        )}
         style={{ width: sizeConfig.outer, height: sizeConfig.outer }}
       >
         {value && (
@@ -258,7 +267,7 @@ export function RadioGroup<T extends string>({
   onValueChange,
   options,
   disabled = false,
-  className = "",
+  className,
 }: RadioGroupProps<T>) {
   return (
     <View className={className}>

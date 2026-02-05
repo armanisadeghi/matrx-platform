@@ -577,3 +577,95 @@ During validation testing, the script caught a hardcoded `shadowColor: "#000"` i
 2. **Pre-commit (optional):** Add `npm run lint` to a lint-staged or husky pre-commit hook to block commits with violations.
 3. **CI pipeline:** Add `npm run check` as a CI step. It runs validation + lint + typecheck in sequence and fails if any step has errors.
 4. **Pre-build:** Run `npm run validate` before `expo prebuild` to catch issues before native builds.
+
+---
+
+## Implementation Notes: cn() Utility, Strict TypeScript, and Component Refactoring
+
+> Completed as part of the second pass through best practices. All recommendations were verified via web search before implementation.
+
+### What Was Changed
+
+#### 1. `cn()` Utility Function — `lib/utils.ts`
+
+Created the industry-standard `cn()` utility combining `clsx` (conditional class composition) with `tailwind-merge` (conflict resolution). This is the same pattern used by shadcn/ui, Tamagui, and most modern React/RN design systems.
+
+```typescript
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}
+```
+
+**Why this matters:**
+- Template literal className concatenation (`\`base ${conditional} ${className}\``) cannot resolve Tailwind conflicts. If a component has `px-4` as a default and the consumer passes `px-6`, both stay in the string and the result is unpredictable.
+- `cn()` ensures the last-specified utility wins: `cn("px-4", "px-6")` → `"px-6"`.
+- `cn()` handles `undefined`, `false`, `null`, and empty strings cleanly, eliminating the need for `className = ""` default parameter values.
+
+**Dependencies added:** `clsx@^2.1.1`, `tailwind-merge@^3.4.0`
+
+#### 2. Removed `react-native-paper` Dependency
+
+A thorough search confirmed zero imports of `react-native-paper` anywhere in the codebase. It was installed but never used — dead weight adding to bundle size and install time. Removed from `package.json`.
+
+#### 3. TypeScript Strict Compiler Options
+
+Added three recommended strict options to `tsconfig.json` (verified against TypeScript 5.9 documentation):
+
+| Option | Purpose |
+|---|---|
+| `noImplicitOverride: true` | Requires explicit `override` keyword when overriding base class methods |
+| `noImplicitReturns: true` | Errors when not all code paths return a value |
+| `noFallthroughCasesInSwitch: true` | Errors on switch case fallthrough without explicit `break`/`return` |
+
+All three options pass cleanly with no errors on the existing codebase.
+
+#### 4. Safe Area `Math.max()` Pattern
+
+Applied `Math.max(insets.bottom, 16)` in `ModalLayout.tsx` for both fullscreen and sheet presentations. This ensures a minimum 16px bottom padding on devices without a home indicator bar (where `insets.bottom` is 0), preventing content from touching the screen edge.
+
+#### 5. Component cn() Refactoring
+
+Refactored **every UI component and layout** to use `cn()` instead of template literal string concatenation for className assembly. This is the complete list of refactored files:
+
+| Component | File |
+|---|---|
+| Text | `components/ui/Text.tsx` |
+| Button | `components/ui/Button.tsx` |
+| Card, CardHeader, CardContent, CardFooter | `components/ui/Card.tsx` |
+| Input | `components/ui/Input.tsx` |
+| IconButton | `components/ui/IconButton.tsx` |
+| Switch, Checkbox, Radio, RadioGroup | `components/ui/Toggle.tsx` |
+| Avatar, AvatarGroup | `components/ui/Avatar.tsx` |
+| Badge, BadgeGroup | `components/ui/Badge.tsx` |
+| Divider | `components/ui/Divider.tsx` |
+| ListItem, ListSection | `components/ui/ListItem.tsx` |
+| Spinner | `components/ui/Spinner.tsx` |
+| Header | `components/layouts/Header.tsx` |
+| ScreenLayout | `components/layouts/ScreenLayout.tsx` |
+| HeaderLayout | `components/layouts/HeaderLayout.tsx` |
+| ModalLayout | `components/layouts/ModalLayout.tsx` |
+| GlassContainer (iOS) | `components/glass/GlassContainer.ios.tsx` |
+| GlassContainer (Android) | `components/glass/GlassContainer.android.tsx` |
+| GlassContainer (Web) | `components/glass/GlassContainer.web.tsx` |
+
+**Pattern applied to each:**
+
+```tsx
+// BEFORE:
+className={`base-classes ${condition ? "conditional" : ""} ${className}`}
+// with: className = "" as default parameter
+
+// AFTER:
+className={cn("base-classes", condition && "conditional", className)}
+// with: className (no default needed — cn() handles undefined)
+```
+
+### Verification
+
+After all changes:
+- `npm run typecheck` — 0 errors
+- `npm run lint` — 0 errors
+- `npm run validate` — 0 errors, 5 pre-existing shadow warnings in `constants/spacing.ts`

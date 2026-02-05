@@ -40,7 +40,7 @@ export function HeaderLayout({
   keyboardDismissMode = "on-drag",
   safeAreaEdges = ["bottom"],
   background = "background",
-  className = "",
+  className,
   style,
   testID,
   ...props

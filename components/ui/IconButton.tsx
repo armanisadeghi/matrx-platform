@@ -8,6 +8,7 @@ import { Pressable, ActivityIndicator } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/hooks/useTheme";
 import { isIOS } from "@/lib/platform";
+import { cn } from "@/lib/utils";
 
 /**
  * IconButton variant types
@@ -106,7 +107,7 @@ export function IconButton({
   loading = false,
   onPress,
   accessibilityLabel,
-  className = "",
+  className,
   testID,
 }: IconButtonProps) {
   const { colors, isDark } = useTheme();
@@ -153,12 +154,12 @@ export function IconButton({
         left: config.hitSlop,
         right: config.hitSlop,
       }}
-      className={`
-        items-center justify-center rounded-full
-        ${getBackgroundClass()}
-        ${isDisabled ? "opacity-50" : ""}
-        ${className}
-      `}
+      className={cn(
+        "items-center justify-center rounded-full",
+        getBackgroundClass(),
+        isDisabled && "opacity-50",
+        className
+      )}
       style={({ pressed }) => ({
         width: config.container,
         height: config.container,

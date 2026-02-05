@@ -7,6 +7,7 @@
 
 import { Pressable, View, ActivityIndicator } from "react-native";
 import { Text } from "./Text";
+import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/useTheme";
 import { isIOS } from "@/lib/platform";
 
@@ -154,7 +155,7 @@ export function Button({
   rightIcon,
   fullWidth = false,
   onPress,
-  className = "",
+  className,
   testID,
 }: ButtonProps) {
   const { colors } = useTheme();
@@ -173,14 +174,14 @@ export function Button({
       onPress={onPress}
       disabled={isDisabled}
       testID={testID}
-      className={`
-        flex-row items-center justify-center
-        ${sizeStyle.container}
-        ${variantStyle.container}
-        ${fullWidth ? "w-full" : ""}
-        ${isDisabled ? "opacity-50" : ""}
-        ${className}
-      `}
+      className={cn(
+        "flex-row items-center justify-center",
+        sizeStyle.container,
+        variantStyle.container,
+        fullWidth && "w-full",
+        isDisabled && "opacity-50",
+        className
+      )}
       style={({ pressed }) => ({
         opacity: pressed && !isDisabled ? (isIOS ? 0.8 : 1) : 1,
       })}
@@ -192,7 +193,7 @@ export function Button({
           {leftIcon && <View className="mr-2">{leftIcon}</View>}
           <Text
             variant="label"
-            className={`${variantStyle.text} ${sizeStyle.text} font-semibold`}
+            className={cn(variantStyle.text, sizeStyle.text, "font-semibold")}
           >
             {children}
           </Text>

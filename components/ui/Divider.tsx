@@ -6,6 +6,7 @@
 
 import { View } from "react-native";
 import { Text } from "./Text";
+import { cn } from "@/lib/utils";
 
 export interface DividerProps {
   /**
@@ -58,7 +59,7 @@ export function Divider({
   orientation = "horizontal",
   spacing = "md",
   label,
-  className = "",
+  className,
 }: DividerProps) {
   const spacingClass = spacingStyles[spacing][orientation];
 
@@ -66,7 +67,7 @@ export function Divider({
   if (orientation === "vertical") {
     return (
       <View
-        className={`w-px bg-border self-stretch ${spacingClass} ${className}`}
+        className={cn("w-px bg-border self-stretch", spacingClass, className)}
       />
     );
   }
@@ -74,7 +75,7 @@ export function Divider({
   // Horizontal divider with label
   if (label) {
     return (
-      <View className={`flex-row items-center ${spacingClass} ${className}`}>
+      <View className={cn("flex-row items-center", spacingClass, className)}>
         <View className="flex-1 h-px bg-border" />
         <Text variant="caption" color="muted" className="px-3">
           {label}
@@ -85,5 +86,5 @@ export function Divider({
   }
 
   // Simple horizontal divider
-  return <View className={`h-px bg-border ${spacingClass} ${className}`} />;
+  return <View className={cn("h-px bg-border", spacingClass, className)} />;
 }

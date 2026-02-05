@@ -12,6 +12,7 @@ import { View, Pressable, StyleSheet, Dimensions } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/hooks/useTheme";
 import { isIOS, platformConstants } from "@/lib/platform";
+import { cn } from "@/lib/utils";
 import { GlassContainer } from "@/components/glass";
 import { Header } from "./Header";
 import type { ModalLayoutProps } from "./types";
@@ -43,7 +44,7 @@ export function ModalLayout({
   maxHeight = 90,
   safeAreaEdges = ["bottom"],
   background: _background = "surface",
-  className = "",
+  className,
   style,
   testID,
   ...props
@@ -61,7 +62,7 @@ export function ModalLayout({
   if (presentation === "fullscreen") {
     return (
       <View
-        className={`flex-1 bg-background ${className}`}
+        className={cn("flex-1 bg-background", className)}
         style={style}
         testID={testID}
         {...props}
@@ -70,7 +71,9 @@ export function ModalLayout({
         <View
           className="flex-1"
           style={{
-            paddingBottom: safeAreaEdges.includes("bottom") ? insets.bottom : 0,
+            paddingBottom: safeAreaEdges.includes("bottom")
+              ? Math.max(insets.bottom, 16)
+              : 0,
           }}
         >
           {children}
@@ -90,7 +93,7 @@ export function ModalLayout({
         />
         {/* Dialog content */}
         <View
-          className={`bg-surface rounded-2xl overflow-hidden mx-6 max-w-md w-full ${className}`}
+          className={cn("bg-surface rounded-2xl overflow-hidden mx-6 max-w-md w-full", className)}
           style={[
             {
               maxHeight: SCREEN_HEIGHT * 0.8,
@@ -117,14 +120,16 @@ export function ModalLayout({
 
   const sheetContent = (
     <View
-      className={`bg-surface ${className}`}
+      className={cn("bg-surface", className)}
       style={[
         styles.sheet,
         {
           maxHeight: sheetHeight,
           borderTopLeftRadius: borderRadius,
           borderTopRightRadius: borderRadius,
-          paddingBottom: safeAreaEdges.includes("bottom") ? insets.bottom : 0,
+          paddingBottom: safeAreaEdges.includes("bottom")
+            ? Math.max(insets.bottom, 16)
+            : 0,
         },
         style,
       ]}

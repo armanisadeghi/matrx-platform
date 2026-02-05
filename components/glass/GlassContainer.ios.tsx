@@ -9,6 +9,7 @@ import { View } from "react-native";
 import { GlassView, type GlassStyle } from "expo-glass-effect";
 import { useAppColorScheme } from "@/hooks/useAppColorScheme";
 import { supportsLiquidGlass } from "@/lib/platform";
+import { cn } from "@/lib/utils";
 import type { GlassContainerProps } from "./types";
 import { borderRadiusMap } from "./types";
 
@@ -18,7 +19,7 @@ export function GlassContainer({
   tint: _tint = "surface",
   interactive = false,
   borderRadius = "lg",
-  className = "",
+  className,
   style,
   ...props
 }: GlassContainerProps) {
@@ -31,9 +32,11 @@ export function GlassContainer({
   if (!supportsLiquidGlass) {
     return (
       <View
-        className={`overflow-hidden ${
-          isDark ? "bg-surface/80" : "bg-surface/90"
-        } ${className}`}
+        className={cn(
+          "overflow-hidden",
+          isDark ? "bg-surface/80" : "bg-surface/90",
+          className
+        )}
         style={[{ borderRadius: radius }, style]}
         {...props}
       >
