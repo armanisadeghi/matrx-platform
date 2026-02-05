@@ -22,6 +22,11 @@ export interface AvatarProps {
   source?: ImageSourcePropType | string;
 
   /**
+   * Image URL (alias for source, for convenience)
+   */
+  image?: string;
+
+  /**
    * Name to generate initials from (used when no image)
    */
   name?: string;
@@ -103,6 +108,7 @@ function getInitials(name: string): string {
  */
 export function Avatar({
   source,
+  image,
   name,
   size = "md",
   showStatus = false,
@@ -120,9 +126,10 @@ export function Avatar({
       ? "bg-secondary"
       : "bg-surface-elevated";
 
-  // Determine image source
+  // Determine image source (image prop takes precedence if both provided)
+  const resolvedSource = image ? { uri: image } : source;
   const imageSource =
-    typeof source === "string" ? { uri: source } : source;
+    typeof resolvedSource === "string" ? { uri: resolvedSource } : resolvedSource;
 
   const hasImage = !!imageSource;
   const initials = name ? getInitials(name) : "";
