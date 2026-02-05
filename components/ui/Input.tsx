@@ -4,7 +4,7 @@
  * Styled text input with variants and states.
  */
 
-import { useState } from "react";
+import { useState, forwardRef } from "react";
 import {
   TextInput,
   View,
@@ -68,7 +68,7 @@ export interface InputProps extends Omit<TextInputProps, "style"> {
    * Input type for specialized inputs
    * @default 'text'
    */
-  type?: "text" | "password" | "email" | "search";
+  type?: "text" | "password" | "email" | "search" | "phone";
 
   /**
    * Additional className for container
@@ -91,7 +91,25 @@ const variantStyles: Record<InputVariant, string> = {
 };
 
 /**
+ * Autofill configuration per input type.
+ * Maps to iOS textContentType and Android autoComplete for proper autofill support.
+ */
+const autofillConfig: Record<
+  NonNullable<InputProps["type"]>,
+  { autoComplete?: TextInputProps["autoComplete"]; textContentType?: TextInputProps["textContentType"]; keyboardType?: TextInputProps["keyboardType"]; autoCapitalize?: TextInputProps["autoCapitalize"] }
+> = {
+  text: {},
+  password: { autoComplete: "password", textContentType: "password" },
+  email: { autoComplete: "email", textContentType: "emailAddress", keyboardType: "email-address", autoCapitalize: "none" },
+  search: { autoCapitalize: "none" },
+  phone: { autoComplete: "tel", textContentType: "telephoneNumber", keyboardType: "phone-pad" },
+};
+
+/**
  * Input component
+ *
+ * Supports ref forwarding for field-to-field navigation (e.g. pressing "Next"
+ * on the keyboard to focus the next input).
  *
  * @example
  * ```tsx
@@ -107,9 +125,19 @@ const variantStyles: Record<InputVariant, string> = {
  *   type="password"
  *   error="Password is required"
  * />
+ *
+ * // Field-to-field navigation
+ * const passwordRef = useRef<TextInput>(null);
+ * <Input
+ *   label="Email"
+ *   type="email"
+ *   returnKeyType="next"
+ *   onSubmitEditing={() => passwordRef.current?.focus()}
+ * />
+ * <Input ref={passwordRef} label="Password" type="password" />
  * ```
  */
-export function Input({
+export const Input = forwardRef<TextInput, InputProps>(function Input({
   variant = "default",
   label,
   helperText,
@@ -122,7 +150,7 @@ export function Input({
   className,
   inputClassName,
   ...props
-}: InputProps) {
+}, ref) {
   const { colors } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
@@ -189,12 +217,15 @@ export function Input({
 
         {/* Text input */}
         <TextInput
+          ref={ref}
           className={cn("flex-1 text-foreground text-base", inputClassName)}
           placeholderTextColor={colors.foreground.muted}
           editable={!disabled}
           secureTextEntry={secureTextEntry}
-          keyboardType={type === "email" ? "email-address" : "default"}
-          autoCapitalize={type === "email" ? "none" : "sentences"}
+          keyboardType={autofillConfig[type]?.keyboardType ?? "default"}
+          autoCapitalize={autofillConfig[type]?.autoCapitalize ?? "sentences"}
+          autoComplete={autofillConfig[type]?.autoComplete}
+          textContentType={autofillConfig[type]?.textContentType}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
           {...props}
@@ -229,7 +260,7 @@ export function Input({
       )}
     </View>
   );
-}
+});
 
 /**
  * TextArea component for multiline input

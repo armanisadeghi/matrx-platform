@@ -477,3 +477,19 @@ const [isSubmitting, setIsSubmitting] = useState(false);
 - [iOS Human Interface Guidelines - Text Fields](https://developer.apple.com/design/human-interface-guidelines/text-fields)
 - [Material Design Text Fields](https://m3.material.io/components/text-fields)
 - [WCAG Form Accessibility](https://www.w3.org/WAI/tutorials/forms/)
+
+---
+
+## TASKS
+
+- [x] **Add autoComplete and textContentType to Input** — Mapped per input type for proper iOS/Android autofill: email → `emailAddress`, password → `password`, phone → `telephoneNumber`. Without these, password managers and OS autofill won't work. File: `components/ui/Input.tsx`
+
+- [x] **Add forwardRef to Input** — Enables field-to-field keyboard navigation (`returnKeyType="next"` + `onSubmitEditing` → `ref.current?.focus()`). File: `components/ui/Input.tsx`
+
+- [x] **Add phone input type** — Added `"phone"` to the `type` union with `keyboardType: "phone-pad"`, `autoComplete: "tel"`, `textContentType: "telephoneNumber"`.
+
+- [ ] **Add accessibility attributes to Input** — Consider adding `accessibilityLabel` from `label` prop, `accessibilityInvalid` from `error` prop, and `accessibilityLabelledBy` pattern.
+
+- [ ] **Create Select/Picker component** — Doc describes a modal picker pattern but no `Select` component exists in the codebase yet. Consider creating `components/ui/Select.tsx`.
+
+- [ ] **Create useForm hook** — Extract common form state management (values, errors, touched, validate, handleChange, handleBlur, handleSubmit) into a reusable hook.
