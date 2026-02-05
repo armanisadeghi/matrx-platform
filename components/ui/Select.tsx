@@ -245,7 +245,7 @@ export function Select<T = string>({
         onRequestClose={handleClose}
       >
         <Pressable
-          className="flex-1 bg-black/50"
+          className="flex-1 bg-backdrop/50"
           onPress={handleClose}
         >
           <View className="flex-1" />

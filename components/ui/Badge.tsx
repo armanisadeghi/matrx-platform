@@ -65,12 +65,12 @@ export interface BadgeProps {
  */
 const variantStyles: Record<BadgeVariant, { bg: string; text: string }> = {
   default: { bg: "bg-surface-elevated", text: "text-foreground" },
-  primary: { bg: "bg-primary", text: "text-white" },
-  secondary: { bg: "bg-secondary", text: "text-white" },
-  success: { bg: "bg-success", text: "text-white" },
-  warning: { bg: "bg-warning", text: "text-white" },
-  error: { bg: "bg-error", text: "text-white" },
-  info: { bg: "bg-info", text: "text-white" },
+  primary: { bg: "bg-primary", text: "text-foreground-inverse" },
+  secondary: { bg: "bg-secondary", text: "text-foreground-inverse" },
+  success: { bg: "bg-success", text: "text-foreground-inverse" },
+  warning: { bg: "bg-warning", text: "text-foreground-inverse" },
+  error: { bg: "bg-error", text: "text-foreground-inverse" },
+  info: { bg: "bg-info", text: "text-foreground-inverse" },
 };
 
 /**

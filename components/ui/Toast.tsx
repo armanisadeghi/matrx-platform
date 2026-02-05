@@ -103,10 +103,10 @@ const variantConfig: Record<
   { bg: string; icon: keyof typeof Ionicons.glyphMap; iconColor: string }
 > = {
   default: { bg: "bg-surface-elevated", icon: "information-circle", iconColor: "foreground" },
-  success: { bg: "bg-success", icon: "checkmark-circle", iconColor: "white" },
-  warning: { bg: "bg-warning", icon: "warning", iconColor: "white" },
-  error: { bg: "bg-error", icon: "alert-circle", iconColor: "white" },
-  info: { bg: "bg-info", icon: "information-circle", iconColor: "white" },
+  success: { bg: "bg-success", icon: "checkmark-circle", iconColor: "inverse" },
+  warning: { bg: "bg-warning", icon: "warning", iconColor: "inverse" },
+  error: { bg: "bg-error", icon: "alert-circle", iconColor: "inverse" },
+  info: { bg: "bg-info", icon: "information-circle", iconColor: "inverse" },
 };
 
 /**
@@ -164,7 +164,7 @@ function Toast({
   }));
 
   const iconColor =
-    variantStyle.iconColor === "white"
+    variantStyle.iconColor === "inverse"
       ? colors.foreground.inverse
       : colors.foreground.DEFAULT;
 
@@ -196,7 +196,7 @@ function Toast({
               variant="label"
               className={cn(
                 "font-semibold mb-0.5",
-                variant !== "default" && "text-white"
+                variant !== "default" && "text-foreground-inverse"
               )}
             >
               {title}
@@ -204,7 +204,7 @@ function Toast({
           )}
           <Text
             variant="body"
-            className={variant !== "default" ? "text-white" : undefined}
+            className={variant !== "default" ? "text-foreground-inverse" : undefined}
           >
             {message}
           </Text>
@@ -215,7 +215,7 @@ function Toast({
               variant="label"
               className={cn(
                 "font-semibold",
-                variant !== "default" ? "text-white" : "text-primary"
+                variant !== "default" ? "text-foreground-inverse" : "text-primary"
               )}
             >
               {action.label}

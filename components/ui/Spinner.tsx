@@ -117,7 +117,7 @@ export function LoadingOverlay({
     >
       <Animated.View
         entering={FadeIn.duration(200)}
-        className="flex-1 items-center justify-center bg-black/50"
+        className="flex-1 items-center justify-center bg-backdrop/50"
       >
         <Animated.View
           entering={FadeInDown.duration(300).delay(100)}

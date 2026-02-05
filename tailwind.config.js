@@ -60,6 +60,8 @@ module.exports = {
           muted: "rgb(var(--color-foreground-muted) / <alpha-value>)",
           inverse: "rgb(var(--color-foreground-inverse) / <alpha-value>)",
         },
+        // Backdrop/Overlay Colors
+        backdrop: "rgb(var(--color-backdrop) / <alpha-value>)",
         // Semantic Colors
         success: {
           DEFAULT: "rgb(var(--color-success) / <alpha-value>)",

@@ -145,7 +145,7 @@ export function Avatar({
           />
         ) : initials ? (
           <Text
-            className={`font-semibold text-white ${config.text}`}
+            className={`font-semibold text-foreground-inverse ${config.text}`}
           >
             {initials}
           </Text>

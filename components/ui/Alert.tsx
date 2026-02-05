@@ -170,7 +170,7 @@ export function Alert({
       animationType="fade"
       onRequestClose={onClose}
     >
-      <View className="flex-1 justify-center items-center bg-black/50 px-6">
+      <View className="flex-1 justify-center items-center bg-backdrop/50 px-6">
         <Pressable
           className="absolute inset-0"
           onPress={handleBackdropPress}

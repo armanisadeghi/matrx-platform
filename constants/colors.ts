@@ -67,6 +67,9 @@ export const colors = {
       inverse: "#F8FAFC",
     },
 
+    // Backdrop/Overlay Colors
+    backdrop: "rgba(0, 0, 0, 0.5)",
+
     // Semantic Colors
     success: {
       DEFAULT: "#059669",
@@ -144,6 +147,9 @@ export const colors = {
       inverse: "#0F172A",
     },
 
+    // Backdrop/Overlay Colors
+    backdrop: "rgba(0, 0, 0, 0.5)",
+
     // Semantic Colors (Adjusted for dark background)
     success: {
       DEFAULT: "#22C55E",
@@ -199,6 +205,7 @@ export interface Colors {
     muted: string;
     inverse: string;
   };
+  backdrop: string;
   success: { DEFAULT: string; light: string };
   warning: { DEFAULT: string; light: string };
   error: { DEFAULT: string; light: string };

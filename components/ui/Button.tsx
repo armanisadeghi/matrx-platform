@@ -93,12 +93,12 @@ const variantStyles: Record<
 > = {
   primary: {
     container: "bg-primary",
-    text: "text-white",
+    text: "text-foreground-inverse",
     pressedContainer: "bg-primary-dark",
   },
   secondary: {
     container: "bg-secondary",
-    text: "text-white",
+    text: "text-foreground-inverse",
     pressedContainer: "bg-secondary-dark",
   },
   ghost: {
@@ -108,7 +108,7 @@ const variantStyles: Record<
   },
   destructive: {
     container: "bg-error",
-    text: "text-white",
+    text: "text-foreground-inverse",
     pressedContainer: "bg-error/90",
   },
   outline: {

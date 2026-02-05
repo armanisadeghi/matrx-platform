@@ -88,7 +88,7 @@ export function ModalLayout({
       <View className="flex-1 justify-center items-center" testID={testID}>
         {/* Backdrop */}
         <Pressable
-          className="absolute inset-0 bg-black/50"
+          className="absolute inset-0 bg-backdrop/50"
           onPress={handleBackdropPress}
         />
         {/* Dialog content */}
@@ -148,7 +148,7 @@ export function ModalLayout({
     <View className="flex-1 justify-end" testID={testID}>
       {/* Backdrop */}
       <Pressable
-        className="absolute inset-0 bg-black/50"
+        className="absolute inset-0 bg-backdrop/50"
         onPress={handleBackdropPress}
       />
       {/* Sheet content - use glass on iOS */}
