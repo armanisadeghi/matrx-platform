@@ -25,18 +25,23 @@ npx expo install react-native-reanimated react-native-worklets
 
 ### Babel Configuration
 
+For **Expo SDK 54+**, `babel-preset-expo` automatically manages the Reanimated/worklets Babel plugin. Do NOT manually add `react-native-reanimated/plugin` or `react-native-worklets/plugin` — it will cause duplicate plugin conflicts.
+
 ```javascript
 // babel.config.js
 module.exports = function (api) {
   api.cache(true);
   return {
-    presets: ['babel-preset-expo'],
-    plugins: [
-      'react-native-worklets/plugin',  // MUST be last
+    presets: [
+      ["babel-preset-expo", { jsxImportSource: "nativewind" }],
     ],
+    // babel-preset-expo automatically manages the reanimated/worklets plugin.
+    // See: https://github.com/expo/fyi/blob/main/expo-54-reanimated.md
   };
 };
 ```
+
+> **Note:** You still need `react-native-worklets` installed as a dependency — `babel-preset-expo` detects its presence and configures the plugin automatically.
 
 ### Requirements
 
@@ -104,18 +109,32 @@ function AnimatedCard() {
 
 ### Spring Animations
 
-For physics-based motion:
+For physics-based spring motion, use the **worklet-based API** (`withSpring`), not CSS transitions. Reanimated's CSS transitions only support standard CSS timing functions (`ease`, `ease-in-out`, `cubicBezier()`, etc.) — there is no `spring()` timing function.
 
 ```tsx
-<Animated.View
-  style={{
-    transform: [{ scale: isPressed ? 0.95 : 1 }],
-    transitionProperty: 'transform',
-    transitionDuration: '200ms',
-    transitionTimingFunction: 'spring(1, 100, 10, 0)',  // mass, stiffness, damping, velocity
-  }}
-/>
+import { useSharedValue, useAnimatedStyle, withSpring } from 'react-native-reanimated';
+
+function ScaleOnPress() {
+  const scale = useSharedValue(1);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <Pressable
+      onPressIn={() => { scale.value = withSpring(0.95); }}
+      onPressOut={() => { scale.value = withSpring(1); }}
+    >
+      <Animated.View style={animatedStyle}>
+        <Content />
+      </Animated.View>
+    </Pressable>
+  );
+}
 ```
+
+> **Important:** The `transitionTimingFunction: 'spring(mass, stiffness, damping, velocity)'` syntax does NOT exist in Reanimated 4. Use `withSpring` for spring physics.
 
 ## Worklet-Based Animations
 
@@ -323,13 +342,13 @@ Existing v2/v3 animation code remains compatible. CSS animations are additive, n
 
 ## NativeWind Integration
 
-**Warning**: NativeWind 4.x requires Reanimated v3. CSS animations via NativeWind require v5.
+NativeWind 4.x works fine alongside Reanimated 4.x for general usage. The incompatibility only applies to NativeWind's own CSS animation class utilities (e.g., `transition-all duration-300`), which are not used in this codebase. Use Reanimated's worklet API directly for all animations.
 
-For NativeWind 4 projects, use worklet-based animations for complex motion:
+Combine NativeWind `className` for static styles with Reanimated `style` for animated values:
 
 ```tsx
-// Combine NativeWind styles with Reanimated
-<Animated.View 
+// NativeWind handles static styles, Reanimated handles animation
+<Animated.View
   className="bg-surface rounded-lg p-4"
   style={animatedStyle}
 />
@@ -339,35 +358,29 @@ For NativeWind 4 projects, use worklet-based animations for complex motion:
 
 ### Button Press Feedback
 
+Use the shared `useAnimatedPress` hook (see `hooks/useAnimatedPress.ts`):
+
 ```tsx
-function AnimatedButton({ onPress, children }: Props) {
-  const scale = useSharedValue(1);
-  
-  const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
-  }));
-  
-  const handlePressIn = () => {
-    scale.value = withSpring(0.95);
-  };
-  
-  const handlePressOut = () => {
-    scale.value = withSpring(1);
-  };
-  
+import Animated from 'react-native-reanimated';
+import { useAnimatedPress } from '@/hooks/useAnimatedPress';
+
+function AnimatedButton({ onPress, disabled, children }: Props) {
+  const { animatedStyle, handlers } = useAnimatedPress({
+    scaleTo: 0.97,  // Subtle for primary CTAs
+    disabled,
+  });
+
   return (
-    <Pressable 
-      onPress={onPress}
-      onPressIn={handlePressIn}
-      onPressOut={handlePressOut}
-    >
-      <Animated.View style={animatedStyle}>
+    <Animated.View style={animatedStyle}>
+      <Pressable onPress={onPress} disabled={disabled} {...handlers}>
         {children}
-      </Animated.View>
-    </Pressable>
+      </Pressable>
+    </Animated.View>
   );
 }
 ```
+
+**Scale guidelines:** 0.97 for buttons (subtle), 0.9 for icon buttons (pronounced), 0.98 for cards (very subtle).
 
 ### Skeleton Loading
 
@@ -403,42 +416,34 @@ function SkeletonLoader() {
 
 ## TASKS
 
-- [ ] **Update Babel plugin configuration** - `babel.config.js` uses legacy `react-native-reanimated/plugin` instead of recommended `react-native-worklets/plugin`. Verify if migration is needed for Reanimated 4.x compatibility.
+- [x] **Update Babel plugin configuration** - Resolved: `babel-preset-expo` in Expo SDK 54 auto-manages the reanimated/worklets Babel plugin. Removed manual plugin entry and added explanatory comment.
 
-- [ ] **Add `react-native-worklets` to package.json** - Currently only installed as peer dependency. Document recommends explicit installation via `npx expo install react-native-worklets`. File: `package.json`
+- [x] **Add `react-native-worklets` to package.json** - Installed as explicit dependency via `npm install react-native-worklets`.
 
-- [ ] **Add spring animation to Button press feedback** - Currently uses basic opacity change via Pressable's style callback (`opacity: pressed ? 0.8 : 1`). Replace with Reanimated `withSpring` scale animation per document's "Button Press Feedback" pattern. File: `components/ui/Button.tsx` (lines 179-181)
+- [x] **Add spring animation to Button press feedback** - Replaced opacity-based feedback with `useAnimatedPress` hook (scale: 0.97). File: `components/ui/Button.tsx`
 
-- [ ] **Add spring animation to IconButton press feedback** - Same issue as Button - uses opacity instead of spring scale. File: `components/ui/IconButton.tsx` (lines 162-172)
+- [x] **Add spring animation to IconButton press feedback** - Replaced opacity/backgroundColor feedback with `useAnimatedPress` hook (scale: 0.9). File: `components/ui/IconButton.tsx`
 
-- [ ] **Add spring animation to Card press feedback** - Pressable cards use `opacity: pressed ? 0.9 : 1`. Replace with scale animation. File: `components/ui/Card.tsx` (lines 120, 148)
+- [x] **Add spring animation to Card press feedback** - Added spring press feedback for pressable cards, both glass and regular variants (scale: 0.98). File: `components/ui/Card.tsx`
 
-- [ ] **Add animation to Checkbox state change** - Checkbox has instant on/off with no animation. Add scale animation to checkmark icon appearance. File: `components/ui/Toggle.tsx` (Checkbox component, lines 140-142)
+- [x] **Add animation to Checkbox state change** - Added `ZoomIn`/`ZoomOut` entering/exiting animations to checkmark icon. File: `components/ui/Toggle.tsx`
 
-- [ ] **Add animation to Radio state change** - Radio button dot appears instantly. Add scale animation to inner dot. File: `components/ui/Toggle.tsx` (Radio component, lines 201-206)
+- [x] **Add animation to Radio state change** - Added `ZoomIn`/`ZoomOut` entering/exiting animations to inner dot. File: `components/ui/Toggle.tsx`
 
-- [ ] **Create `useAnimatedPress` hook** - Extract common press animation pattern into reusable hook for consistent spring feedback across all pressable components. New file: `hooks/useAnimatedPress.ts`
+- [x] **Create `useAnimatedPress` hook** - Reusable hook using `useSharedValue` + `useAnimatedStyle` + `withSpring`. Configurable `scaleTo` and `disabled` options. File: `hooks/useAnimatedPress.ts`
 
-- [ ] **Add enter/exit animations to LoadingOverlay** - Currently uses React Native Modal's basic `animationType="fade"`. Consider using Reanimated's `FadeIn`/`FadeOut` for smoother transitions. File: `components/ui/Spinner.tsx` (lines 110-128)
+- [ ] **Add enter/exit animations to LoadingOverlay** - Currently uses React Native Modal's basic `animationType="fade"`. Consider using Reanimated's `FadeIn`/`FadeOut` for smoother transitions. File: `components/ui/Spinner.tsx`
 
 - [ ] **Add skeleton loading component** - Document shows shimmer keyframe animation pattern but codebase has no skeleton loader. Consider creating `components/ui/Skeleton.tsx` with keyframe animation.
 
 - [ ] **Consider layout animations for list items** - Document recommends `LinearTransition` for reorderable lists. Could benefit `ListItem` and any future list components. File: `components/ui/ListItem.tsx`
 
-## TO DISCUSS
+## RESOLVED DISCUSSIONS
 
-- **Current approach:** Babel config uses `react-native-reanimated/plugin`
-- **Document suggests:** Use `react-native-worklets/plugin` (must be last)
-- **Why current may be acceptable:** The `react-native-reanimated/plugin` still works in Reanimated 4.x as it internally delegates to worklets. The pnpm-lock.yaml shows `react-native-worklets@0.7.2` is properly installed as a peer dependency. This may be intentional backward compatibility. Recommend verifying with Reanimated 4.x official docs before changing.
+- **Babel plugin configuration** — RESOLVED: For Expo SDK 54, `babel-preset-expo` auto-manages the reanimated/worklets Babel plugin. Neither `react-native-reanimated/plugin` nor `react-native-worklets/plugin` should be manually added. See: https://github.com/expo/fyi/blob/main/expo-54-reanimated.md
 
----
+- **Press feedback approach** — RESOLVED: Migrated all interactive components to `withSpring` scale animations via the shared `useAnimatedPress` hook. Spring animations provide more natural, interruptible motion. The hook centralizes the pattern so it's as easy to use as the old opacity approach.
 
-- **Current approach:** Components use basic Pressable opacity transitions (`style={({ pressed }) => ({ opacity: pressed ? 0.8 : 1 })}`)
-- **Document suggests:** Use Reanimated `withSpring` for all press feedback
-- **Why current has merit:** The basic opacity approach is simpler, has zero bundle size impact, works identically on web, and has minimal performance overhead. For basic press feedback (not gestures), this may be "good enough". However, spring animations do provide more natural, interruptible motion that users perceive as higher quality. Consider a tiered approach: basic opacity for simple interactions, Reanimated springs for primary CTAs and important UI elements.
+- **NativeWind + Reanimated compatibility** — RESOLVED: NativeWind 4.x works fine alongside Reanimated 4.x for general usage. The incompatibility only applies to NativeWind's own CSS animation class utilities, which this codebase does not use. All animations use Reanimated's worklet API directly.
 
----
-
-- **Current approach:** NativeWind 4.2.1 paired with Reanimated 4.2.1
-- **Document suggests:** "NativeWind 4.x requires Reanimated v3. CSS animations via NativeWind require v5."
-- **Why current may work:** The pnpm-lock.yaml shows NativeWind is resolving correctly with Reanimated 4.x. The constraint may only apply to NativeWind's CSS animation features, not general usage. If CSS transitions via NativeWind classes aren't being used (they aren't currently), this pairing should be fine. However, if CSS animation classes like `transition-all duration-300` are added to NativeWind styles, compatibility issues may arise.
+- **CSS transition `spring()` timing function** — RESOLVED: The `transitionTimingFunction: 'spring(mass, stiffness, damping, velocity)'` syntax documented in the original version of this file does NOT exist in Reanimated 4. Only standard CSS timing functions are supported (`ease`, `ease-in-out`, `cubicBezier()`, etc.). Spring physics must use the worklet-based `withSpring` API.

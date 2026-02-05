@@ -6,10 +6,11 @@
  */
 
 import { Pressable, View, ActivityIndicator } from "react-native";
+import Animated from "react-native-reanimated";
 import { Text } from "./Text";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/useTheme";
-import { isIOS } from "@/lib/platform";
+import { useAnimatedPress } from "@/hooks/useAnimatedPress";
 
 /**
  * Button variant types
@@ -162,6 +163,10 @@ export function Button({
   const isDisabled = disabled || loading;
   const variantStyle = variantStyles[variant];
   const sizeStyle = sizeStyles[size];
+  const { animatedStyle, handlers } = useAnimatedPress({
+    scaleTo: 0.97,
+    disabled: isDisabled,
+  });
 
   // Determine spinner color from theme based on variant
   const spinnerColor =
@@ -170,36 +175,36 @@ export function Button({
       : colors.foreground.inverse;
 
   return (
-    <Pressable
-      onPress={onPress}
-      disabled={isDisabled}
-      testID={testID}
-      className={cn(
-        "flex-row items-center justify-center",
-        sizeStyle.container,
-        variantStyle.container,
-        fullWidth && "w-full",
-        isDisabled && "opacity-50",
-        className
-      )}
-      style={({ pressed }) => ({
-        opacity: pressed && !isDisabled ? (isIOS ? 0.8 : 1) : 1,
-      })}
-    >
-      {loading ? (
-        <ActivityIndicator size="small" color={spinnerColor} />
-      ) : (
-        <>
-          {leftIcon && <View className="mr-2">{leftIcon}</View>}
-          <Text
-            variant="label"
-            className={cn(variantStyle.text, sizeStyle.text, "font-semibold")}
-          >
-            {children}
-          </Text>
-          {rightIcon && <View className="ml-2">{rightIcon}</View>}
-        </>
-      )}
-    </Pressable>
+    <Animated.View style={animatedStyle}>
+      <Pressable
+        onPress={onPress}
+        disabled={isDisabled}
+        testID={testID}
+        className={cn(
+          "flex-row items-center justify-center",
+          sizeStyle.container,
+          variantStyle.container,
+          fullWidth && "w-full",
+          isDisabled && "opacity-50",
+          className
+        )}
+        {...handlers}
+      >
+        {loading ? (
+          <ActivityIndicator size="small" color={spinnerColor} />
+        ) : (
+          <>
+            {leftIcon && <View className="mr-2">{leftIcon}</View>}
+            <Text
+              variant="label"
+              className={cn(variantStyle.text, sizeStyle.text, "font-semibold")}
+            >
+              {children}
+            </Text>
+            {rightIcon && <View className="ml-2">{rightIcon}</View>}
+          </>
+        )}
+      </Pressable>
+    </Animated.View>
   );
 }

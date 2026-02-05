@@ -5,9 +5,11 @@
  */
 
 import { View, Pressable, type ViewProps } from "react-native";
+import Animated from "react-native-reanimated";
 import { GlassContainer } from "@/components/glass";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/useTheme";
+import { useAnimatedPress } from "@/hooks/useAnimatedPress";
 
 /**
  * Card variant types
@@ -95,6 +97,11 @@ export function Card({
   ...props
 }: CardProps) {
   const { shadows } = useTheme();
+  const isPressable = pressable && !!onPress;
+  const { animatedStyle, handlers } = useAnimatedPress({
+    scaleTo: 0.98,
+    disabled: !isPressable,
+  });
 
   const paddingClass = paddingStyles[padding];
 
@@ -113,14 +120,13 @@ export function Card({
       </GlassContainer>
     );
 
-    if (pressable && onPress) {
+    if (isPressable) {
       return (
-        <Pressable
-          onPress={onPress}
-          style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}
-        >
-          {content}
-        </Pressable>
+        <Animated.View style={animatedStyle}>
+          <Pressable onPress={onPress} {...handlers}>
+            {content}
+          </Pressable>
+        </Animated.View>
       );
     }
 
@@ -145,14 +151,13 @@ export function Card({
     </View>
   );
 
-  if (pressable && onPress) {
+  if (isPressable) {
     return (
-      <Pressable
-        onPress={onPress}
-        style={({ pressed }) => ({ opacity: pressed ? 0.9 : 1 })}
-      >
-        {content}
-      </Pressable>
+      <Animated.View style={animatedStyle}>
+        <Pressable onPress={onPress} {...handlers}>
+          {content}
+        </Pressable>
+      </Animated.View>
     );
   }
 

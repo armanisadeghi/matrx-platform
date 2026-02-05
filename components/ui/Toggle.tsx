@@ -5,6 +5,7 @@
  */
 
 import { Pressable, View, Switch as RNSwitch } from "react-native";
+import Animated, { ZoomIn, ZoomOut } from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import { Text } from "./Text";
 import { useTheme } from "@/hooks/useTheme";
@@ -143,7 +144,9 @@ export function Checkbox({
         style={{ width: sizeConfig.box, height: sizeConfig.box }}
       >
         {value && (
-          <Ionicons name="checkmark" size={sizeConfig.icon} color={colors.foreground.inverse} />
+          <Animated.View entering={ZoomIn.duration(200)} exiting={ZoomOut.duration(150)}>
+            <Ionicons name="checkmark" size={sizeConfig.icon} color={colors.foreground.inverse} />
+          </Animated.View>
         )}
       </View>
       {(label || description) && (
@@ -207,7 +210,9 @@ export function Radio({
         style={{ width: sizeConfig.outer, height: sizeConfig.outer }}
       >
         {value && (
-          <View
+          <Animated.View
+            entering={ZoomIn.duration(200)}
+            exiting={ZoomOut.duration(150)}
             className="rounded-full bg-primary"
             style={{ width: sizeConfig.inner, height: sizeConfig.inner }}
           />

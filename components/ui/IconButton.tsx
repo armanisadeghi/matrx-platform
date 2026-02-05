@@ -5,10 +5,11 @@
  */
 
 import { Pressable, ActivityIndicator } from "react-native";
+import Animated from "react-native-reanimated";
 import { Ionicons } from "@expo/vector-icons";
 import { useTheme } from "@/hooks/useTheme";
-import { isIOS } from "@/lib/platform";
 import { cn } from "@/lib/utils";
+import { useAnimatedPress } from "@/hooks/useAnimatedPress";
 
 /**
  * IconButton variant types
@@ -113,6 +114,10 @@ export function IconButton({
   const { colors, isDark } = useTheme();
   const config = sizeConfig[size];
   const isDisabled = disabled || loading;
+  const { animatedStyle, handlers } = useAnimatedPress({
+    scaleTo: 0.9,
+    disabled: isDisabled,
+  });
 
   // Determine icon color
   const getIconColor = () => {
@@ -142,44 +147,40 @@ export function IconButton({
   };
 
   return (
-    <Pressable
-      onPress={onPress}
-      disabled={isDisabled}
-      accessibilityLabel={accessibilityLabel}
-      accessibilityRole="button"
-      testID={testID}
-      hitSlop={{
-        top: config.hitSlop,
-        bottom: config.hitSlop,
-        left: config.hitSlop,
-        right: config.hitSlop,
-      }}
-      className={cn(
-        "items-center justify-center rounded-full",
-        getBackgroundClass(),
-        isDisabled && "opacity-50",
-        className
-      )}
-      style={({ pressed }) => ({
-        width: config.container,
-        height: config.container,
-        opacity: pressed && !isDisabled ? (isIOS ? 0.7 : 1) : 1,
-        backgroundColor:
-          pressed && !isDisabled && variant === "default"
-            ? isDark
-              ? `${colors.foreground.inverse}1A`
-              : `${colors.foreground.DEFAULT}0D`
-            : undefined,
-      })}
-    >
-      {loading ? (
-        <ActivityIndicator
-          size="small"
-          color={variant === "filled" ? colors.foreground.inverse : colors.primary.DEFAULT}
-        />
-      ) : (
-        <Ionicons name={icon} size={config.icon} color={getIconColor()} />
-      )}
-    </Pressable>
+    <Animated.View style={animatedStyle}>
+      <Pressable
+        onPress={onPress}
+        disabled={isDisabled}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole="button"
+        testID={testID}
+        hitSlop={{
+          top: config.hitSlop,
+          bottom: config.hitSlop,
+          left: config.hitSlop,
+          right: config.hitSlop,
+        }}
+        className={cn(
+          "items-center justify-center rounded-full",
+          getBackgroundClass(),
+          isDisabled && "opacity-50",
+          className
+        )}
+        style={{
+          width: config.container,
+          height: config.container,
+        }}
+        {...handlers}
+      >
+        {loading ? (
+          <ActivityIndicator
+            size="small"
+            color={variant === "filled" ? colors.foreground.inverse : colors.primary.DEFAULT}
+          />
+        ) : (
+          <Ionicons name={icon} size={config.icon} color={getIconColor()} />
+        )}
+      </Pressable>
+    </Animated.View>
   );
 }
