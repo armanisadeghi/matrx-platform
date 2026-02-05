@@ -55,7 +55,7 @@ export function GlassContainer({
           // Web-specific CSS properties for glass effect
           backdropFilter: `blur(${blurRadius}px)`,
           WebkitBackdropFilter: `blur(${blurRadius}px)`,
-        } as React.CSSProperties & Record<string, unknown>,
+        } as any, // Type assertion needed for web-specific CSS properties
         style,
       ]}
       {...props}

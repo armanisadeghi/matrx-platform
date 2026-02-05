@@ -4,17 +4,16 @@
  * Central hub linking to all component demonstrations.
  */
 
-import { View, ScrollView, Platform } from "react-native";
+import { View, Platform } from "react-native";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
 import {
   Text,
   Card,
   Switch,
   Badge,
 } from "@/components/ui";
-import { ScreenLayout } from "@/components/layouts";
+import { HeaderLayout } from "@/components/layouts";
 import { useAppColorScheme } from "@/hooks/useAppColorScheme";
 import { useTheme } from "@/hooks/useTheme";
 
@@ -53,30 +52,21 @@ function DemoLink({ href, title, description, icon }: DemoLinkProps) {
 }
 
 export default function DemoIndex() {
-  const insets = useSafeAreaInsets();
   const { colorScheme, toggleColorScheme, isDark } = useAppColorScheme();
   const { colors } = useTheme();
 
   return (
-    <ScreenLayout safeAreaEdges={["top"]}>
-      <ScrollView
-        className="flex-1"
-        contentContainerStyle={{
-          paddingHorizontal: 16,
-          paddingBottom: insets.bottom + 16,
-        }}
-        showsVerticalScrollIndicator={false}
-      >
-        {/* Header */}
-        <View className="py-6">
-          <View className="flex-row items-center justify-between mb-2">
-            <Text variant="h2">Component Library</Text>
-            <Badge variant="primary">v1.0.0</Badge>
-          </View>
-          <Text variant="body" color="secondary">
-            Explore all available components and design tokens
-          </Text>
-        </View>
+    <HeaderLayout
+      header={{
+        title: "Component Library",
+        showBackButton: true,
+        rightContent: <Badge variant="primary">v1.0.0</Badge>,
+      }}
+    >
+      <View className="px-4 py-4">
+        <Text variant="body" color="secondary" className="mb-6">
+          Explore all available components and design tokens
+        </Text>
 
         {/* Theme Toggle */}
         <Card variant="filled" className="mb-6">
@@ -167,7 +157,7 @@ export default function DemoIndex() {
           description="User avatars and groups"
           icon="people"
         />
-      </ScrollView>
-    </ScreenLayout>
+      </View>
+    </HeaderLayout>
   );
 }

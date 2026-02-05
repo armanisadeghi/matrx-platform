@@ -17,10 +17,11 @@
 
 ## Golden Rules
 
-1. **Zero hardcoded colors** — Use `className="bg-primary"` or `colors.primary.DEFAULT` from `useTheme()`
-2. **Use provided components** — Import from `@/components/ui`, don't create your own
-3. **Spring animations + haptics** — Use `useAnimatedPress()` hook for interactive elements
-4. **Platform files** — Use `.ios.tsx` / `.android.tsx` for platform-specific implementations
+1. **🚨 NEVER trap users** — Every screen MUST have navigation back or exit. Use `HeaderLayout` with `showBackButton: true` for all non-root screens
+2. **Zero hardcoded colors** — Use `className="bg-primary"` or `colors.primary.DEFAULT` from `useTheme()`
+3. **Use provided components** — Import from `@/components/ui`, don't create your own
+4. **Spring animations + haptics** — Use `useAnimatedPress()` hook for interactive elements
+5. **Platform files** — Use `.ios.tsx` / `.android.tsx` for platform-specific implementations
 
 ## Component Import
 
