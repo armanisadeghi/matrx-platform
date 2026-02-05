@@ -4,7 +4,7 @@
  * Central hub linking to all component demonstrations.
  */
 
-import { View, Platform } from "react-native";
+import { View, Platform, ScrollView } from "react-native";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import {
@@ -62,102 +62,135 @@ export default function DemoIndex() {
         showBackButton: true,
         rightContent: <Badge variant="primary">v1.0.0</Badge>,
       }}
+      safeAreaEdges={["bottom"]}
     >
-      <View className="px-4 py-4">
-        <Text variant="body" color="secondary" className="mb-6">
-          Explore all available components and design tokens
-        </Text>
-
-        {/* Theme Toggle */}
-        <Card variant="filled" className="mb-6">
-          <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center">
-              <Ionicons
-                name={isDark ? "moon" : "sunny"}
-                size={20}
-                color={colors.warning.DEFAULT}
-              />
-              <Text variant="label" className="ml-3">
-                {isDark ? "Dark Mode" : "Light Mode"}
-              </Text>
-            </View>
-            <Switch value={isDark} onValueChange={toggleColorScheme} />
-          </View>
-          <Text variant="caption" color="muted" className="mt-2">
-            Platform: {Platform.OS} | Color Scheme: {colorScheme}
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <View className="px-4 py-4">
+          <Text variant="body" color="secondary" className="mb-6">
+            Explore all available components and design tokens
           </Text>
-        </Card>
 
-        {/* Foundation */}
-        <Text variant="overline" color="secondary" className="mb-3 ml-1">
-          Foundation
-        </Text>
-        <DemoLink
-          href="/(demo)/colors"
-          title="Colors"
-          description="Color palette and semantic colors"
-          icon="color-palette"
-        />
-        <DemoLink
-          href="/(demo)/typography"
-          title="Typography"
-          description="Text styles and variants"
-          icon="text"
-        />
+          {/* Theme Toggle */}
+          <Card variant="filled" className="mb-6">
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center">
+                <Ionicons
+                  name={isDark ? "moon" : "sunny"}
+                  size={20}
+                  color={colors.warning.DEFAULT}
+                />
+                <Text variant="label" className="ml-3">
+                  {isDark ? "Dark Mode" : "Light Mode"}
+                </Text>
+              </View>
+              <Switch value={isDark} onValueChange={toggleColorScheme} />
+            </View>
+            <Text variant="caption" color="muted" className="mt-2">
+              Platform: {Platform.OS} | Color Scheme: {colorScheme}
+            </Text>
+          </Card>
 
-        {/* Components */}
-        <Text variant="overline" color="secondary" className="mb-3 ml-1 mt-4">
-          Components
-        </Text>
-        <DemoLink
-          href="/(demo)/buttons"
-          title="Buttons"
-          description="Button variants and states"
-          icon="radio-button-on"
-        />
-        <DemoLink
-          href="/(demo)/inputs"
-          title="Inputs"
-          description="Text inputs and form fields"
-          icon="create"
-        />
-        <DemoLink
-          href="/(demo)/cards"
-          title="Cards"
-          description="Card variants and compositions"
-          icon="card"
-        />
-        <DemoLink
-          href="/(demo)/toggles"
-          title="Toggles"
-          description="Switches, checkboxes, and radios"
-          icon="toggle"
-        />
-        <DemoLink
-          href="/(demo)/glass"
-          title="Glass Effects"
-          description="Platform-native glass components"
-          icon="sparkles"
-        />
-        <DemoLink
-          href="/(demo)/feedback"
-          title="Feedback"
-          description="Badges, spinners, and indicators"
-          icon="notifications"
-        />
-        <DemoLink
-          href="/(demo)/lists"
-          title="Lists"
-          description="List items and sections"
-          icon="list"
-        />
-        <DemoLink
-          href="/(demo)/avatars"
-          title="Avatars"
-          description="User avatars and groups"
-          icon="people"
-        />
-      </View>
+          {/* iOS 26 Showcase */}
+          <Text variant="overline" color="secondary" className="mb-3 ml-1">
+            iOS 26 Native Demos
+          </Text>
+          <Link href="/(ios-showcase)" asChild>
+            <Card variant="glass" pressable className="mb-6">
+              <View className="flex-row items-center">
+                <View className="w-12 h-12 rounded-xl items-center justify-center mr-3" style={{ backgroundColor: "#007AFF" }}>
+                  <Ionicons name="phone-portrait" size={24} color="#FFFFFF" />
+                </View>
+                <View className="flex-1">
+                  <View className="flex-row items-center">
+                    <Text variant="label">iOS 26 Showcase</Text>
+                    <Badge variant="success" size="sm" className="ml-2">
+                      New
+                    </Badge>
+                  </View>
+                  <Text variant="caption" color="secondary">
+                    Dashboard, Messages, Settings & more
+                  </Text>
+                </View>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={colors.foreground.muted}
+                />
+              </View>
+            </Card>
+          </Link>
+
+          {/* Foundation */}
+          <Text variant="overline" color="secondary" className="mb-3 ml-1">
+            Foundation
+          </Text>
+          <DemoLink
+            href="/(demo)/colors"
+            title="Colors"
+            description="Color palette and semantic colors"
+            icon="color-palette"
+          />
+          <DemoLink
+            href="/(demo)/typography"
+            title="Typography"
+            description="Text styles and variants"
+            icon="text"
+          />
+
+          {/* Components */}
+          <Text variant="overline" color="secondary" className="mb-3 ml-1 mt-4">
+            Components
+          </Text>
+          <DemoLink
+            href="/(demo)/buttons"
+            title="Buttons"
+            description="Button variants and states"
+            icon="radio-button-on"
+          />
+          <DemoLink
+            href="/(demo)/inputs"
+            title="Inputs"
+            description="Text inputs and form fields"
+            icon="create"
+          />
+          <DemoLink
+            href="/(demo)/cards"
+            title="Cards"
+            description="Card variants and compositions"
+            icon="card"
+          />
+          <DemoLink
+            href="/(demo)/toggles"
+            title="Toggles"
+            description="Switches, checkboxes, and radios"
+            icon="toggle"
+          />
+          <DemoLink
+            href="/(demo)/glass"
+            title="Glass Effects"
+            description="Platform-native glass components"
+            icon="sparkles"
+          />
+          <DemoLink
+            href="/(demo)/feedback"
+            title="Feedback"
+            description="Badges, spinners, and indicators"
+            icon="notifications"
+          />
+          <DemoLink
+            href="/(demo)/lists"
+            title="Lists"
+            description="List items and sections"
+            icon="list"
+          />
+          <DemoLink
+            href="/(demo)/avatars"
+            title="Avatars"
+            description="User avatars and groups"
+            icon="people"
+          />
+        </View>
+      </ScrollView>
     </HeaderLayout>
   );
 }
