@@ -4,12 +4,14 @@
  * Main landing screen for the app.
  */
 
-import { View } from "react-native";
+import { View, ScrollView } from "react-native";
 import { Link } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Text, Card, Button, Avatar, Badge } from "@/components/ui";
+import { GlassContainer } from "@/components/glass";
 import { HeaderLayout } from "@/components/layouts";
 import { useTheme } from "@/hooks/useTheme";
+import { supportsLiquidGlass } from "@/lib/platform";
 
 export default function HomeTab() {
   const { colors } = useTheme();
@@ -28,19 +30,43 @@ export default function HomeTab() {
       }}
       safeAreaEdges={["bottom"]}
     >
-      <View className="px-4 py-4">
-        {/* Welcome Card */}
-        <Card variant="glass" className="mb-6">
-          <View className="flex-row items-center">
-            <Avatar name="User" size="lg" showStatus status="online" />
-            <View className="ml-4 flex-1">
-              <Text variant="h4">Welcome back!</Text>
-              <Text variant="body" color="secondary">
-                Ready to explore the app?
-              </Text>
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <View className="px-4 py-4">
+          {/* iOS 26 Showcase Banner */}
+          <Link href="/(ios-showcase)" asChild>
+            <Card variant="glass" pressable className="mb-6">
+              <View className="flex-row items-center">
+                <View className="w-14 h-14 rounded-2xl bg-gradient-to-br items-center justify-center mr-4" style={{ backgroundColor: "#007AFF" }}>
+                  <Ionicons name="phone-portrait" size={28} color="#FFFFFF" />
+                </View>
+                <View className="flex-1">
+                  <View className="flex-row items-center">
+                    <Text variant="h5">iOS 26 Showcase</Text>
+                    <Badge variant="success" size="sm" className="ml-2">
+                      New
+                    </Badge>
+                  </View>
+                  <Text variant="bodySmall" color="secondary">
+                    Explore Liquid Glass demos
+                  </Text>
+                </View>
+                <Ionicons name="chevron-forward" size={20} color={colors.foreground.muted} />
+              </View>
+            </Card>
+          </Link>
+
+          {/* Welcome Card */}
+          <Card variant="glass" className="mb-6">
+            <View className="flex-row items-center">
+              <Avatar name="User" size="lg" showStatus status="online" />
+              <View className="ml-4 flex-1">
+                <Text variant="h4">Welcome back!</Text>
+                <Text variant="body" color="secondary">
+                  Ready to explore the app?
+                </Text>
+              </View>
             </View>
-          </View>
-        </Card>
+          </Card>
 
         {/* Quick Actions */}
         <Text variant="overline" color="secondary" className="mb-3 ml-1">
@@ -117,13 +143,21 @@ export default function HomeTab() {
           </View>
         </Card>
 
-        {/* CTA */}
-        <View className="mt-6">
-          <Link href="/(demo)" asChild>
-            <Button fullWidth>View Component Library</Button>
-          </Link>
+          {/* CTA */}
+          <View className="mt-6 gap-3">
+            <Link href="/(ios-showcase)" asChild>
+              <Button fullWidth variant="primary">
+                iOS 26 Showcase
+              </Button>
+            </Link>
+            <Link href="/(demo)" asChild>
+              <Button fullWidth variant="secondary">
+                Component Library
+              </Button>
+            </Link>
+          </View>
         </View>
-      </View>
+      </ScrollView>
     </HeaderLayout>
   );
 }
