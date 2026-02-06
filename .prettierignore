@@ -1,6 +1,9 @@
 node_modules/
 .expo/
+.next/
+.turbo/
 dist/
+out/
 android/
 ios/
 web-build/

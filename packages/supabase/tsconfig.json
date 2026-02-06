@@ -1,0 +1,11 @@
+{
+  "extends": "@matrx/typescript-config/library.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@matrx/supabase/*": ["./src/*"]
+    }
+  },
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "dist"]
+}

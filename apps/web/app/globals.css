@@ -1,0 +1,129 @@
+@import "tailwindcss";
+
+/*
+ * Matrx Design System — Web
+ *
+ * Tailwind CSS 4 CSS-first configuration.
+ * Uses @theme directive instead of tailwind.config.js.
+ *
+ * Color values match the mobile design system for brand consistency.
+ * Web-specific adjustments (hover states, focus rings) are added here.
+ */
+
+@theme {
+  /* Font families */
+  --font-sans: "Inter", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* Primary — Deep Blue (Trust & Professionalism) */
+  --color-primary: #1E3A5F;
+  --color-primary-light: #2D5A8A;
+  --color-primary-dark: #0F1F33;
+  --color-on-primary: #FFFFFF;
+  --color-primary-container: #D4E4F7;
+  --color-on-primary-container: #001D36;
+
+  /* Secondary — Warm Slate */
+  --color-secondary: #64748B;
+  --color-secondary-light: #94A3B8;
+  --color-secondary-dark: #475569;
+  --color-on-secondary: #FFFFFF;
+  --color-secondary-container: #D6E3F7;
+  --color-on-secondary-container: #0F1D2A;
+
+  /* Background */
+  --color-background: #FFFFFF;
+  --color-background-secondary: #F8FAFC;
+  --color-background-tertiary: #F1F5F9;
+
+  /* Surface */
+  --color-surface: #FFFFFF;
+  --color-surface-elevated: #FFFFFF;
+  --color-surface-variant: #DFE2EB;
+  --color-on-surface-variant: #43474E;
+
+  /* Border & Outline */
+  --color-border: #E2E8F0;
+  --color-border-subtle: #F1F5F9;
+  --color-outline: #73777F;
+  --color-outline-variant: #C3C7CF;
+
+  /* Foreground (text) */
+  --color-foreground: #0F172A;
+  --color-foreground-secondary: #475569;
+  --color-foreground-muted: #94A3B8;
+  --color-foreground-inverse: #F8FAFC;
+
+  /* Semantic */
+  --color-success: #059669;
+  --color-success-light: #D1FAE5;
+  --color-warning: #D97706;
+  --color-warning-light: #FEF3C7;
+  --color-error: #DC2626;
+  --color-error-light: #FEE2E2;
+  --color-info: #2563EB;
+  --color-info-light: #DBEAFE;
+
+  /* Backdrop */
+  --color-backdrop: rgba(0, 0, 0, 0.5);
+}
+
+/*
+ * Dark mode overrides
+ */
+@media (prefers-color-scheme: dark) {
+  @theme {
+    --color-primary: #3B82F6;
+    --color-primary-light: #60A5FA;
+    --color-primary-dark: #1D4ED8;
+    --color-on-primary: #003059;
+    --color-primary-container: #1E3A5F;
+    --color-on-primary-container: #D4E4F7;
+
+    --color-secondary: #94A3B8;
+    --color-secondary-light: #CBD5E1;
+    --color-secondary-dark: #64748B;
+    --color-on-secondary: #243240;
+    --color-secondary-container: #3B4857;
+    --color-on-secondary-container: #D6E3F7;
+
+    --color-background: #0A0A0B;
+    --color-background-secondary: #141416;
+    --color-background-tertiary: #1E1E22;
+
+    --color-surface: #141416;
+    --color-surface-elevated: #1E1E22;
+    --color-surface-variant: #43474E;
+    --color-on-surface-variant: #C3C7CF;
+
+    --color-border: #2A2A2E;
+    --color-border-subtle: #1E1E22;
+    --color-outline: #8D9199;
+    --color-outline-variant: #43474E;
+
+    --color-foreground: #F8FAFC;
+    --color-foreground-secondary: #CBD5E1;
+    --color-foreground-muted: #64748B;
+    --color-foreground-inverse: #0F172A;
+
+    --color-success: #22C55E;
+    --color-success-light: #14532D;
+    --color-warning: #FBBF24;
+    --color-warning-light: #713F12;
+    --color-error: #F87171;
+    --color-error-light: #7F1D1D;
+    --color-info: #60A5FA;
+    --color-info-light: #1E3A8A;
+
+    --color-backdrop: rgba(0, 0, 0, 0.5);
+  }
+}
+
+/*
+ * Base layer resets
+ */
+@layer base {
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+}

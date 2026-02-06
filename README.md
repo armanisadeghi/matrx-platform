@@ -1,246 +1,157 @@
-# Mobile Native Template
+# Matrx Platform Template
 
-> **The starting point for all Matrx native applications.**
+> **Monorepo template for generating custom AI-integrated web and mobile applications.**
 
-**Stack:** Expo SDK 54 · React Native 0.81 · iOS 26 · Android 16 · TypeScript Strict
-
----
-
-## READ THIS FIRST (Developers & AI Agents)
-
-Before writing ANY code in this repository, read these resources in order:
-
-| Priority | Resource | What You'll Learn |
-|----------|----------|-------------------|
-| **1. Required** | This README | Core principles, critical rules, what NOT to do |
-| **2. Required** | [Best Practices Index](./docs/best-practices/INDEX.md) | Quick reference for all patterns |
-| **3. As Needed** | [docs/best-practices/](./docs/best-practices/) | Deep dives on specific topics |
-
-**AI Agents:** The `.cursor/skills/mobile-native-standards/SKILL.md` file contains enforcement rules. Apply them on every change.
+**Stack:** Next.js 16.1 · Expo SDK 54 · Supabase · Stripe · TypeScript Strict · Turborepo
 
 ---
 
-## Critical Rules (Violations Will Break the Build)
+## Architecture
 
-### 1. ZERO Hardcoded Colors
-
-```typescript
-// ❌ NEVER — Build will fail
-<View style={{ backgroundColor: '#000000' }} />
-<View className="bg-black" />
-<Text style={{ color: 'white' }} />
-
-// ✅ ALWAYS
-import { useTheme } from '@/hooks';
-const { colors } = useTheme();
-<View style={{ backgroundColor: colors.background.primary }} />
+```
+├── apps/
+│   ├── web/              Next.js 16.1 — API routes, web portal, admin dashboard
+│   └── mobile/           Expo 54 — iOS 26 + Android 16 native app
+│
+├── packages/
+│   ├── shared/           Types, Zod schemas, constants, utilities
+│   ├── supabase/         Database types, client factory, shared queries
+│   ├── ai-client/        Matrx AI integration SDK (prompts, agents, workflows)
+│   ├── typescript-config/ Shared tsconfig presets
+│   └── eslint-config/    Shared ESLint configurations
+│
+├── turbo.json            Turborepo task orchestration
+└── pnpm-workspace.yaml   pnpm workspace definition
 ```
 
-All colors come from `constants/colors.ts` via the `useTheme()` hook.
+### Data Flow
 
-### 2. NO Deprecated SafeAreaView
-
-```typescript
-// ❌ NEVER
-import { SafeAreaView } from 'react-native';
-
-// ✅ ALWAYS
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
-const insets = useSafeAreaInsets();
+```
+Mobile/Web  →  Next.js API Routes  →  Supabase (DB, Auth, Storage)
+                      ↓
+              Matrx AI Backend (Prompts, Agents, Workflows)
+                      ↓
+              Stripe (Payments, Subscriptions)
 ```
 
-Or use layout components from `@/components/layouts`.
+All business logic lives in Next.js API routes — the single source of truth.
+Clients (web and mobile) consume endpoints only.
 
-### 3. Reanimated 4 for ALL Animations
+---
 
-```typescript
-// ❌ NEVER
-import { Animated } from 'react-native';
+## Quick Start
 
-// ✅ ALWAYS
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-```
+```bash
+# Install dependencies
+pnpm install
 
-### 4. NO `any` Types
+# Run the web app
+pnpm dev:web
 
-```typescript
-// ❌ NEVER
-const data: any = fetchData();
+# Run the mobile app
+pnpm dev:mobile
 
-// ✅ ALWAYS
-interface User { id: string; name: string; }
-const data: User = fetchData();
-```
+# Run everything
+pnpm dev
 
-### 5. Use Provided Components
+# Build all
+pnpm build
 
-```typescript
-// ❌ NEVER — Don't create your own
-<TouchableOpacity><Text>Click</Text></TouchableOpacity>
-
-// ✅ ALWAYS — Use the component library
-import { Button } from '@/components/ui';
-<Button onPress={handlePress}>Click</Button>
+# Lint + typecheck all
+pnpm check
 ```
 
 ---
 
-## Project Structure
+## Apps
 
-```
-mobile-native/
-├── app/                      # Routes (Expo Router file-based)
-│   ├── (tabs)/               # Tab navigation group
-│   ├── (auth)/               # Auth flow group
-│   └── _layout.tsx           # Root layout
-├── components/
-│   ├── ui/                   # ⭐ Reusable UI components (Button, Card, Input, etc.)
-│   ├── glass/                # Glass effect components (iOS/Android/Web)
-│   └── layouts/              # Screen layout templates
-├── hooks/                    # Custom hooks (useTheme, useAnimatedPress, etc.)
-├── constants/                # Theme tokens (colors, spacing, typography)
-├── lib/                      # Utilities (cn, platform helpers)
-├── docs/
-│   └── best-practices/       # 📚 Detailed documentation
-└── .cursor/
-    └── skills/               # 🤖 AI agent enforcement rules
-```
+### `apps/web` — Next.js 16.1
+
+- **React 19.2** with React Compiler (automatic memoization)
+- **Tailwind CSS 4.1** with CSS-first `@theme` configuration
+- **Dynamic by default** — opt into caching with `'use cache'` directive
+- **Turbopack** as default bundler (no flags needed)
+- **`proxy.ts`** for route guards (replaces deprecated `middleware.ts`)
+- Supabase Auth with SSR cookie handling via `@supabase/ssr`
+- Stripe integration for payments and subscriptions
+
+### `apps/mobile` — Expo SDK 54
+
+- **React Native 0.81** with New Architecture (Fabric, TurboModules, Hermes)
+- **iOS 26** — Liquid Glass design system
+- **Android 16** — Material 3 Expressive design system
+- **NativeWind 4.2** for Tailwind-style styling
+- **Reanimated 4** for 60fps animations
+- **MMKV** for high-performance local storage
 
 ---
 
-## Component Library
+## Packages
 
-Import all UI components from a single location:
+### `@matrx/shared`
+
+Types, Zod validation schemas, and utilities shared between web and mobile.
 
 ```typescript
-import {
-  // Interactive
-  Button, Pressable, IconButton,
-  // Display
-  Text, Card, Badge, Avatar, Image,
-  // Forms
-  Input, Select, SearchBar,
-  // Feedback
-  Alert, Toast, Spinner, Skeleton, ProgressBar,
-  // Layout
-  ListItem, EmptyState, ScrollContainer,
-  // Icons
-  Icon,
-} from '@/components/ui';
+import { loginSchema, API_ROUTES, formatRelativeTime } from "@matrx/shared";
+import type { User, ApiResponse, Workspace } from "@matrx/shared";
 ```
 
----
+### `@matrx/supabase`
 
-## Theming Quick Reference
+Typed Supabase client factory and shared query functions.
 
 ```typescript
-import { useTheme } from '@/hooks';
-
-const { colors, colorScheme } = useTheme();
-
-// Available color tokens:
-colors.background.primary      // Main background
-colors.background.secondary    // Card backgrounds
-colors.background.elevated     // Elevated surfaces
-colors.text.primary           // Main text
-colors.text.secondary         // Muted text
-colors.accent.primary         // Brand color
-colors.accent.success         // Success states
-colors.accent.error           // Error states
-colors.border.default         // Standard borders
-colors.surface.overlay        // Modal overlays
+import { createSupabaseClient, getProfile, getWorkspaces } from "@matrx/supabase";
+import type { Database, Tables } from "@matrx/supabase";
 ```
 
-Full token list: `constants/colors.ts`
+### `@matrx/ai-client`
 
----
-
-## Platform-Specific Code
+Client SDK for the Matrx AI integration platform.
 
 ```typescript
-// For FULL component differences — use file extensions:
-GlassContainer.ios.tsx        // iOS 26 Liquid Glass
-GlassContainer.android.tsx    // Android 16 Material 3
-GlassContainer.web.tsx        // Web fallback
-
-// For SMALL differences — use Platform module:
-import { Platform } from 'react-native';
-const value = Platform.select({ ios: 10, android: 12, default: 8 });
+import { MatrxAiClient } from "@matrx/ai-client";
+import type { Workflow, Agent, PromptTemplate } from "@matrx/ai-client";
 ```
 
 ---
 
-## Documentation Index
+## Core Principles
 
-| Topic | File | When to Read |
-|-------|------|--------------|
-| **Quick Reference** | [INDEX.md](./docs/best-practices/INDEX.md) | Always start here |
-| **Theming** | [centralized-theming.md](./docs/best-practices/centralized-theming.md) | Styling any component |
-| **Components** | [component-architecture.md](./docs/best-practices/component-architecture.md) | Creating new components |
-| **Navigation** | [expo-router-navigation.md](./docs/best-practices/expo-router-navigation.md) | Adding screens/routes |
-| **Layouts** | [layout-system.md](./docs/best-practices/layout-system.md) | Screen structure, safe areas |
-| **Forms** | [form-handling.md](./docs/best-practices/form-handling.md) | Form inputs, validation |
-| **Animations** | [reanimated-4-animations.md](./docs/best-practices/reanimated-4-animations.md) | Adding motion |
-| **Icons** | [icons-and-graphics.md](./docs/best-practices/icons-and-graphics.md) | Using icons |
-| **Platform Code** | [platform-specific-code.md](./docs/best-practices/platform-specific-code.md) | iOS/Android differences |
-| **iOS 26** | [ios-26-liquid-glass.md](./docs/best-practices/ios-26-liquid-glass.md) | Liquid Glass specifics |
-| **Android 16** | [android-16-material-3-expressive.md](./docs/best-practices/android-16-material-3-expressive.md) | M3 Expressive specifics |
-| **TypeScript** | [typescript-patterns.md](./docs/best-practices/typescript-patterns.md) | Type patterns |
-| **Project Structure** | [project-structure.md](./docs/best-practices/project-structure.md) | File organization |
-| **Expo SDK** | [expo-sdk-54.md](./docs/best-practices/expo-sdk-54.md) | Expo configuration |
-| **New Architecture** | [react-native-new-architecture.md](./docs/best-practices/react-native-new-architecture.md) | Fabric, TurboModules |
+1. **Server-first data flow** — Server Components by default, Client Components only for interactivity
+2. **API routes are the single source of truth** — All business logic lives there
+3. **End-to-end type safety** — Database types flow from Supabase → shared package → API → client
+4. **Dynamic by default, cache explicitly** — Opt into caching with `'use cache'`
+5. **Native-first mobile** — iOS Liquid Glass + Android Material 3, not cross-platform compromises
+6. **No hardcoded colors** — Everything flows from the design system
+7. **TypeScript strict mode** — No `any` types anywhere
+
+---
+
+## Environment Setup
+
+Copy the example env files:
+
+```bash
+cp apps/web/.env.example apps/web/.env.local
+cp apps/mobile/.env.example apps/mobile/.env
+```
 
 ---
 
 ## Tech Stack
 
-| Layer | Technology | Version |
-|-------|-----------|---------|
-| Framework | Expo | 54.0.33 |
-| Runtime | React Native | 0.81.5 |
-| React | React | 19.1.0 |
-| TypeScript | TypeScript | 5.9.2 |
-| Styling | NativeWind | 4.2.1 |
-| Navigation | Expo Router | 6.0.23 |
-| Animation | Reanimated | 4.2.1 |
-| iOS Design | Liquid Glass | expo-liquid-glass-native 1.3.0 |
-| Android Design | Material 3 Expressive | expo-liquid-glass-native 1.3.0 |
-
-**Targets:** iOS 26+ · Android 16+ · Web (ES2022+)
-
-**Architecture:** React Native New Architecture (Fabric, TurboModules, Bridgeless, Hermes)
-
----
-
-## Commands
-
-```bash
-pnpm install          # Install dependencies
-pnpm start            # Start Expo dev server
-pnpm ios              # Run on iOS simulator
-pnpm android          # Run on Android emulator
-pnpm web              # Run in browser
-pnpm lint             # Run ESLint
-pnpm typecheck        # Run TypeScript compiler
-```
-
----
-
-## Philosophy
-
-**Native first.** iOS users get iOS 26 Liquid Glass. Android users get Material 3 Expressive. We build native apps that share business logic, not "cross-platform" compromises.
-
-**No shortcuts.** If a component needs three platform implementations to feel native, we write three implementations.
-
-**Single source of truth.** Every color, spacing value, and text style flows from centralized constants. Global changes are instant.
-
----
-
-## For AI Agents
-
-1. **Before ANY change:** Read this README and the [Best Practices Index](./docs/best-practices/INDEX.md)
-2. **On every change:** Validate against `.cursor/skills/mobile-native-standards/SKILL.md`
-3. **Creating components:** Follow the template in [component-architecture.md](./docs/best-practices/component-architecture.md)
-4. **When in doubt:** Use `useTheme()` for colors, existing components from `@/components/ui`, and Reanimated 4 for animations
-
-The ESLint configuration enforces these rules. Violations will fail CI.
+| Layer | Web | Mobile |
+|-------|-----|--------|
+| Framework | Next.js 16.1 | Expo SDK 54 |
+| React | 19.2 | 19.1 |
+| Styling | Tailwind CSS 4.1 | NativeWind 4.2 (TW 3.4) |
+| Language | TypeScript 5.9 | TypeScript 5.9 |
+| Database | Supabase (PostgreSQL) | via API routes |
+| Auth | Supabase Auth + SSR | Supabase Auth + MMKV |
+| Payments | Stripe | Stripe React Native |
+| Real-time | Supabase Realtime | Supabase Realtime |
+| Bundler | Turbopack | Metro |
+| Package Manager | pnpm 10.28 | pnpm 10.28 |
+| Orchestration | Turborepo | Turborepo |
