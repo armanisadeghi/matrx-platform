@@ -17,9 +17,32 @@ export type {
 } from "./types";
 
 export {
+  // Profiles
   getProfile,
+  getAllProfiles,
   updateProfile,
+  // Organizations
   getOrganization,
+  getOrganizationBySlug,
+  getUserOrganizations,
+  // User Preferences
+  getUserPreferences,
+  updateUserPreferences,
+  // Blog
+  getPublishedBlogPosts,
+  getBlogPostBySlug,
+  getAllBlogPosts,
+  getBlogCategories,
+  // Dynamic Pages
+  getDynamicPageBySlug,
+  getAllDynamicPages,
+  // Files
+  getUserFiles,
+  getAllFiles,
+  // App Versions
+  getAppVersions,
+  getCurrentVersion,
+  // Workspaces & AI
   getWorkspaces,
   getAiIntegrations,
   createAiIntegration,

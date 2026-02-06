@@ -20,3 +20,20 @@ export type {
   CreateWorkspaceInput,
   CreateAiIntegrationInput,
 } from "./common";
+
+export {
+  createBlogPostSchema,
+  updateBlogPostSchema,
+  blogCategorySchema,
+  createDynamicPageSchema,
+  updateDynamicPageSchema,
+  fileUploadSchema,
+} from "./content";
+export type {
+  CreateBlogPostInput,
+  UpdateBlogPostInput,
+  BlogCategoryInput,
+  CreateDynamicPageInput,
+  UpdateDynamicPageInput,
+  FileUploadInput,
+} from "./content";
