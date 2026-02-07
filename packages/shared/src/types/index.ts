@@ -38,3 +38,15 @@ export type {
   Workspace,
   AiIntegration,
 } from "./database";
+
+export type {
+  ErrorLevel,
+  ErrorStatus,
+  ErrorPlatform,
+  ErrorGroup,
+  ErrorEvent,
+  ErrorBreadcrumb,
+  ErrorReportPayload,
+  CaptureExtras,
+  AuditLogEntry,
+} from "./errors";

@@ -1,5 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
+import { errorReporter } from "@matrx/shared";
+
 export default function Error({
   error,
   reset,
@@ -7,6 +10,14 @@ export default function Error({
   error: Error & { digest?: string };
   reset: () => void;
 }) {
+  useEffect(() => {
+    errorReporter.captureError(error, {
+      component: "NextErrorBoundary",
+      action: "page_render",
+      context: { digest: error.digest },
+    });
+  }, [error]);
+
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-8">
       <h1 className="text-4xl font-bold text-foreground">

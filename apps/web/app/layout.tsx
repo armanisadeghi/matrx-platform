@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
+import { ErrorTrackingProvider } from "@/components/ErrorTrackingProvider";
 import "./globals.css";
 
 const inter = Inter({
@@ -41,7 +42,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
-        {children}
+        <ErrorTrackingProvider>{children}</ErrorTrackingProvider>
       </body>
     </html>
   );

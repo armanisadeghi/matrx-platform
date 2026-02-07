@@ -6,3 +6,4 @@ export {
   formatNumber,
   formatFileSize,
 } from "./format";
+export { errorReporter } from "./error-reporter";

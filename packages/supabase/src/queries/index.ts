@@ -246,3 +246,20 @@ export async function createAiIntegration(
     .select()
     .single();
 }
+
+// ============================================================================
+// Error Tracking & Audit (re-exported from errors.ts)
+// ============================================================================
+
+export {
+  getErrorGroups,
+  getErrorGroupById,
+  updateErrorGroupStatus,
+  assignErrorGroup,
+  deleteErrorGroup,
+  getErrorGroupStats,
+  getErrorEvents,
+  getErrorEventById,
+  getAuditLogs,
+  createAuditLog,
+} from "./errors";

@@ -539,9 +539,213 @@ export type Database = {
           updated_at?: string;
         };
       };
+      error_groups: {
+        Row: {
+          id: string;
+          fingerprint: string;
+          title: string;
+          culprit: string | null;
+          platform: string;
+          level: "fatal" | "error" | "warning" | "info";
+          status: "unresolved" | "resolved" | "ignored" | "muted";
+          first_seen_at: string;
+          last_seen_at: string;
+          event_count: number;
+          user_count: number;
+          assigned_to: string | null;
+          resolved_at: string | null;
+          resolved_by: string | null;
+          tags: Record<string, unknown>;
+          metadata: Record<string, unknown>;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          fingerprint: string;
+          title: string;
+          culprit?: string | null;
+          platform?: string;
+          level?: "fatal" | "error" | "warning" | "info";
+          status?: "unresolved" | "resolved" | "ignored" | "muted";
+          first_seen_at?: string;
+          last_seen_at?: string;
+          event_count?: number;
+          user_count?: number;
+          assigned_to?: string | null;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          tags?: Record<string, unknown>;
+          metadata?: Record<string, unknown>;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          fingerprint?: string;
+          title?: string;
+          culprit?: string | null;
+          platform?: string;
+          level?: "fatal" | "error" | "warning" | "info";
+          status?: "unresolved" | "resolved" | "ignored" | "muted";
+          first_seen_at?: string;
+          last_seen_at?: string;
+          event_count?: number;
+          user_count?: number;
+          assigned_to?: string | null;
+          resolved_at?: string | null;
+          resolved_by?: string | null;
+          tags?: Record<string, unknown>;
+          metadata?: Record<string, unknown>;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
+      error_events: {
+        Row: {
+          id: string;
+          group_id: string;
+          message: string;
+          stack_trace: string | null;
+          platform: string;
+          environment: string;
+          release: string | null;
+          user_id: string | null;
+          user_agent: string | null;
+          ip_address: string | null;
+          url: string | null;
+          component: string | null;
+          action: string | null;
+          breadcrumbs: unknown[];
+          context: Record<string, unknown>;
+          tags: Record<string, unknown>;
+          request: Record<string, unknown> | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          group_id: string;
+          message: string;
+          stack_trace?: string | null;
+          platform?: string;
+          environment?: string;
+          release?: string | null;
+          user_id?: string | null;
+          user_agent?: string | null;
+          ip_address?: string | null;
+          url?: string | null;
+          component?: string | null;
+          action?: string | null;
+          breadcrumbs?: unknown[];
+          context?: Record<string, unknown>;
+          tags?: Record<string, unknown>;
+          request?: Record<string, unknown> | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          group_id?: string;
+          message?: string;
+          stack_trace?: string | null;
+          platform?: string;
+          environment?: string;
+          release?: string | null;
+          user_id?: string | null;
+          user_agent?: string | null;
+          ip_address?: string | null;
+          url?: string | null;
+          component?: string | null;
+          action?: string | null;
+          breadcrumbs?: unknown[];
+          context?: Record<string, unknown>;
+          tags?: Record<string, unknown>;
+          request?: Record<string, unknown> | null;
+          created_at?: string;
+        };
+      };
+      error_rate_limits: {
+        Row: {
+          fingerprint: string;
+          window_start: string;
+          event_count: number;
+        };
+        Insert: {
+          fingerprint: string;
+          window_start: string;
+          event_count?: number;
+        };
+        Update: {
+          fingerprint?: string;
+          window_start?: string;
+          event_count?: number;
+        };
+      };
+      audit_logs: {
+        Row: {
+          id: string;
+          actor_id: string | null;
+          actor_email: string | null;
+          action: string;
+          resource: string;
+          resource_id: string | null;
+          changes: Record<string, unknown>;
+          ip_address: string | null;
+          user_agent: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          actor_id?: string | null;
+          actor_email?: string | null;
+          action: string;
+          resource: string;
+          resource_id?: string | null;
+          changes?: Record<string, unknown>;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          created_at?: string;
+        };
+        Update: {
+          id?: string;
+          actor_id?: string | null;
+          actor_email?: string | null;
+          action?: string;
+          resource?: string;
+          resource_id?: string | null;
+          changes?: Record<string, unknown>;
+          ip_address?: string | null;
+          user_agent?: string | null;
+          created_at?: string;
+        };
+      };
     };
     Views: Record<string, never>;
-    Functions: Record<string, never>;
+    Functions: {
+      increment_error_group_count: {
+        Args: {
+          p_fingerprint: string;
+          p_title: string;
+          p_culprit?: string;
+          p_platform?: string;
+          p_level?: string;
+        };
+        Returns: string;
+      };
+      check_error_rate_limit: {
+        Args: {
+          p_fingerprint: string;
+          p_window_minutes?: number;
+          p_max_per_window?: number;
+        };
+        Returns: boolean;
+      };
+      cleanup_error_rate_limits: {
+        Args: {
+          p_older_than_hours?: number;
+        };
+        Returns: number;
+      };
+    };
     Enums: {
       profile_role: "super_admin" | "admin" | "member" | "viewer";
       org_member_role: "owner" | "admin" | "member" | "viewer";
@@ -553,6 +757,8 @@ export type Database = {
       integration_type: "prompt" | "agent" | "workflow";
       app_name: "web" | "mobile_ios" | "mobile_android";
       deployment_env: "development" | "staging" | "production";
+      error_level: "fatal" | "error" | "warning" | "info";
+      error_status: "unresolved" | "resolved" | "ignored" | "muted";
     };
   };
 };

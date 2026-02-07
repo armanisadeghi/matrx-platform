@@ -36,6 +36,18 @@ export default function AdminDashboardPage() {
       description: "Uploaded files",
       enabled: features.fileStorage,
     },
+    {
+      label: "Unresolved Errors",
+      value: "—",
+      description: "Active error groups",
+      enabled: features.errorTracking,
+    },
+    {
+      label: "Audit Events",
+      value: "—",
+      description: "Admin actions logged",
+      enabled: features.auditLog,
+    },
   ];
 
   return (
