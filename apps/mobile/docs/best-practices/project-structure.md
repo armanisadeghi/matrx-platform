@@ -3,7 +3,7 @@
 ## Directory Layout
 
 ```
-mobile-native/
+apps/mobile/
 ├── app/                    # Expo Router routes
 │   ├── _layout.tsx        # Root layout (providers)
 │   ├── (tabs)/            # Tab navigator group

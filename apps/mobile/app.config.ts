@@ -2,14 +2,14 @@ import { ExpoConfig, ConfigContext } from "expo/config";
 
 export default ({ config }: ConfigContext): ExpoConfig => ({
   ...config,
-  name: "mobile-native",
-  slug: "mobile-native",
+  name: "Matrx",
+  slug: "matrx",
   version: "1.0.0",
   orientation: "portrait",
   icon: "./assets/icon.png",
   userInterfaceStyle: "automatic",
   newArchEnabled: true,
-  scheme: "mobile-native",
+  scheme: "matrx",
   splash: {
     image: "./assets/splash-icon.png",
     resizeMode: "contain",
@@ -17,7 +17,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   },
   ios: {
     supportsTablet: true,
-    bundleIdentifier: "com.matrx.mobilenative",
+    bundleIdentifier: "com.matrx.app",
     infoPlist: {
       UIUserInterfaceStyle: "Automatic",
     },
@@ -28,7 +28,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
       backgroundColor: "#ffffff",
     },
     edgeToEdgeEnabled: true,
-    package: "com.matrx.mobilenative",
+    package: "com.matrx.app",
   },
   web: {
     favicon: "./assets/favicon.png",
