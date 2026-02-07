@@ -48,6 +48,14 @@ export const API_ROUTES = {
   // Webhooks
   STRIPE_WEBHOOK: "/api/webhooks/stripe",
 
+  // Error Tracking
+  ERROR_INGEST: "/api/errors",
+  ERROR_GROUP: "/api/errors/:id",
+  ERROR_EVENTS: "/api/errors/:id/events",
+
+  // Audit
+  AUDIT_LOG: "/api/audit",
+
   // Health
   HEALTH: "/api/health",
 } as const;

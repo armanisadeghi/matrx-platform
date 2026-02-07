@@ -46,4 +46,16 @@ export {
   getWorkspaces,
   getAiIntegrations,
   createAiIntegration,
+  // Error Tracking
+  getErrorGroups,
+  getErrorGroupById,
+  updateErrorGroupStatus,
+  assignErrorGroup,
+  deleteErrorGroup,
+  getErrorGroupStats,
+  getErrorEvents,
+  getErrorEventById,
+  // Audit
+  getAuditLogs,
+  createAuditLog,
 } from "./queries";

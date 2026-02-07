@@ -36,6 +36,10 @@ export interface FeatureFlags {
   githubWebhook: boolean;
   /** Vercel deployment webhook */
   vercelWebhook: boolean;
+  /** Error tracking system (collection, admin dashboard) */
+  errorTracking: boolean;
+  /** Audit logging (admin action history) */
+  auditLog: boolean;
 }
 
 /** Default feature flag values (used when env vars are missing) */
@@ -51,6 +55,8 @@ export const DEFAULT_FEATURES: FeatureFlags = {
   versionTracking: true,
   githubWebhook: false,
   vercelWebhook: false,
+  errorTracking: true,
+  auditLog: true,
 };
 
 /**
@@ -70,6 +76,8 @@ export const FEATURE_ENV_KEYS: Record<keyof FeatureFlags, string> = {
   versionTracking: "FEATURE_VERSION_TRACKING",
   githubWebhook: "FEATURE_GITHUB_WEBHOOK",
   vercelWebhook: "FEATURE_VERCEL_WEBHOOK",
+  errorTracking: "FEATURE_ERROR_TRACKING",
+  auditLog: "FEATURE_AUDIT_LOG",
 };
 
 /**
@@ -143,6 +151,8 @@ export function checkFeatureDependencies(
     adminPortal: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
     realtime: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
     versionTracking: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
+    errorTracking: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
+    auditLog: ["NEXT_PUBLIC_SUPABASE_URL", "NEXT_PUBLIC_SUPABASE_ANON_KEY"],
   };
 
   const required = deps[feature] ?? [];

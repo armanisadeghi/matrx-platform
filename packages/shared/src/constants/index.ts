@@ -5,6 +5,7 @@ export {
   PAGINATION,
   UPLOAD_LIMITS,
   STORAGE_BUCKETS,
+  ERROR_TRACKING,
 } from "./app";
 
 export {

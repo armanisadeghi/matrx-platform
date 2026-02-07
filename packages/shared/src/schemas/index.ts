@@ -37,3 +37,15 @@ export type {
   UpdateDynamicPageInput,
   FileUploadInput,
 } from "./content";
+
+export {
+  errorBreadcrumbSchema,
+  errorReportSchema,
+  errorGroupFilterSchema,
+  updateErrorGroupSchema,
+} from "./errors";
+export type {
+  ErrorReportInput,
+  ErrorGroupFilterInput,
+  UpdateErrorGroupInput,
+} from "./errors";

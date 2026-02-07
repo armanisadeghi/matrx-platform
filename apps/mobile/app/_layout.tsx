@@ -11,8 +11,12 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import * as SplashScreen from "expo-splash-screen";
 import { useTheme } from "@/hooks/useTheme";
+import { initErrorTracking } from "@/lib/error-tracking";
 
 import "../global.css";
+
+// Initialize error tracking as early as possible
+initErrorTracking();
 
 // Prevent splash screen from auto-hiding
 SplashScreen.preventAutoHideAsync();
