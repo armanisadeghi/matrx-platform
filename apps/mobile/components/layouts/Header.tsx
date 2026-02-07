@@ -48,13 +48,17 @@ export function Header({
   };
 
   const height = headerHeights[size];
-  const showGlass = useGlassEffect && isIOS && !transparent;
+
+  // On iOS, use glass header with lighter font weight
+  const effectiveTransparent = transparent;
+  const showGlass = useGlassEffect && isIOS && !effectiveTransparent;
+  const titleWeight = isIOS ? "font-medium" : "font-semibold";
 
   // Header content
   const headerContent = (
     <View
       className={cn("flex-row items-center justify-between px-4", className)}
-      style={[styles.header, { height, paddingTop: transparent ? insets.top : 0 }]}
+      style={[styles.header, { height, paddingTop: effectiveTransparent ? insets.top : 0 }]}
     >
       {/* Left section */}
       <View className="flex-row items-center min-w-[60px]">
@@ -78,7 +82,7 @@ export function Header({
       <View className="flex-1 items-center">
         {title && (
           <Text
-            className="text-foreground font-semibold text-lg"
+            className={`text-foreground ${titleWeight} text-lg`}
             numberOfLines={1}
           >
             {title}
@@ -105,7 +109,7 @@ export function Header({
   if (showGlass) {
     return (
       <GlassContainer
-        intensity="light"
+        intensity={isIOS ? "medium" : "light"}
         tint="surface"
         borderRadius="none"
         style={[styles.glassHeader, { paddingTop: insets.top }]}
@@ -115,12 +119,21 @@ export function Header({
     );
   }
 
-  // Regular header
+  // Transparent header (iOS 26 default - content scrolls behind)
+  if (effectiveTransparent) {
+    return (
+      <View
+        className="absolute top-0 left-0 right-0 z-10"
+        style={{ paddingTop: insets.top }}
+      >
+        {headerContent}
+      </View>
+    );
+  }
+
+  // Regular opaque header
   return (
-    <View
-      className={transparent ? "absolute top-0 left-0 right-0 z-10" : "bg-surface"}
-      style={transparent ? { paddingTop: insets.top } : undefined}
-    >
+    <View className="bg-surface">
       {headerContent}
     </View>
   );

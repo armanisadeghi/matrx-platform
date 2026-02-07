@@ -10,6 +10,7 @@ import { GlassContainer } from "@/components/glass";
 import { cn } from "@/lib/utils";
 import { useTheme } from "@/hooks/useTheme";
 import { useAnimatedPress } from "@/hooks/useAnimatedPress";
+import { isIOS } from "@/lib/platform";
 
 /**
  * Card variant types
@@ -72,6 +73,22 @@ const paddingStyles: Record<NonNullable<CardProps["padding"]>, string> = {
 };
 
 /**
+ * Corner radius — larger on iOS 26 for Liquid Glass aesthetic
+ */
+const cardRadius = isIOS ? "rounded-3xl" : "rounded-2xl";
+
+/**
+ * Resolve variant: on iOS, auto-promote elevated/outlined to glass
+ * for the frosted glass aesthetic
+ */
+function resolveVariant(variant: CardVariant): CardVariant {
+  if (isIOS && (variant === "elevated" || variant === "outlined")) {
+    return "glass";
+  }
+  return variant;
+}
+
+/**
  * Card component
  *
  * @example
@@ -103,10 +120,11 @@ export function Card({
     disabled: !isPressable,
   });
 
+  const resolvedVariant = resolveVariant(variant);
   const paddingClass = paddingStyles[padding];
 
   // Glass variant uses GlassContainer
-  if (variant === "glass") {
+  if (resolvedVariant === "glass") {
     const content = (
       <GlassContainer
         intensity="light"
@@ -134,14 +152,15 @@ export function Card({
   }
 
   // Regular variants
-  const shadowStyle = variant === "elevated" ? shadows.md : undefined;
+  const shadowStyle = resolvedVariant === "elevated" ? shadows.md : undefined;
 
   const content = (
     <View
       className={cn(
-        "rounded-2xl overflow-hidden",
+        cardRadius,
+        "overflow-hidden",
         paddingClass,
-        variantStyles[variant],
+        variantStyles[resolvedVariant],
         className
       )}
       style={[shadowStyle, style]}
