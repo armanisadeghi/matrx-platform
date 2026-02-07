@@ -19,6 +19,7 @@ export {
   type NotificationBannerProps,
 } from "./NotificationBanner";
 export { FloatingBar, type FloatingBarProps } from "./FloatingBar";
+export { SearchIcon, type SearchIconProps } from "./SearchIcon";
 export {
   SettingsRow,
   type SettingsRowProps,
@@ -45,8 +46,8 @@ export {
   SettingsSectionHeader,
   type SettingsSectionHeaderProps,
 } from "./SettingsRow";
-export { 
-  Sheet, 
+export {
+  Sheet,
   type SheetProps,
   ActionSheet,
   type ActionSheetProps,
