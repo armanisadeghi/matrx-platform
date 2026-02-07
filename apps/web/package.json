@@ -9,7 +9,17 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "ship": "tsx scripts/deploy.ts",
+    "ship:minor": "tsx scripts/deploy.ts --minor",
+    "ship:major": "tsx scripts/deploy.ts --major",
+    "version:update": "tsx scripts/update-app-version.ts",
+    "version:minor": "tsx scripts/update-app-version.ts --minor",
+    "version:major": "tsx scripts/update-app-version.ts --major",
+    "vercel:sync": "tsx scripts/sync-vercel-deployments.ts",
+    "vercel:sync:all": "tsx scripts/sync-vercel-deployments.ts --all",
+    "cleanup:duplicates": "tsx scripts/cleanup-duplicate-versions.ts",
+    "backfill:history": "tsx scripts/backfill-version-history.ts"
   },
   "dependencies": {
     "@matrx/ai-client": "workspace:*",
@@ -37,7 +47,9 @@
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "dotenv": "^16.5.0",
     "tailwindcss": "^4.1.18",
+    "tsx": "^4.19.4",
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.54.0"
   }

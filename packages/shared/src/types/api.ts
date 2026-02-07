@@ -58,6 +58,13 @@ export const API_ROUTES = {
 
   // Health
   HEALTH: "/api/health",
+
+  // Version / Deployment
+  VERSION: "/api/version",
+  VERSION_HISTORY: "/api/version/history",
+  VERSION_STATS: "/api/version/stats",
+  VERSIONS_LIST: "/api/versions",
+  VERCEL_WEBHOOK: "/api/webhooks/vercel",
 } as const;
 
 export type ApiRoute = (typeof API_ROUTES)[keyof typeof API_ROUTES];

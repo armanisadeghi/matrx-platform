@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, JetBrains_Mono } from "next/font/google";
 import { ErrorTrackingProvider } from "@/components/ErrorTrackingProvider";
+import { UpdateBanner } from "@/components/UpdateBanner";
 import "./globals.css";
 
 const inter = Inter({
@@ -42,7 +43,13 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
-        <ErrorTrackingProvider>{children}</ErrorTrackingProvider>
+        <ErrorTrackingProvider>
+          <UpdateBanner
+            pollingInterval={300_000}
+            checkOnRouteChange
+          />
+          {children}
+        </ErrorTrackingProvider>
       </body>
     </html>
   );

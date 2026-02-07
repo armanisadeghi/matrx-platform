@@ -1,17 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { features } from "@/lib/features";
 import type { ApiResponse } from "@matrx/shared";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 /**
- * Vercel Webhook Handler
+ * POST /api/webhooks/vercel
  *
- * Processes Vercel deployment webhook events.
- * Verifies the webhook signature before processing.
+ * Receives Vercel deployment webhooks and updates the app_versions table.
  *
- * Handles:
- * - `deployment.succeeded` — marks version as deployed
- * - `deployment.failed` — marks version as failed
+ * Webhook events handled:
+ *   - deployment.created   → status: "building"
+ *   - deployment.succeeded → status: "deployed"
+ *   - deployment.error     → status: "failed"
+ *   - deployment.canceled  → status: "canceled"
+ *
+ * Env vars:
+ *   - VERCEL_WEBHOOK_SECRET (optional, enables signature verification)
+ *   - DEPLOY_APP_NAME       (default: "web")
  */
 
 async function verifyVercelSignature(
@@ -30,35 +38,25 @@ async function verifyVercelSignature(
     ["sign"]
   );
 
-  const signed = await crypto.subtle.sign("HMAC", key, encoder.encode(payload));
+  const signed = await crypto.subtle.sign(
+    "HMAC",
+    key,
+    encoder.encode(payload)
+  );
   const expectedSignature = Array.from(new Uint8Array(signed))
     .map((b) => b.toString(16).padStart(2, "0"))
     .join("");
 
-  const a = new TextEncoder().encode(expectedSignature);
-  const b = new TextEncoder().encode(signature);
+  // Constant-time comparison to prevent timing attacks
+  if (expectedSignature.length !== signature.length) return false;
 
-  if (a.byteLength !== b.byteLength) return false;
-
-  return crypto.subtle.timingSafeEqual(a, b);
-}
-
-interface VercelDeploymentPayload {
-  type: string;
-  payload: {
-    deployment: {
-      id: string;
-      name: string;
-      url: string;
-      meta?: {
-        githubCommitSha?: string;
-        githubCommitMessage?: string;
-        githubCommitAuthorName?: string;
-        githubCommitRef?: string;
-      };
-    };
-    target?: string;
-  };
+  let mismatch = 0;
+  for (let i = 0; i < expectedSignature.length; i++) {
+    mismatch |=
+      (expectedSignature.charCodeAt(i) ?? 0) ^
+      (signature.charCodeAt(i) ?? 0);
+  }
+  return mismatch === 0;
 }
 
 export async function POST(request: NextRequest) {
@@ -67,104 +65,136 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const secret = process.env.VERCEL_WEBHOOK_SECRET;
-    if (!secret) {
-      const response: ApiResponse<null> = {
-        data: null,
-        error: {
-          code: "CONFIG_ERROR",
-          message: "Vercel webhook secret is not configured",
-        },
-      };
-      return NextResponse.json(response, { status: 500 });
-    }
-
     const body = await request.text();
-    const signature = request.headers.get("x-vercel-signature");
 
-    const isValid = await verifyVercelSignature(body, signature, secret);
-    if (!isValid) {
-      const response: ApiResponse<null> = {
-        data: null,
-        error: {
-          code: "INVALID_SIGNATURE",
-          message: "Vercel webhook signature verification failed",
-        },
-      };
-      return NextResponse.json(response, { status: 401 });
+    // Verify webhook signature if secret is configured
+    const secret = process.env.VERCEL_WEBHOOK_SECRET;
+    if (secret) {
+      const signature = request.headers.get("x-vercel-signature");
+      const isValid = await verifyVercelSignature(
+        body,
+        signature,
+        secret
+      );
+      if (!isValid) {
+        const response: ApiResponse<null> = {
+          data: null,
+          error: {
+            code: "INVALID_SIGNATURE",
+            message: "Vercel webhook signature verification failed",
+          },
+        };
+        return NextResponse.json(response, { status: 401 });
+      }
     }
 
-    const event = JSON.parse(body) as VercelDeploymentPayload;
-    const { type, payload: eventPayload } = event;
-    const { deployment } = eventPayload;
-    const target = eventPayload.target ?? "preview";
-    const meta = deployment.meta;
+    const payload = JSON.parse(body);
+    const { type, payload: eventPayload } = payload;
+    const { deployment } = eventPayload ?? {};
 
-    if (type === "deployment.succeeded" || type === "deployment.failed") {
-      const status = type === "deployment.succeeded" ? "deployed" : "failed";
+    if (!deployment) {
+      return NextResponse.json(
+        { error: "No deployment data in payload" },
+        { status: 400 }
+      );
+    }
 
-      const supabase = await createServerSupabaseClient();
+    // Extract data from the Vercel deployment
+    const deploymentId: string = deployment.id;
+    const deploymentUrl: string = deployment.url;
+    const gitCommit: string | null =
+      deployment.meta?.githubCommitSha?.substring(0, 7) ?? null;
+    const target: string = eventPayload.target ?? "preview";
 
-      // Try to update an existing version record by commit SHA
-      if (meta?.githubCommitSha) {
-        const { data: existing } = await supabase
-          .from("app_versions")
-          .select("id")
-          .eq("commit_sha", meta.githubCommitSha)
-          .maybeSingle();
+    // Map webhook type → our status
+    let deploymentStatus: string;
+    let deploymentError: string | null = null;
 
-        if (existing) {
-          const { error: updateError } = await supabase
-            .from("app_versions")
-            .update({
-              status,
-              deployed_at: status === "deployed" ? new Date().toISOString() : undefined,
-              metadata: {
-                vercel_deployment_id: deployment.id,
-                vercel_url: deployment.url,
-                target,
-              },
-            })
-            .eq("id", existing.id);
+    switch (type) {
+      case "deployment.created":
+        deploymentStatus = "building";
+        break;
+      case "deployment.succeeded":
+        deploymentStatus = "deployed";
+        break;
+      case "deployment.error":
+        deploymentStatus = "failed";
+        deploymentError =
+          deployment.errorMessage ?? "Deployment failed";
+        break;
+      case "deployment.canceled":
+        deploymentStatus = "canceled";
+        break;
+      default:
+        return NextResponse.json({
+          message: "Event type ignored",
+        });
+    }
 
-          if (updateError) {
-            const response: ApiResponse<null> = {
-              data: null,
-              error: {
-                code: "DB_ERROR",
-                message: `Failed to update version record: ${updateError.message}`,
-              },
-            };
-            return NextResponse.json(response, { status: 500 });
-          }
+    const appName = (process.env.DEPLOY_APP_NAME ?? "web") as
+      "web" | "mobile_ios" | "mobile_android";
+    const supabase = createAdminClient();
 
-          const response: ApiResponse<{ id: string; status: string }> = {
-            data: { id: existing.id, status },
-            error: null,
-          };
-          return NextResponse.json(response);
-        }
-      }
+    // Find the matching app_versions record
+    let versionId: string | null = null;
 
-      // No existing record — create a new one
+    // Try by git commit (most reliable)
+    if (gitCommit) {
+      const { data: versionByCommit } = await supabase
+        .from("app_versions")
+        .select("id")
+        .eq("git_commit_sha", gitCommit)
+        .eq("app_name", appName)
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      versionId = versionByCommit?.id ?? null;
+    }
+
+    // Fallback: most recent pending version within 10 minutes
+    if (!versionId) {
+      const tenMinutesAgo = new Date(
+        Date.now() - 10 * 60 * 1000
+      ).toISOString();
+      const { data: recentVersion } = await supabase
+        .from("app_versions")
+        .select("id")
+        .eq("app_name", appName)
+        .gte("created_at", tenMinutesAgo)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      versionId = recentVersion?.id ?? null;
+    }
+
+    // If still no match, create a new record from the webhook data
+    if (!versionId) {
       const { data: inserted, error: insertError } = await supabase
         .from("app_versions")
         .insert({
-          app_name: deployment.name,
-          version: `deploy-${deployment.id.slice(0, 8)}`,
-          environment: target === "production" ? "production" : "staging",
-          source: "vercel",
-          status,
-          commit_sha: meta?.githubCommitSha,
-          commit_message: meta?.githubCommitMessage,
-          author: meta?.githubCommitAuthorName ?? "vercel",
-          deployed_at: status === "deployed" ? new Date().toISOString() : undefined,
-          metadata: {
-            vercel_deployment_id: deployment.id,
-            vercel_url: deployment.url,
-            target,
-            github_ref: meta?.githubCommitRef,
-          },
+          app_name: appName,
+          version: `deploy-${deploymentId.slice(0, 8)}`,
+          environment:
+            target === "production"
+              ? ("production" as const)
+              : ("staging" as const),
+          deployment_provider: "vercel" as const,
+          status: deploymentStatus as "pending" | "building" | "deployed" | "failed" | "canceled",
+          git_commit_sha: gitCommit,
+          changelog:
+            (deployment.meta?.githubCommitMessage as string) ?? null,
+          deployment_id: deploymentId,
+          deployment_url: `https://${deploymentUrl}`,
+          deployed_at:
+            deploymentStatus === "deployed"
+              ? new Date().toISOString()
+              : new Date().toISOString(),
+          build_metadata: deploymentError
+            ? { error: deploymentError, target }
+            : { target },
         })
         .select("id")
         .single();
@@ -180,22 +210,62 @@ export async function POST(request: NextRequest) {
         return NextResponse.json(response, { status: 500 });
       }
 
-      const response: ApiResponse<{ id: string; status: string }> = {
-        data: { id: inserted.id, status },
+      const response: ApiResponse<{
+        id: string;
+        status: string;
+      }> = {
+        data: { id: inserted.id, status: deploymentStatus },
         error: null,
       };
       return NextResponse.json(response, { status: 201 });
     }
 
-    // Unhandled event type — acknowledge receipt
-    const response: ApiResponse<{ type: string }> = {
-      data: { type },
+    // Update the existing record
+    const { error: updateError } = await supabase
+      .from("app_versions")
+      .update({
+        status: deploymentStatus as "pending" | "building" | "deployed" | "failed" | "canceled",
+        deployment_id: deploymentId,
+        deployment_url: `https://${deploymentUrl}`,
+        deployment_provider: "vercel" as const,
+        ...(deploymentStatus === "deployed"
+          ? { deployed_at: new Date().toISOString() }
+          : {}),
+        ...(deploymentError
+          ? { build_metadata: { error: deploymentError, target } }
+          : {}),
+      })
+      .eq("id", versionId);
+
+    if (updateError) {
+      console.error("Error updating app_version:", updateError);
+      const response: ApiResponse<null> = {
+        data: null,
+        error: {
+          code: "DB_ERROR",
+          message: `Failed to update version: ${updateError.message}`,
+        },
+      };
+      return NextResponse.json(response, { status: 500 });
+    }
+
+    console.log("✅ Updated deployment status:", {
+      versionId,
+      status: deploymentStatus,
+      deploymentId,
+      gitCommit,
+    });
+
+    const response: ApiResponse<{ id: string; status: string }> = {
+      data: { id: versionId, status: deploymentStatus },
       error: null,
     };
     return NextResponse.json(response);
   } catch (error) {
     const message =
-      error instanceof Error ? error.message : "Vercel webhook handler failed";
+      error instanceof Error
+        ? error.message
+        : "Vercel webhook handler failed";
     const response: ApiResponse<null> = {
       data: null,
       error: { code: "WEBHOOK_ERROR", message },

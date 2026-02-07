@@ -56,6 +56,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       organizations: {
         Row: {
@@ -97,6 +98,15 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "organizations_owner_id_fkey";
+            columns: ["owner_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["user_id"];
+          },
+        ];
       };
       organization_members: {
         Row: {
@@ -129,6 +139,15 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       user_preferences: {
         Row: {
@@ -167,6 +186,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       blog_categories: {
         Row: {
@@ -199,6 +219,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       blog_posts: {
         Row: {
@@ -270,6 +291,22 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_author_id_fkey";
+            columns: ["author_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["user_id"];
+          },
+          {
+            foreignKeyName: "blog_posts_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "blog_categories";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       dynamic_pages: {
         Row: {
@@ -335,6 +372,15 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "dynamic_pages_author_id_fkey";
+            columns: ["author_id"];
+            isOneToOne: false;
+            referencedRelation: "profiles";
+            referencedColumns: ["user_id"];
+          },
+        ];
       };
       file_metadata: {
         Row: {
@@ -400,6 +446,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       app_versions: {
         Row: {
@@ -414,7 +461,7 @@ export type Database = {
           deployment_provider: "vercel" | "eas" | "manual" | null;
           deployment_url: string | null;
           deployment_id: string | null;
-          status: "building" | "deployed" | "failed" | "rolled_back";
+          status: "pending" | "building" | "deployed" | "failed" | "rolled_back" | "canceled";
           changelog: string | null;
           is_current: boolean;
           build_metadata: Record<string, unknown>;
@@ -434,7 +481,7 @@ export type Database = {
           deployment_provider?: "vercel" | "eas" | "manual" | null;
           deployment_url?: string | null;
           deployment_id?: string | null;
-          status?: "building" | "deployed" | "failed" | "rolled_back";
+          status?: "pending" | "building" | "deployed" | "failed" | "rolled_back" | "canceled";
           changelog?: string | null;
           is_current?: boolean;
           build_metadata?: Record<string, unknown>;
@@ -454,7 +501,7 @@ export type Database = {
           deployment_provider?: "vercel" | "eas" | "manual" | null;
           deployment_url?: string | null;
           deployment_id?: string | null;
-          status?: "building" | "deployed" | "failed" | "rolled_back";
+          status?: "pending" | "building" | "deployed" | "failed" | "rolled_back" | "canceled";
           changelog?: string | null;
           is_current?: boolean;
           build_metadata?: Record<string, unknown>;
@@ -462,6 +509,7 @@ export type Database = {
           deployed_at?: string;
           created_at?: string;
         };
+        Relationships: [];
       };
       workspaces: {
         Row: {
@@ -494,6 +542,15 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "workspaces_organization_id_fkey";
+            columns: ["organization_id"];
+            isOneToOne: false;
+            referencedRelation: "organizations";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       ai_integrations: {
         Row: {
@@ -538,6 +595,15 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "ai_integrations_workspace_id_fkey";
+            columns: ["workspace_id"];
+            isOneToOne: false;
+            referencedRelation: "workspaces";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       error_groups: {
         Row: {
@@ -600,6 +666,7 @@ export type Database = {
           created_at?: string;
           updated_at?: string;
         };
+        Relationships: [];
       };
       error_events: {
         Row: {
@@ -662,6 +729,15 @@ export type Database = {
           request?: Record<string, unknown> | null;
           created_at?: string;
         };
+        Relationships: [
+          {
+            foreignKeyName: "error_events_group_id_fkey";
+            columns: ["group_id"];
+            isOneToOne: false;
+            referencedRelation: "error_groups";
+            referencedColumns: ["id"];
+          },
+        ];
       };
       error_rate_limits: {
         Row: {
@@ -679,6 +755,7 @@ export type Database = {
           window_start?: string;
           event_count?: number;
         };
+        Relationships: [];
       };
       audit_logs: {
         Row: {
@@ -717,6 +794,7 @@ export type Database = {
           user_agent?: string | null;
           created_at?: string;
         };
+        Relationships: [];
       };
     };
     Views: Record<string, never>;
@@ -760,6 +838,7 @@ export type Database = {
       error_level: "fatal" | "error" | "warning" | "info";
       error_status: "unresolved" | "resolved" | "ignored" | "muted";
     };
+    CompositeTypes: Record<string, never>;
   };
 };
 
