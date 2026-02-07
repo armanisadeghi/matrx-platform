@@ -12,7 +12,9 @@
     "typecheck": "turbo run typecheck",
     "check": "turbo run check",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,json,css,md}\"",
-    "clean": "turbo run clean && rm -rf node_modules"
+    "clean": "turbo run clean && rm -rf node_modules",
+    "env:pull": "doppler secrets download --project matrx-platform --config dev --no-file --format env > apps/web/.env.local && echo '✓ Env updated from Doppler'",
+    "env:push": "doppler secrets upload --project matrx-platform --config dev apps/web/.env.local && echo '✓ Env pushed to Doppler'"
   },
   "devDependencies": {
     "prettier": "^3.8.1",
