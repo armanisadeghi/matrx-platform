@@ -58,3 +58,7 @@ yarn.lock
 .idea/
 *.swp
 *.swo
+
+# Matrx config (contains API keys)
+.matrx.json
+.matrx-ship.json
