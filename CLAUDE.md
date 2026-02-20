@@ -2,6 +2,8 @@
 
 Turborepo monorepo template for generating custom AI-integrated web and mobile applications. This is a starting point for new AI Matrx projects, not a standalone product.
 
+> **Official Next.js/React/TypeScript best practices:** `~/.arman/rules/nextjs-best-practices/nextjs-guide.md`
+
 ---
 
 ## Monorepo Structure
