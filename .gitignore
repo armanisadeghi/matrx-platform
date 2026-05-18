@@ -62,3 +62,7 @@ yarn.lock
 # Matrx config (contains API keys)
 .matrx.json
 .matrx-ship.json
+
+# macOS Finder metadata
+.DS_Store
+**/.DS_Store
