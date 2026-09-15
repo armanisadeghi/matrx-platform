@@ -88,7 +88,7 @@ export async function signUpWithEmail(formData: FormData) {
  */
 export async function signOut() {
   const supabase = await createServerSupabaseClient();
-  await supabase.auth.signOut();
+  await supabase.auth.signOut({ scope: "local" });
   redirect("/login");
 }
 
