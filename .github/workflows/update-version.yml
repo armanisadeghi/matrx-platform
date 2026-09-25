@@ -18,6 +18,9 @@ concurrency:
 jobs:
   update-version:
     name: Update Version in Database
+    # This repository is a template, not a deployed application. Generated
+    # projects may opt in after configuring their own database credentials.
+    if: ${{ vars.ENABLE_APP_VERSION_DATABASE_UPDATE == 'true' }}
     runs-on: ubuntu-latest
 
     # Run from the web app directory
