@@ -22,6 +22,7 @@ jobs:
     # projects may opt in after configuring their own database credentials.
     if: ${{ vars.ENABLE_APP_VERSION_DATABASE_UPDATE == 'true' }}
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     # Run from the web app directory
     defaults:
